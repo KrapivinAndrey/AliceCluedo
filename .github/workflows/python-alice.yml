@@ -1,11 +1,10 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python application
+name: Alice skill
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - /refs/heads/*
+      - !main
   pull_request:
     branches: [ main ]
 
@@ -30,21 +29,9 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: deploy
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: goodsmileduck/yandex-serverless-action@v1
-        with:
-          token: ${{ secrets.YAAUTH }}
-          function_id: ${{ secrets.CLUEDO_ID }}
-          runtime: 'python37'
-          memory: '256'
-          environment: DEBUG=True
-          entrypoint: 'main.handler'
-          source: './cluedo'
-          exclude: './cluedo/tests'
     - name: close pull_request
       if: github.event_name == 'pull_request'
       uses: peter-evans/close-pull@v1
-        with:
-          comment: Auto-closing pull request
-          delete-branch: true
+      with:
+        comment: Auto-closing pull request
+        delete-branch: true
