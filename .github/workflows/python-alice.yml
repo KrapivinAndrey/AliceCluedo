@@ -45,6 +45,7 @@ jobs:
       if: github.event_name == 'pull_request'
       uses: "pascalgn/automerge-action@v0.13.0"
       env:
+        MERGE_LABELS: ""
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         MERGE_METHOD: "squash"
         MERGE_COMMIT_MESSAGE: "Autoclose"
