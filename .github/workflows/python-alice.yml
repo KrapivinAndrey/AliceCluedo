@@ -33,7 +33,7 @@ jobs:
         use-mypy: false
         use-isort: false
         extra-pylint-options: ""
-        extra-pycodestyle-options: "--ignore=E402 --max-line-length=120"
+        extra-pycodestyle-options: "--exclude=tests --max-line-length=120"
         extra-flake8-options: ""
         extra-black-options: ""
         extra-mypy-options: ""
@@ -41,7 +41,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-    - name: close pull_request
+    - name: close PR
       if: github.event_name == 'pull_request'
       uses: peter-evans/close-pull@v1
       with:
