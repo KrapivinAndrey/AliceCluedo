@@ -2,9 +2,8 @@ name: Alice skill
 
 on:
   push:
-    branches:
-      - /refs/heads/*
-      - !main
+    branches-ignore:
+      - main
   pull_request:
     branches: [ main ]
 
