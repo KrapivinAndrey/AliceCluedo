@@ -3,12 +3,9 @@ INTRO_TEXT = 'Привет! Вы находитесь в приватном на
     'Чтобы выйти, скажите "Хватит".'
 
 
-def handler(event, context):
+def response(text, end_session, event):
 
-    text = INTRO_TEXT
-    end_session = False
-
-    response = {
+    return {
         'version': event['version'],
         'session': event['session'],
         'response': {
@@ -18,4 +15,13 @@ def handler(event, context):
         'session_state': {'last_phrase': text}
     }
 
-    return response
+
+def handler(event, context):
+
+    end_session = False
+    if event['session']['new']:
+        text = INTRO_TEXT
+    else:
+        text = 'Давно не виделись'
+
+    return response(text, end_session, event)
