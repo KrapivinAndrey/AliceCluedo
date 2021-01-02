@@ -43,7 +43,8 @@ jobs:
         pytest
     - name: close PR
       if: github.event_name == 'pull_request'
-      uses: peter-evans/close-pull@v1
-      with:
-        comment: Auto-closing pull request
-        delete-branch: true
+      uses: "pascalgn/automerge-action@v0.13.0"
+      env:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        MERGE_METHOD: "squash"
+        MERGE_COMMIT_MESSAGE: "Autoclose"
