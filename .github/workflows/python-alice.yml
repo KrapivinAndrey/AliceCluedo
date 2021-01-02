@@ -2,9 +2,8 @@ name: Alice skill
 
 on:
   push:
-    branches:
-      - /refs/heads/*
-      - !main
+    branches-ignore:
+      - main
   pull_request:
     branches: [ main ]
 
@@ -24,14 +23,29 @@ jobs:
         python -m pip install --upgrade pip
         pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: PEP8 Action
-      uses: quentinguidee/pep8-action@v1
+    - name: Python Code Quality and Lint
+      uses: ricardochaves/python-lint@v1.3.0
+      with:
+        use-pylint: false
+        use-pycodestyle: true
+        use-flake8: false
+        use-black: false
+        use-mypy: false
+        use-isort: false
+        extra-pylint-options: ""
+        extra-pycodestyle-options: "--exclude=tests --max-line-length=120"
+        extra-flake8-options: ""
+        extra-black-options: ""
+        extra-mypy-options: ""
+        extra-isort-options: ""
     - name: Test with pytest
       run: |
         pytest
-    - name: close pull_request
+    - name: close PR
       if: github.event_name == 'pull_request'
-      uses: peter-evans/close-pull@v1
-      with:
-        comment: Auto-closing pull request
-        delete-branch: true
+      uses: "pascalgn/automerge-action@v0.13.0"
+      env:
+        MERGE_LABELS: ""
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        MERGE_METHOD: "squash"
+        MERGE_COMMIT_MESSAGE: "Autoclose"
