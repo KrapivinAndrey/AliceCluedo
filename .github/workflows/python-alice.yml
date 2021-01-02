@@ -26,7 +26,7 @@ jobs:
     - name: PEP8 Action
       uses: quentinguidee/pep8-action@v1
       with:
-        arguments: '--exclude=*/cluedo/tests*'
+        arguments: '--exclude=*/cluedo/tests/*'
     - name: Test with pytest
       run: |
         pytest
