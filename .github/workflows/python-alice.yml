@@ -33,7 +33,7 @@ jobs:
         use-mypy: false
         use-isort: false
         extra-pylint-options: ""
-        extra-pycodestyle-options: "--exclude='*/tests/*'"
+        extra-pycodestyle-options: "--exclude='tests'"
         extra-flake8-options: ""
         extra-black-options: ""
         extra-mypy-options: ""
