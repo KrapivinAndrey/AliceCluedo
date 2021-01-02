@@ -30,8 +30,6 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
-
-jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: [build]
