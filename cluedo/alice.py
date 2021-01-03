@@ -41,3 +41,7 @@ class AliceResponse:
         for a in path.split('.'):
             result = result[a]
         return result
+
+    @property
+    def body(self):
+        return self._response_dict

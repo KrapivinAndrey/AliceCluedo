@@ -25,4 +25,4 @@ def handler(event, context):
         answer.set_text(text)
         answer.set_tts(tts)
 
-    return str(answer)
+    return answer.body

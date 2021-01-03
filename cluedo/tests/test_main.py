@@ -15,4 +15,5 @@ def test_hello():
             'new': True
         }
     }
-    assert 'Привет!' in main.handler(start, '')
+    assert 'Привет!' in main.handler(start, '')['response']['text']
+    assert 'Привет!' in main.handler(start, '')['response']['tts']
