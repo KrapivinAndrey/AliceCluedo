@@ -1,16 +1,16 @@
-INTRO_TEXT = 'Привет! Вы находитесь в приватном навыке "Детектив". ' \
-    'Играем в клюэдо.' \
-    'Чтобы выйти, скажите "Хватит".'
+import texts
+from alice import AliceResponse
 
 
-def response(text, end_session, event):
+def response(text, tts, event):
 
     return {
         'version': event['version'],
         'session': event['session'],
         'response': {
             'text': text,
-            'end_session': end_session
+            'tts': tts,
+            'end_session': False
         },
         'session_state': {'last_phrase': text}
     }
@@ -18,10 +18,11 @@ def response(text, end_session, event):
 
 def handler(event, context):
 
-    end_session = False
-    if event['session']['new']:
-        text = INTRO_TEXT
-    else:
-        text = 'Давно не виделись'
+    answer = AliceResponse(event)
 
-    return response(text, end_session, event)
+    if event['session']['new']:
+        text, tts = texts.hello()
+        answer.set_text(text)
+        answer.set_tts(tts)
+
+    return str(answer)
