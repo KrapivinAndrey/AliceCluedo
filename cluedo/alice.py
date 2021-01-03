@@ -36,7 +36,7 @@ class AliceResponse:
     def __str__(self) -> str:
         return self.dumps()
 
-    def get(self, path) :
+    def get(self, path):
         result = self._response_dict
         for a in path.split('.'):
             result = result[a]
