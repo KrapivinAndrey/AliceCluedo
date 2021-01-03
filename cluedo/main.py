@@ -1,4 +1,5 @@
 import texts
+from alice import AliceResponse
 
 
 def response(text, tts, event):
@@ -17,7 +18,11 @@ def response(text, tts, event):
 
 def handler(event, context):
 
+    answer = AliceResponse(event)
+
     if event['session']['new']:
         text, tts = texts.hello()
+        answer.set_text(text)
+        answer.set_tts(tts)
 
-    return response(text, tts, event)
+    return str(answer)
