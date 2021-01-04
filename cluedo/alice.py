@@ -48,10 +48,13 @@ class AliceResponse(Chain):
 
         button = {
             'title': title,
-            'url': url,
-            'payload': payload,
             'hide': hide
         }
+        if url != "":
+            button["url"] = url
+        if payload != "":
+            button["payload"] = payload
+
         self._response_dict['response']['buttons'].append(button)
 
     def end(self):

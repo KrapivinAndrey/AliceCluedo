@@ -16,12 +16,13 @@ def response(text, tts, event):
     }
 
 
-def handler(event, context):
+def handler(event, context=None):
 
     answer = AliceResponse(event)
 
     if event['session']['new']:
         text, tts = texts.hello()
-        answer.set_text(text).set_tts(tts)
+        answer.set_text(text).set_tts(tts).\
+            add_button("Начать игру").add_button("Правила")
 
     return answer.body
