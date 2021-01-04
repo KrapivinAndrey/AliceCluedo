@@ -1,7 +1,19 @@
 import json
+from types import MethodType
 
 
-class AliceResponse:
+class Chain(object):
+    def __getattribute__(self, item):
+        fn = object.__getattribute__(self, item)
+        if fn and type(fn) == MethodType:
+            def chained(*args, **kwargs):
+                ans = fn(*args, **kwargs)
+                return ans if ans is not None else self
+            return chained
+        return fn
+
+
+class AliceResponse(Chain):
 
     def __init__(self, request):
 
@@ -44,4 +56,4 @@ class AliceResponse:
 
     @property
     def body(self):
-        return self._response_dict
+        return self._response_dict.copy()

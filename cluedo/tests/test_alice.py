@@ -71,8 +71,7 @@ def test_set_text(start_session):
 
 def test_set_tts(start_session):
     ans = alice.AliceResponse(start_session)
-    ans.set_text('Hello')
-    ans.set_tts('Goodbye')
+    ans.set_text('Hello').set_tts('Goodbye')
     assert ans.get('response.tts') == 'Goodbye'
 
 
