@@ -10,4 +10,3 @@ def rules() -> tuple:
     text = """Правила игры"""
     tts = text
     return text, tts
-
