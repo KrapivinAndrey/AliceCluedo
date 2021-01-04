@@ -50,15 +50,3 @@ jobs:
         MERGE_METHOD: "squash"
         MERGE_COMMIT_MESSAGE: "pull-request-title-and-description"
         MERGE_DELETE_BRANCH: true
-    - name: deploy
-      if: github.event_name == 'pull_request'
-      uses: goodsmileduck/yandex-serverless-action@v1
-      with:
-        token: ${{ secrets.YAAUTH }}
-        function_id: ${{ secrets.CLUEDO_ID }}
-        runtime: 'python37'
-        memory: '256'
-        environment: DEBUG=True
-        entrypoint: 'main.handler'
-        source: './cluedo'
-        exclude: './cluedo/tests'

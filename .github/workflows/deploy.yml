@@ -2,6 +2,9 @@ name: Push and Deploy Serverless function
 on: 
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+    types: [closed]
 
 jobs:
   deploy:
