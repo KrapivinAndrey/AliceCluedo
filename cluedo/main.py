@@ -24,5 +24,9 @@ def handler(event, context=None):
         text, tts = texts.hello()
         answer.set_text(text).set_tts(tts).\
             add_button("Начать игру").add_button("Правила")
+    elif event['request']['command'] == 'правила':
+        text, tts = texts.rules()
+        answer.set_text(text).set_tts(tts). \
+            add_button("Начать игру")
 
     return answer.body

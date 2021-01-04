@@ -4,3 +4,10 @@ def hello() -> tuple:
         Или начать играть"""
     tts = text
     return text, tts
+
+
+def rules() -> tuple:
+    text = """Правила игры"""
+    tts = text
+    return text, tts
+
