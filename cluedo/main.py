@@ -22,7 +22,6 @@ def handler(event, context):
 
     if event['session']['new']:
         text, tts = texts.hello()
-        answer.set_text(text)
-        answer.set_tts(tts)
+        answer.set_text(text).set_tts(tts)
 
     return answer.body
