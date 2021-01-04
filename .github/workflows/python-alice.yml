@@ -2,10 +2,18 @@ name: Alice skill
 
 on:
   push:
-    branches-ignore:
-      - main
+    branches-ignore: [ main ]
   pull_request:
     branches: [ main ]
+    types:
+      - labeled
+      - unlabeled
+      - synchronize
+      - opened
+      - edited
+      - ready_for_review
+      - reopened
+      - unlocked
 
 jobs:
   build:
@@ -43,10 +51,10 @@ jobs:
         pytest
     - name: close PR
       if: github.event_name == 'pull_request'
-      uses: "pascalgn/automerge-action@v0.13.0"
+      uses: pascalgn/automerge-action@v0.13.0
       env:
         MERGE_LABELS: ""
         GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         MERGE_METHOD: "squash"
         MERGE_COMMIT_MESSAGE: "pull-request-title-and-description"
-        MERGE_DELETE_BRANCH: true
+        MERGE_DELETE_BRANCH: "true"
