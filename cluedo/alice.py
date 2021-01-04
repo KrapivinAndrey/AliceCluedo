@@ -18,10 +18,11 @@ class AliceResponse(Chain):
     def __init__(self, request):
 
         self._response_dict = {
-            'version': request['version'],
-            'session': request['session'],
+            'version': '1.0',
+            'session': request['session'],  # для отладки
             'response': {
-                'end_session': False
+                'end_session': False,
+                'buttons': []
             }
         }
 
@@ -40,7 +41,18 @@ class AliceResponse(Chain):
         self._response_dict['response']['tts'] = tts  # tts может быть длиннее за счет дополнительных звуков
 
     def set_buttons(self, buttons):
-        self._response_dict['response']['buttons'] = buttons
+        for title in buttons:
+            self.add_button(title)
+
+    def add_button(self, title: str, url="", payload="", hide=False):
+
+        button = {
+            'title': title,
+            'url': url,
+            'payload': payload,
+            'hide': hide
+        }
+        self._response_dict['response']['buttons'].append(button)
 
     def end(self):
         self._response_dict["response"]["end_session"] = True
@@ -49,7 +61,7 @@ class AliceResponse(Chain):
         return self.dumps()
 
     def get(self, path):
-        result = self._response_dict
+        result = self.body
         for a in path.split('.'):
             result = result[a]
         return result

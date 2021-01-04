@@ -75,9 +75,21 @@ def test_set_tts(start_session):
     assert ans.get('response.tts') == 'Goodbye'
 
 
+def test_add_button(start_session):
+    ans = alice.AliceResponse(start_session)
+    assert len(ans.get('response.buttons')) == 0
+    ans.add_button('test')
+    assert len(ans.get('response.buttons')) == 1
+    assert ans.get('response.buttons')[0]['title'] == "test"
+
+
 def test_set_buttons(start_session):
     ans = alice.AliceResponse(start_session)
     buttons = ['Ok', 'Cancel']
 
     ans.set_buttons(buttons)
-    assert ans.get('response.buttons') == buttons
+    assert len(ans.get('response.buttons')) == 2
+    assert ans.get('response.buttons')[0]['title'] == "Ok"
+    assert ans.get('response.buttons')[1]['title'] == "Cancel"
+
+
