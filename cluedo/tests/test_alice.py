@@ -56,40 +56,48 @@ def start_session():
 
 
 def test_alice_init(start_session):
-    ans = alice.AliceResponse(start_session)
+    ans = alice.AliceResponse(start_session).body
     assert ans is not None
-    assert ans.get('session.session_id') == 'f243ae6c-a923-4f64-9662-1511067c8897'
+    assert ans['session']['session_id'] == 'f243ae6c-a923-4f64-9662-1511067c8897'
 
 
 def test_set_text(start_session):
-    ans = alice.AliceResponse(start_session)
-    ans.set_text('Hello')
+    ans = alice.AliceResponse(start_session).text('Hello').body
 
-    assert ans.get('response.text') == 'Hello'
-    assert ans.get('response.tts') == 'Hello'
+    assert ans['response']['text'] == 'Hello'
+    assert ans['response']['tts'] == 'Hello'
 
 
 def test_set_tts(start_session):
-    ans = alice.AliceResponse(start_session)
-    ans.set_text('Hello').set_tts('Goodbye')
-    assert ans.get('response.tts') == 'Goodbye'
+    ans = alice.AliceResponse(start_session).text('Hello').tts('Goodbye').body
+    assert ans['response']['tts'] == 'Goodbye'
 
 
 def test_add_button(start_session):
-    ans = alice.AliceResponse(start_session)
-    assert len(ans.get('response.buttons')) == 0
-    ans.add_button('test')
-    assert len(ans.get('response.buttons')) == 1
-    assert ans.get('response.buttons')[0]['title'] == "test"
+    ans = alice.AliceResponse(start_session).button('test').body
+
+    assert len(ans['response']['buttons']) == 1
+    assert ans['response']['buttons'][0]['text'] == "test"
 
 
 def test_set_buttons(start_session):
-    ans = alice.AliceResponse(start_session)
     buttons = ['Ok', 'Cancel']
+    ans = alice.AliceResponse(start_session).setButtons(buttons).body
 
-    ans.set_buttons(buttons)
-    assert len(ans.get('response.buttons')) == 2
-    assert ans.get('response.buttons')[0]['title'] == "Ok"
-    assert ans.get('response.buttons')[1]['title'] == "Cancel"
+    assert len(ans['response']['buttons']) == 2
+    assert ans['response']['buttons'][0]['text'] == "Ok"
+    assert ans['response']['buttons'][1]['text'] == "Cancel"
 
+
+def test_add_one_image(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test', 'test image').withButton('test2').body
+
+    assert ans['card']['type'] == 'BigImage'
+
+    assert ans['card']['image_id'] == '111'
+    assert ans['card']['title'] == 'test'
+    assert ans['card']['description'] == 'test image'
+    assert ans['card']['button']['text'] == 'test2'
+    assert 'items' not in ans['card']
 

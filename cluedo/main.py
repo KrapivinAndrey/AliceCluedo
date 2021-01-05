@@ -22,11 +22,11 @@ def handler(event, context=None):
 
     if event['session']['new']:
         text, tts = texts.hello()
-        answer.set_text(text).set_tts(tts).\
-            add_button("Начать игру").add_button("Правила")
+        answer.text(text).tts(tts).\
+            button("Начать игру").button("Правила")
     elif event['request']['command'] == 'правила':
         text, tts = texts.rules()
-        answer.set_text(text).set_tts(tts). \
-            add_button("Начать игру")
+        answer.text(text).tts(tts). \
+            button("Начать игру")
 
     return answer.body
