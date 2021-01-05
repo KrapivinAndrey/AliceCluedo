@@ -30,7 +30,7 @@ class AliceResponse(Chain):
         self._images = []
         self._header = ""
         self._footer = ""
-        self._asImageList = False
+        self._asItemsList = False
         self._asImageGallery = False
 
     def __str__(self) -> str:
@@ -66,14 +66,14 @@ class AliceResponse(Chain):
     def __prepare_card(self):
         if not self._images:
             raise Exception("No images for card")
-        elif len(self._images) == 1:
+        elif len(self._images) == 1 and not (self._asItemsList or self._asImageGallery):
             result = {
                 "type": "BigImage"
             }
             result.update(self._images[0])
-        elif len(self._images) <= 5:
+        elif len(self._images) <= 5 and not self._asImageGallery:
             result = {
-                "type": "ItemList",
+                "type": "ItemsList",
                 "items": copy.deepcopy(self._images)
             }
         elif len(self._images) <= 7:
@@ -140,6 +140,14 @@ class AliceResponse(Chain):
 
     def footer(self, text: str):
         self._footer = text
+
+    def asItemsList(self):
+        assert not self._asImageGallery
+        self._asItemsList = True
+
+    def asImageGallery(self):
+        assert not self._asItemsList
+        self._asImageGallery = True
 
     def end(self):
         """Признак конца разговора"""

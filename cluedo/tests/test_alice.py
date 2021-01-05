@@ -109,7 +109,7 @@ def test_add_two_images(start_session):
         image('111', 'test', 'test image').withButton('button1'). \
         image('222', 'test2', 'test image').withButton('button2').body
 
-    assert ans['card']['type'] == 'ItemList'
+    assert ans['card']['type'] == 'ItemsList'
 
     assert 'image_id' not in ans['card']
     assert 'title' not in ans['card']
@@ -127,7 +127,7 @@ def test_add_five_images(start_session):
         image('444', 'test4', 'test image').withButton('button4'). \
         image('555', 'test5', 'test image').withButton('button5').body
 
-    assert ans['card']['type'] == 'ItemList'
+    assert ans['card']['type'] == 'ItemsList'
 
     assert 'image_id' not in ans['card']
     assert 'title' not in ans['card']
