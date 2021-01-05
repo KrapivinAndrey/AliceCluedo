@@ -1,6 +1,8 @@
 import os
 import sys
 import inspect
+from unittest import TestCase
+
 import pytest
 
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -90,14 +92,93 @@ def test_set_buttons(start_session):
 
 
 def test_add_one_image(start_session):
-    ans = alice.AliceResponse(start_session).\
-        image('111', 'test', 'test image').withButton('test2').body
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test', 'test image').withButton('button').body
 
     assert ans['card']['type'] == 'BigImage'
 
     assert ans['card']['image_id'] == '111'
     assert ans['card']['title'] == 'test'
     assert ans['card']['description'] == 'test image'
-    assert ans['card']['button']['text'] == 'test2'
+    assert ans['card']['button']['text'] == 'button'
     assert 'items' not in ans['card']
 
+
+def test_add_two_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2').body
+
+    assert ans['card']['type'] == 'ItemList'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 2
+
+
+def test_add_five_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test1', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2'). \
+        image('333', 'test3', 'test image').withButton('button3'). \
+        image('444', 'test4', 'test image').withButton('button4'). \
+        image('555', 'test5', 'test image').withButton('button5').body
+
+    assert ans['card']['type'] == 'ItemList'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 5
+
+
+def test_add_seven_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test1', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2'). \
+        image('333', 'test3', 'test image').withButton('button3'). \
+        image('444', 'test4', 'test image').withButton('button4'). \
+        image('555', 'test5', 'test image').withButton('button5'). \
+        image('666', 'test6', 'test image').withButton('button6'). \
+        image('777', 'test7', 'test image').withButton('button7').body
+
+    assert ans['card']['type'] == 'ImageGallery'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 7
+
+
+def test_header(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        header('test').body
+
+    assert ans['card']['header'] == 'test'
+    assert 'footer' not in ans['card']
+
+
+def test_footer(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        footer('test').body
+
+    assert ans['card']['footer'] == 'test'
+    assert 'header' not in ans['card']
+
+
+def test_header_footer(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        header('up').footer('down').body
+
+    assert ans['card']['header'] == 'up'
+    assert ans['card']['footer'] == 'down'

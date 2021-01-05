@@ -28,6 +28,10 @@ class AliceResponse(Chain):
         }
 
         self._images = []
+        self._header = ""
+        self._footer = ""
+        self._asImageList = False
+        self._asImageGallery = False
 
     def __str__(self) -> str:
         return self.dumps()
@@ -80,6 +84,12 @@ class AliceResponse(Chain):
         else:
             raise Exception("Too many images")
 
+        if self._header:
+            result['header'] = self._header
+
+        if self._footer:
+            result['footer'] = self._footer
+
         return result
 
     def text(self, text: str):
@@ -124,6 +134,12 @@ class AliceResponse(Chain):
         if not self._images:
             raise Exception("No images")
         self._images[-1]['button'] = self.__button(title, url, payload, False)
+
+    def header(self, text: str):
+        self._header = text
+
+    def footer(self, text: str):
+        self._footer = text
 
     def end(self):
         """Признак конца разговора"""
