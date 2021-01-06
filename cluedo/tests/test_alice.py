@@ -182,3 +182,10 @@ def test_header_footer(start_session):
 
     assert ans['card']['header'] == 'up'
     assert ans['card']['footer'] == 'down'
+
+
+def test_save_state(start_session):
+    ans = alice.AliceResponse(start_session). \
+        text("test").saveState('demo', 1).body
+
+    assert ans['session_state']['demo'] == 1

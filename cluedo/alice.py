@@ -24,7 +24,8 @@ class AliceResponse(Chain):
             'response': {
                 'end_session': False,
                 'buttons': []
-            }
+            },
+            'session_state': {}
         }
 
         self._images = []
@@ -148,6 +149,9 @@ class AliceResponse(Chain):
     def asImageGallery(self):
         assert not self._asItemsList
         self._asImageGallery = True
+
+    def saveState(self, name: str, value):
+        self._response_dict['session_state'][name] = value
 
     def end(self):
         """Признак конца разговора"""
