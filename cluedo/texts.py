@@ -1,4 +1,4 @@
-def hello() -> tuple:
+def hello():
     text = """Привет! Вы находитесь в приватном навыке "Детектив".
         Можете узнать правила
         Или начать играть"""
@@ -6,7 +6,7 @@ def hello() -> tuple:
     return text, tts
 
 
-def rules() -> tuple:
+def rules():
     text = """Правила игры"""
     tts = text
     return text, tts
