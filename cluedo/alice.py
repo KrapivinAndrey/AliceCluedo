@@ -37,12 +37,6 @@ class AliceResponse(Chain):
     def __str__(self) -> str:
         return self.dumps()
 
-    def get(self, path):
-        result = self.body
-        for a in path.split('.'):
-            result = result[a]
-        return result
-
     def dumps(self):
         return json.dumps(
             self._response_dict,
