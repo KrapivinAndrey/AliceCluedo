@@ -47,7 +47,7 @@ class AliceResponse(Chain):
     @staticmethod
     def __button(text: str, url: str, payload: str, hide: bool) -> dict:
         button = {
-            'text': text[:64]
+            'title': text[:64]
         }
         if url:
             button["url"] = url[:1024]
@@ -55,6 +55,18 @@ class AliceResponse(Chain):
             button["payload"] = payload
         if hide:
             button["hide"] = hide
+
+        return button
+
+    @staticmethod
+    def __buttonImage(text: str, url: str, payload: str) -> dict:
+        button = {
+            'text': text[:64]
+        }
+        if url:
+            button["url"] = url[:1024]
+        if payload:
+            button["payload"] = payload
 
         return button
 
@@ -128,7 +140,7 @@ class AliceResponse(Chain):
     def withButton(self, title: str, url="", payload=""):
         if not self._images:
             raise Exception("No images")
-        self._images[-1]['button'] = self.__button(title, url, payload, False)
+        self._images[-1]['button'] = self.__buttonImage(title, url, payload)
 
     def header(self, text: str):
         self._header = text

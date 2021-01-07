@@ -79,7 +79,7 @@ def test_add_button(start_session):
     ans = alice.AliceResponse(start_session).button('test').body
 
     assert len(ans['response']['buttons']) == 1
-    assert ans['response']['buttons'][0]['text'] == "test"
+    assert ans['response']['buttons'][0]['title'] == "test"
 
 
 def test_set_buttons(start_session):
@@ -87,8 +87,8 @@ def test_set_buttons(start_session):
     ans = alice.AliceResponse(start_session).setButtons(buttons).body
 
     assert len(ans['response']['buttons']) == 2
-    assert ans['response']['buttons'][0]['text'] == "Ok"
-    assert ans['response']['buttons'][1]['text'] == "Cancel"
+    assert ans['response']['buttons'][0]['title'] == "Ok"
+    assert ans['response']['buttons'][1]['title'] == "Cancel"
 
 
 def test_add_one_image(start_session):
