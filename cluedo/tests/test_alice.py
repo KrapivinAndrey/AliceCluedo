@@ -1,6 +1,8 @@
 import os
 import sys
 import inspect
+from unittest import TestCase
+
 import pytest
 
 current_dir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
@@ -56,40 +58,134 @@ def start_session():
 
 
 def test_alice_init(start_session):
-    ans = alice.AliceResponse(start_session)
+    ans = alice.AliceResponse(start_session).body
     assert ans is not None
-    assert ans.get('session.session_id') == 'f243ae6c-a923-4f64-9662-1511067c8897'
+    assert ans['session']['session_id'] == 'f243ae6c-a923-4f64-9662-1511067c8897'
 
 
 def test_set_text(start_session):
-    ans = alice.AliceResponse(start_session)
-    ans.set_text('Hello')
+    ans = alice.AliceResponse(start_session).text('Hello').body
 
-    assert ans.get('response.text') == 'Hello'
-    assert ans.get('response.tts') == 'Hello'
+    assert ans['response']['text'] == 'Hello'
+    assert ans['response']['tts'] == 'Hello'
 
 
 def test_set_tts(start_session):
-    ans = alice.AliceResponse(start_session)
-    ans.set_text('Hello').set_tts('Goodbye')
-    assert ans.get('response.tts') == 'Goodbye'
+    ans = alice.AliceResponse(start_session).text('Hello').tts('Goodbye').body
+    assert ans['response']['tts'] == 'Goodbye'
 
 
 def test_add_button(start_session):
-    ans = alice.AliceResponse(start_session)
-    assert len(ans.get('response.buttons')) == 0
-    ans.add_button('test')
-    assert len(ans.get('response.buttons')) == 1
-    assert ans.get('response.buttons')[0]['title'] == "test"
+    ans = alice.AliceResponse(start_session).button('test').body
+
+    assert len(ans['response']['buttons']) == 1
+    assert ans['response']['buttons'][0]['text'] == "test"
 
 
 def test_set_buttons(start_session):
-    ans = alice.AliceResponse(start_session)
     buttons = ['Ok', 'Cancel']
+    ans = alice.AliceResponse(start_session).setButtons(buttons).body
 
-    ans.set_buttons(buttons)
-    assert len(ans.get('response.buttons')) == 2
-    assert ans.get('response.buttons')[0]['title'] == "Ok"
-    assert ans.get('response.buttons')[1]['title'] == "Cancel"
+    assert len(ans['response']['buttons']) == 2
+    assert ans['response']['buttons'][0]['text'] == "Ok"
+    assert ans['response']['buttons'][1]['text'] == "Cancel"
 
 
+def test_add_one_image(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test', 'test image').withButton('button').body
+
+    assert ans['card']['type'] == 'BigImage'
+
+    assert ans['card']['image_id'] == '111'
+    assert ans['card']['title'] == 'test'
+    assert ans['card']['description'] == 'test image'
+    assert ans['card']['button']['text'] == 'button'
+    assert 'items' not in ans['card']
+
+
+def test_add_two_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2').body
+
+    assert ans['card']['type'] == 'ItemsList'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 2
+
+
+def test_add_five_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test1', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2'). \
+        image('333', 'test3', 'test image').withButton('button3'). \
+        image('444', 'test4', 'test image').withButton('button4'). \
+        image('555', 'test5', 'test image').withButton('button5').body
+
+    assert ans['card']['type'] == 'ItemsList'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 5
+
+
+def test_add_seven_images(start_session):
+    ans = alice.AliceResponse(start_session). \
+        image('111', 'test1', 'test image').withButton('button1'). \
+        image('222', 'test2', 'test image').withButton('button2'). \
+        image('333', 'test3', 'test image').withButton('button3'). \
+        image('444', 'test4', 'test image').withButton('button4'). \
+        image('555', 'test5', 'test image').withButton('button5'). \
+        image('666', 'test6', 'test image').withButton('button6'). \
+        image('777', 'test7', 'test image').withButton('button7').body
+
+    assert ans['card']['type'] == 'ImageGallery'
+
+    assert 'image_id' not in ans['card']
+    assert 'title' not in ans['card']
+    assert 'description' not in ans['card']
+    assert 'button' not in ans['card']
+
+    assert len(ans['card']['items']) == 7
+
+
+def test_header(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        header('test').body
+
+    assert ans['card']['header'] == 'test'
+    assert 'footer' not in ans['card']
+
+
+def test_footer(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        footer('test').body
+
+    assert ans['card']['footer'] == 'test'
+    assert 'header' not in ans['card']
+
+
+def test_header_footer(start_session):
+    ans = alice.AliceResponse(start_session).\
+        image('111', 'test1', 'test image').withButton('button1').\
+        header('up').footer('down').body
+
+    assert ans['card']['header'] == 'up'
+    assert ans['card']['footer'] == 'down'
+
+
+def test_save_state(start_session):
+    ans = alice.AliceResponse(start_session). \
+        text("test").saveState('demo', 1).body
+
+    assert ans['session_state']['demo'] == 1
