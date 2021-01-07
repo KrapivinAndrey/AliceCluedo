@@ -1,5 +1,6 @@
 import texts
 from alice import AliceResponse
+from game import GameEngine
 
 
 def response(text, tts, event):
@@ -16,6 +17,12 @@ def response(text, tts, event):
     }
 
 
+def startGame(aliceAnswer):
+    game = GameEngine()
+    game.new_game()
+    aliceAnswer.saveState(game.dump)
+
+
 def handler(event, context=None):
 
     answer = AliceResponse(event)
@@ -28,5 +35,7 @@ def handler(event, context=None):
         text, tts = texts.rules()
         answer.text(text).tts(tts). \
             button("Начать игру")
+    elif event['request']['command'] == 'начать игру':
+        startGame(answer)
 
     return answer.body
