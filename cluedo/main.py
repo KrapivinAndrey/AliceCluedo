@@ -17,10 +17,12 @@ def response(text, tts, event):
     }
 
 
-def startGame(aliceAnswer):
+def startGame(answer):
     game = GameEngine()
     game.new_game()
-    aliceAnswer.saveState(game.dump)
+    answer.text(game.playerCards[0] + game.playerCards[1] + game.playerCards[3]).saveState(game.dump)
+    for weapon in game.weapons():
+        answer.button(weapon)
 
 
 def handler(event, context=None):

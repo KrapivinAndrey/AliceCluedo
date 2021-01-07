@@ -53,6 +53,10 @@ class GameEngine:
             "Бальный зал"
         ]
 
+    @property
+    def playerCards(self):
+        return self._playerCards[0]
+
     def new_game(self):
         import random
         weapons = self.weapons()
