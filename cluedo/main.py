@@ -20,7 +20,7 @@ def response(text, tts, event):
 def startGame(answer):
     game = GameEngine()
     game.new_game()
-    answer.text(game.playerCards[0] + game.playerCards[1] + game.playerCards[3]).saveState(game.dump)
+    answer.text(game.playerCards[0] + game.playerCards[1] + game.playerCards[2]).saveState("game", game.dump())
     for weapon in game.weapons():
         answer.button(weapon)
 
