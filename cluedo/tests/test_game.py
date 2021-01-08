@@ -56,3 +56,14 @@ def test_restore(gameState):
 
     assert len(game._playerCards) == 6
 
+
+def test_game_turn(gameState):
+    game = GameEngine()
+    game.restore(gameState)
+
+    result = game.game_turn("Преподобный Грин", "Гостиная", "Подсвечник")
+
+    assert len(result) == 6  # Должны быть ответы для каждого игрока
+    assert result[0]['player'] == "Вы"
+    assert result[0]['player_stop'] == "Профессор Плам"  # Остановились на данном игроке
+    assert result[0]['card'] in ("Гостиная", "Подсвечник")  # Показал одну из карт

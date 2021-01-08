@@ -1,4 +1,5 @@
 import copy
+import random
 
 
 class GameEngine:
@@ -18,15 +19,37 @@ class GameEngine:
         self._playerCards = copy.deepcopy(state['cards'])
         self._secret = copy.deepcopy(state['secret'])
 
+    def __randomCards(self, num):
+
+        def get_random_card(cards, except_cards):
+            random.shuffle(cards)
+            while cards[0] in except_cards:
+                cards.pop(0)
+
+            return cards[0]
+
+        # Случайный ход, исключая имеющиеся карты
+        myCards = self._playerCards[num]
+        myCards.append(self.suspects()[num])
+
+        suspect = get_random_card(self.suspects(), myCards)
+        room = get_random_card(self.rooms(), myCards)
+        weapon = get_random_card(self.weapons(), myCards)
+
+        return suspect, room, weapon
+
     @staticmethod
-    def suspects():
-        return [
+    def suspects(full=False):
+        result = [
             "Миссис Пикок",
             "Мисс Скарлет",
             "Полковник Мастард",
             "Профессор Плам",
             "Преподобный Грин"
         ]
+        if full:
+            result.insert(0, "Вы")
+        return result
 
     @staticmethod
     def weapons():
@@ -58,7 +81,6 @@ class GameEngine:
         return self._playerCards[0]
 
     def new_game(self):
-        import random
         weapons = self.weapons()
         rooms = self.rooms()
         suspects = self.suspects()
@@ -84,3 +106,40 @@ class GameEngine:
                 i = 1
             else:
                 i += 1
+
+    def game_turn(self, suspect, room, weapon):
+
+        def make_suggestion(suspect, room, weapon, index):
+            # Обработчик предположения игрока
+            suggestion = {suspect, room, weapon}
+            i = index + 1
+            while i != index:
+                cross = set(self._playerCards[i]) & suggestion
+                if cross:
+                    return self.suspects(True)[i], random.choice(tuple(cross))
+                i = (i + 1) % self.num_players
+
+            return None, None
+
+        # Расчет раунда. Передается ход игрока. Возвращается набор ответов
+        # Ответ - массив: Ход, Кто опроверг, Какую карту показал(только для игрока)
+
+        # Сначала наш ход
+        result = [{
+            'player': "Вы",
+            'move': (suspect, room, weapon)
+        }]
+
+        myMove = make_suggestion(suspect, room, weapon, 0)
+        result[0]['player_stop'] = myMove[0]
+        result[0]['card'] = myMove[1]
+        for i in range(self.num_players-1):
+            bot = self.suspects()[i]
+            result.append({
+                    'player': bot,
+                    'move': self.__randomCards(i)
+                })
+
+
+
+        return result

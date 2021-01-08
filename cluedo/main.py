@@ -17,15 +17,8 @@ def response(text, tts, event):
     }
 
 
-def startGame(answer):
-    game = GameEngine()
-    game.new_game()
-    answer.text(game.playerCards[0] + game.playerCards[1] + game.playerCards[2]).saveState("game", game.dump())
-    for weapon in game.rooms():
-        answer.button(weapon)
-
-
 def handler(event, context=None):
+    game = GameEngine()
 
     answer = AliceResponse(event)
 
@@ -38,6 +31,18 @@ def handler(event, context=None):
         answer.text(text).tts(tts). \
             button("Начать игру")
     elif event['request']['command'] == 'начать игру':
-        startGame(answer)
+        game.new_game()
+        answer.text(game.playerCards[0] + game.playerCards[1] + game.playerCards[2]).\
+            saveState("game", game.dump()).\
+            saveState("player_answer", []).\
+            saveState("suspect", True)
+        for suspect in game.suspects():
+            answer.button(suspect)
+    elif event['session_state']['weapon']:
+        if event['request']['command'] not in game.weapons():
+            # TODO: Добавить обработку не правильного ответа
+            pass
+
+
 
     return answer.body
