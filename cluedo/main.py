@@ -43,6 +43,4 @@ def handler(event, context=None):
             # TODO: Добавить обработку не правильного ответа
             pass
 
-
-
     return answer.body
