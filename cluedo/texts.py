@@ -18,23 +18,23 @@ def start_game(suspect, room, weapon):
     return text, tts
 
 
-def suspect():
+def who_do_you_suspect():
     text = """Кого Вы подозреваете?
-                Скажите "Варианты" чтобы узнать варианты"""
+    Скажите "Варианты" чтобы узнать варианты"""
     tts = text
     return text, tts
 
 
-def room():
+def in_which_room():
     text = """Где произошло преступление?
-                Скажите "Варианты" чтобы узнать варианты"""
+    Скажите "Варианты" чтобы узнать варианты"""
     tts = text
     return text, tts
 
 
-def weapon():
+def what_weapon():
     text = """Чем был убит?
-                Скажите "Варианты" чтобы узнать варианты"""
+    Скажите "Варианты" чтобы узнать варианты"""
     tts = text
     return text, tts
 
