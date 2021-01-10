@@ -67,3 +67,36 @@ def test_game_turn(gameState):
     assert result[0]['player'] == "Вы"
     assert result[0]['player_stop'] == "Профессор Плам"  # Остановились на данном игроке
     assert result[0]['card'] in ("Гостиная", "Подсвечник")  # Показал одну из карт
+
+
+def test_it_is_suspect():
+    game = GameEngine()
+
+    x = game.it_is_suspect("преподобный грин")
+    assert x == "Преподобный Грин"
+
+    x = game.it_is_suspect("пинкертон")
+    assert x == ""
+
+
+def test_it_is_room():
+    game = GameEngine()
+
+    x = game.it_is_room("бальный зал")
+    assert x == "Бальный зал"
+
+    x = game.it_is_room("бильярдная")
+    assert x == "Бильярдная"
+
+    x = game.it_is_room("зальный бал")
+    assert x == ""
+
+
+def test_it_is_weapon():
+    game = GameEngine()
+
+    x = game.it_is_weapon("кинжал")
+    assert x == "Кинжал"
+
+    x = game.it_is_weapon("бензопила")
+    assert x == ""

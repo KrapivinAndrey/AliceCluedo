@@ -9,32 +9,81 @@ sys.path.insert(0, parent_dir)
 import main
 
 
+def game_for_test():
+    return {
+            "cards": [
+              [
+                "Мисс Скарлет",
+                "Кухня",
+                "Кубок"
+              ],
+              [
+                "Полковник Мастард",
+                "Холл",
+                "Столовая"
+              ],
+              [
+                "Бальный зал",
+                "Кабинет",
+                "Револьвер"
+              ],
+              [
+                "Библиотека",
+                "Гаечный ключ",
+                "Зимний сад"
+              ],
+              [
+                "Кинжал",
+                "Подсвечник",
+                "Бильярдная"
+              ],
+              [
+                "Миссис Пикок",
+                "Преподобный Грин"
+              ]
+            ],
+            "secret": [
+              "Профессор Плам",
+              "Гостиная",
+              "Веревка"
+            ]
+          }
+
+
+def meta():
+    return {
+        "locale": "ru-RU",
+        "timezone": "UTC",
+        "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+        "interfaces": {
+          "screen": {},
+          "payments": {},
+          "account_linking": {}
+        }
+      }
+
+
+def session(new=False):
+    return {
+        "message_id": 3,
+        "session_id": "d825cbef-e7d6-4af9-9810-3ff3f358ac16",
+        "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
+        "user": {
+          "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
+        },
+        "application": {
+          "application_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544"
+        },
+        "user_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544",
+        "new": new
+      }
+
+
 @pytest.fixture()
 def start_session():
     start = {
-        "meta": {
-            "locale": "ru-RU",
-            "timezone": "UTC",
-            "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-            "interfaces": {
-                "screen": {},
-                "payments": {},
-                "account_linking": {}
-            }
-        },
-        "session": {
-            "message_id": 0,
-            "session_id": "f243ae6c-a923-4f64-9662-1511067c8897",
-            "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
-            "user": {
-                "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
-            },
-            "application": {
-                "application_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544"
-            },
-            "user_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544",
-            "new": True
-        },
+        "meta": meta(),
+        "session": session(True),
         "request": {
             "command": "",
             "original_utterance": "",
@@ -57,29 +106,8 @@ def start_session():
 @pytest.fixture()
 def need_rules():
     start = {
-        "meta": {
-            "locale": "ru-RU",
-            "timezone": "UTC",
-            "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-            "interfaces": {
-                "screen": {},
-                "payments": {},
-                "account_linking": {}
-            }
-        },
-        "session": {
-            "message_id": 0,
-            "session_id": "f243ae6c-a923-4f64-9662-1511067c8897",
-            "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
-            "user": {
-                "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
-            },
-            "application": {
-                "application_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544"
-            },
-            "user_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544",
-            "new": False
-        },
+        "meta": meta(),
+        "session": session(),
         "request": {
             "command": "правила",
             "original_utterance": "Правила",
@@ -104,29 +132,8 @@ def need_rules():
 @pytest.fixture()
 def start_game():
     return {
-          "meta": {
-            "locale": "ru-RU",
-            "timezone": "UTC",
-            "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-            "interfaces": {
-              "screen": {},
-              "payments": {},
-              "account_linking": {}
-            }
-          },
-          "session": {
-            "message_id": 1,
-            "session_id": "ad9f580b-9582-4873-93d4-2fa5ed79b606",
-            "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
-            "user": {
-              "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
-            },
-            "application": {
-              "application_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544"
-            },
-            "user_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544",
-            "new": False
-          },
+          "meta": meta(),
+          "session": session(),
           "request": {
             "command": "начать игру",
             "original_utterance": "Начать игру",
@@ -154,36 +161,21 @@ def start_game():
 
 @pytest.fixture()
 def full_player_answer():
+    return {}
+
+
+@pytest.fixture()
+def first_answer_right():
     return {
-      "meta": {
-        "locale": "ru-RU",
-        "timezone": "UTC",
-        "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
-        "interfaces": {
-          "screen": {},
-          "payments": {},
-          "account_linking": {}
-        }
-      },
-      "session": {
-        "message_id": 5,
-        "session_id": "7354f508-2296-4b6b-abfa-b019a26e1d3a",
-        "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
-        "user": {
-          "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
-        },
-        "application": {
-          "application_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544"
-        },
-        "user_id": "EFFF6BDD6A2D661526BB262D095D4789DE7F86EC6AA1C1A7480FB94CD9FB6544",
-        "new": False
-      },
+      "meta": meta(),
+      "session": session(),
       "request": {
-        "command": "кубок",
-        "original_utterance": "Кубок",
+        "command": "миссис пикок",
+        "original_utterance": "Миссис Пикок",
         "nlu": {
           "tokens": [
-            "кубок"
+            "миссис",
+            "пикок"
           ],
           "entities": [],
           "intents": {}
@@ -195,7 +187,45 @@ def full_player_answer():
       },
       "state": {
         "session": {
-          "state": "weapon"
+          "game": game_for_test(),
+          "text": "Мисс Скарлет Кухня Кубок",
+          "tts": "Мисс Скарлет Кухня Кубок",
+          "wait": "suspect"
+        },
+        "user": {},
+        "application": {}
+      },
+      "version": "1.0"
+    }
+
+
+@pytest.fixture()
+def first_answer_wrong():
+    return {
+      "meta": meta(),
+      "session": session(),
+      "request": {
+        "command": "миссис грин",
+        "original_utterance": "Миссис Грин",
+        "nlu": {
+          "tokens": [
+            "миссис",
+            "грин"
+          ],
+          "entities": [],
+          "intents": {}
+        },
+        "markup": {
+          "dangerous_context": False
+        },
+        "type": "SimpleUtterance"
+      },
+      "state": {
+        "session": {
+          "game": game_for_test(),
+          "text": "Мисс Скарлет Кухня Кубок",
+          "tts": "Мисс Скарлет Кухня Кубок",
+          "wait": "suspect"
         },
         "user": {},
         "application": {}
@@ -225,7 +255,17 @@ def test_new_game(start_game):
     assert ans is not None
 
 
-def test_full_answer(full_player_answer):
-    ans = main.handler(full_player_answer)
+def test_answer_suspect_right(first_answer_right):
+    ans = main.handler(first_answer_right)
 
     assert ans is not None
+    assert ans['session_state']['wait'] == 'room'
+
+
+def test_answer_suspect_wrong(first_answer_wrong):
+    ans = main.handler(first_answer_wrong)
+
+    assert ans is not None
+    assert ans['session_state']['wait'] == 'suspect'
+
+

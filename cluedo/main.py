@@ -57,7 +57,7 @@ def handler(event: dict, context=None):
             saveState("wait", "suspect").\
             setButtons(game.suspects())
     elif wait == 'suspect':  # Ожидали ввод подозреваемых
-        playerAnswer = game.it_is_weapon(command)
+        playerAnswer = game.it_is_suspect(command)
         if playerAnswer:
             text, tts = texts.in_which_room()
             answer.text(text).tts(tts). \
