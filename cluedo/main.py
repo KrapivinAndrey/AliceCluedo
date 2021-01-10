@@ -2,6 +2,9 @@ import texts
 from alice import AliceResponse
 from game import GameEngine
 import logging
+import sys
+
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 
 def response(text, tts, event):
