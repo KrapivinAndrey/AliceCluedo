@@ -17,20 +17,22 @@ def response(text, tts, event):
     }
 
 
-def handler(event, context=None):
+def handler(event: dict, context=None):
     game = GameEngine()
 
     answer = AliceResponse(event)
+
+    command = event.get('request', {}).get('command', {})
 
     if event['session']['new']:
         text, tts = texts.hello()
         answer.text(text).tts(tts).\
             button("Начать игру").button("Правила")
-    elif event['request']['command'] == 'правила':
+    elif command == 'правила':
         text, tts = texts.rules()
         answer.text(text).tts(tts). \
             button("Начать игру")
-    elif event['request']['command'] == 'начать игру':
+    elif command == 'начать игру':
         game.new_game()
         text, tts = texts.start_game(game.playerCards[0], game.playerCards[1], game.playerCards[2])
         answer.text(text).tts(tts).\
@@ -40,7 +42,7 @@ def handler(event, context=None):
             saveState("weapon", False). \
             saveState("room", False).\
             setButtons(['Продолжить', 'Повторить'])
-    elif event['request']['command'] == 'продолжить':
+    elif command == 'продолжить':
         # Продолжить вызывается после начала игры и после оглашения хода
         # После этого надо назвать подозреваемого
         text, tts = texts.suspect()

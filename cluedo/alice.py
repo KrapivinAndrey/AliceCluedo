@@ -25,11 +25,8 @@ class AliceResponse(Chain):
                 'end_session': False,
                 'buttons': []
             },
-            'session_state': {}  # сохраним предыдущее состояние
+            'session_state': request.get('session_state', {})  # сохраним предыдущее состояние
         }
-
-        if 'session_state' in request:
-            self._response_dict['session_state'] = request['session_state']
 
         self._images = []
         self._header = ""
