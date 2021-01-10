@@ -1,6 +1,7 @@
 import texts
 from alice import AliceResponse
 from game import GameEngine
+import logging
 
 
 def response(text, tts, event):
@@ -22,8 +23,10 @@ def handler(event: dict, context=None):
     answer = AliceResponse(event)
 
     command = event.get('request', {}).get('command', {})
-    state = event.get('session', {}).get('state', {}).get('state', '')
+    state = event.get('state', {}).get('session', {}).get('state', '')
     itIsNewGame = event.get('session', {}).get('new', False)
+    logging.info('command %s', command)
+    logging.info('state %s', state)
 
     if itIsNewGame:
         text, tts = texts.hello()
