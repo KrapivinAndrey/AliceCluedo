@@ -46,7 +46,7 @@ def handler(event: dict, context=None):
         # Продолжить вызывается после начала игры и после оглашения хода
         # После этого надо назвать подозреваемого
         text, tts = texts.suspect()
-        answer.text(text).ttx(tts).\
+        answer.text(text).tts(tts).\
             saveState("suspect", True)
         for suspect in game.suspects():
             answer.button(suspect)
