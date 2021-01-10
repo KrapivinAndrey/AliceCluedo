@@ -143,3 +143,21 @@ class GameEngine:
             result.append(move(randomCards(i), i))
 
         return result
+
+    def it_is_suspect(self, suspect: str) ->str:
+        for x in self.suspects():
+            if suspect == x.lower():
+                return x
+        return ''
+
+    def it_is_room(self, room: str) ->str:
+        for x in self.rooms():
+            if room == x.lower():
+                return x
+        return ''
+
+    def it_is_weapon(self, weapon: str) ->str:
+        for x in self.weapons():
+            if weapon == x.lower():
+                return x
+        return ''

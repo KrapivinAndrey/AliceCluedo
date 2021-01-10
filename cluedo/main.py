@@ -12,10 +12,10 @@ def handler(event: dict, context=None):
     answer = AliceResponse(event)
 
     command = event.get('request', {}).get('command', {})
-    state = event.get('state', {}).get('session', {}).get('state', '')
+    wait = event.get('state', {}).get('session', {}).get('wait', '')
     itIsNewGame = event.get('session', {}).get('new', False)
     logging.info('command %s', command)
-    logging.info('state %s', state)
+    logging.info('state %s', wait)
 
     if itIsNewGame:
         text, tts = texts.hello()
@@ -29,17 +29,16 @@ def handler(event: dict, context=None):
         answer.text(text).tts(tts). \
             button("Начать игру")
     elif command == 'варианты':
-        if state == 'suspect':
-            text, tts = texts.cards(state, game.suspects())
+        if wait == 'suspect':
+            text, tts = texts.cards(wait, game.suspects())
             buttons = game.suspects()
-        elif state == 'room':
-            text, tts = texts.cards(state, game.rooms())
+        elif wait == 'room':
+            text, tts = texts.cards(wait, game.rooms())
             buttons = game.suspects()
-        elif state == 'weapon':
-            text, tts = texts.cards(state, game.weapons())
+        elif wait == 'weapon':
+            text, tts = texts.cards(wait, game.weapons())
             buttons = game.weapons()
         answer.text(text).tts(tts).\
-            saveState("state", state).\
             setButtons(buttons)
 
     elif command == 'начать игру':
@@ -55,36 +54,44 @@ def handler(event: dict, context=None):
         # После этого надо назвать подозреваемого
         text, tts = texts.who_do_you_suspect()
         answer.text(text).tts(tts).\
-            saveState("state", "suspect").\
+            saveState("wait", "suspect").\
             setButtons(game.suspects())
-    elif state == 'suspect':  # Ожидали ввод подозреваемых
-        if command not in [x.lower() for x in game.suspects()]:
+    elif wait == 'suspect':  # Ожидали ввод подозреваемых
+        playerAnswer = game.it_is_weapon(command)
+        if playerAnswer:
+            text, tts = texts.in_which_room()
+            answer.text(text).tts(tts). \
+                saveState("wait", "room").\
+                saveState('suspect', playerAnswer).\
+                setButtons(game.rooms())
+        else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts).\
                 setButtons(game.suspects())
-        else:
-            text, tts = texts.in_which_room()
-            answer.text(text).tts(tts). \
-                saveState("state", "room").\
-                saveState('suspect', command).\
-                setButtons(game.rooms())
-    elif state == 'room':
-        if command not in [x.lower() for x in game.rooms()]:
-            text, tts = texts.wrong_answer()
-            answer.text(text).tts(tts). \
-                saveState('room', command). \
-                setButtons(game.rooms())
-        else:
+    elif wait == 'room':
+        playerAnswer = game.it_is_room(command)
+        if playerAnswer:
             text, tts = texts.what_weapon()
             answer.text(text).tts(tts). \
-                saveState("state", "weapon").\
+                saveState("wait", "weapon"). \
+                saveState('room', playerAnswer). \
                 setButtons(game.weapons())
-    elif state == 'weapon':
-        if command not in [x.lower() for x in game.weapons()]:
+        else:
+            text, tts = texts.wrong_answer()
+            answer.text(text).tts(tts).\
+                setButtons(game.rooms())
+    elif wait == 'weapon':
+        playerAnswer = game.it_is_weapon(command)
+        if playerAnswer:
+            gameState = event.get('state', {}).get('session', {}).get('game', {})
+            suspect = event.get('state', {}).get('session', {}).get('suspect')
+            room = event.get('state', {}).get('session', {}).get('room', {})
+            weapon = playerAnswer
+            game.restore(gameState)
+            turn = game.game_turn(suspect, room, weapon)
+        else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts). \
                 setButtons(game.weapons())
-        else:
-            pass
 
     return answer.body
