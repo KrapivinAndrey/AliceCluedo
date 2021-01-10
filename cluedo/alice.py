@@ -25,7 +25,7 @@ class AliceResponse(Chain):
                 'end_session': False,
                 'buttons': []
             },
-            'session_state': request.get('session_state', {})  # сохраним предыдущее состояние
+            'session_state': request.get('state', {}).get('session', {})  # сохраним предыдущее состояние
         }
 
         self._images = []
