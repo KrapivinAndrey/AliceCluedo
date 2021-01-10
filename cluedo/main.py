@@ -22,7 +22,7 @@ def handler(event: dict, context=None):
     answer = AliceResponse(event)
 
     command = event.get('request', {}).get('command', {})
-    state = event.get('session_state', {}).get('state', '')
+    state = event.get('session', {}).get('state', {}).get('state', '')
     itIsNewGame = event.get('session', {}).get('new', False)
 
     if itIsNewGame:
