@@ -19,12 +19,13 @@ def response(text, tts, event):
 
 def handler(event: dict, context=None):
     game = GameEngine()
-
     answer = AliceResponse(event)
 
     command = event.get('request', {}).get('command', {})
+    state = event.get('session_state', {}).get('state', '')
+    itIsNewGame = event.get('session', {}).get('new', False)
 
-    if event['session']['new']:
+    if itIsNewGame:
         text, tts = texts.hello()
         answer.text(text).tts(tts).\
             button("Начать игру").button("Правила")
@@ -38,16 +39,21 @@ def handler(event: dict, context=None):
         answer.text(text).tts(tts).\
             saveState("game", game.dump()).\
             saveState("player_answer", []).\
-            saveState("suspect", False).\
-            saveState("weapon", False). \
-            saveState("room", False).\
+            saveState("text", text).\
+            saveState("tts", tts).\
             setButtons(['Продолжить', 'Повторить'])
     elif command == 'продолжить':
         # Продолжить вызывается после начала игры и после оглашения хода
         # После этого надо назвать подозреваемого
         text, tts = texts.suspect()
         answer.text(text).tts(tts).\
-            saveState("suspect", True)
+            saveState("state", "suspect").button("Варианты")
+        for suspect in game.suspects():
+            answer.button(suspect)
+    elif command == 'варианты':
+        text, tts = texts.cards(state, game)
+        answer.text(text).tts(tts). \
+            saveState("state", "suspect")
         for suspect in game.suspects():
             answer.button(suspect)
 

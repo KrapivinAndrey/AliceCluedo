@@ -20,20 +20,30 @@ def start_game(suspect, room, weapon):
 
 def suspect():
     text = """Кого Вы подозреваете?
-                Скажите "Помощь" чтобы узнать варианты"""
+                Скажите "Варианты" чтобы узнать варианты"""
     tts = text
     return text, tts
 
 
 def room():
     text = """Где произошло преступление?
-                Скажите "Помощь" чтобы узнать варианты"""
+                Скажите "Варианты" чтобы узнать варианты"""
     tts = text
     return text, tts
 
 
 def weapon():
     text = """Чем был убит?
-                Скажите "Помощь" чтобы узнать варианты"""
+                Скажите "Варианты" чтобы узнать варианты"""
     tts = text
+    return text, tts
+
+
+def cards(state: str, game):
+    if state == 'suspect': # Подсказать подозреваемых
+        text = """Вы подозреваете следующих: 
+                """
+        text += '\n'.join(game.suspects())
+        tts = text
+
     return text, tts
