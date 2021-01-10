@@ -40,7 +40,7 @@ def weapon():
 
 
 def cards(state: str, game):
-    if state == 'suspect': # Подсказать подозреваемых
+    if state == 'suspect':  # Подсказать подозреваемых
         text = """Вы подозреваете следующих: 
                 """
         text += '\n'.join(game.suspects())
