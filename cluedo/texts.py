@@ -39,11 +39,24 @@ def weapon():
     return text, tts
 
 
-def cards(state: str, game):
-    text = tts = ''
+def cards(state: str, list_of_cards: list):
+    text = ''
     if state == 'suspect':  # Подсказать подозреваемых
         text = "Вы подозреваете следующих: \n"
-        text += '\n'.join(game.suspects())
-        tts = text
+    elif state == 'room':  # Подсказать комнату
+        text = "В доме есть следующие комнаты: \n"
+    elif state == 'weapon':  # Подсказать подозреваемых
+        text = "Возможные орудия убийства: \n"
 
+    text += '\n'.join(list_of_cards)
+    tts = text
+
+    return text, tts
+
+
+def wrong_answer():
+    text = """Нет такого варианта ответа
+                Попробуйте еще раз 
+                или скажите "Варианты" чтобы получить подсказку"""
+    tts = text
     return text, tts
