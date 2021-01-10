@@ -25,7 +25,7 @@ class AliceResponse(Chain):
                 'end_session': False,
                 'buttons': []
             },
-            'session_state': {}
+            'session_state': request['session_state']  # сохраним предыдущее состояние
         }
 
         self._images = []
@@ -158,6 +158,9 @@ class AliceResponse(Chain):
 
     def saveState(self, name: str, value):
         self._response_dict['session_state'][name] = value
+
+    def clearState(self):
+        self._response_dict.pop("session_state")
 
     def end(self):
         """Признак конца разговора"""
