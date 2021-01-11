@@ -152,7 +152,7 @@ def start_game():
             "application": {}
           },
           "version": "1.0"
-}
+    }
 
 
 @pytest.fixture()
@@ -230,6 +230,74 @@ def first_answer_wrong():
     }
 
 
+@pytest.fixture()
+def win_answer():
+    return {
+        "meta": meta(),
+        "session": session(),
+        "request": {
+            "command": "веревка",
+            "original_utterance": "Веревка",
+            "nlu": {
+                "tokens": [
+                    "веревка"
+                ],
+                "entities": [],
+                "intents": {}
+            },
+            "markup": {
+                "dangerous_context": False
+            },
+            "type": "SimpleUtterance"
+        },
+        "state": {
+            "session": {
+                "game": game_for_test(),
+                "suspect": "Профессор Плам",
+                "room": "Гостиная",
+                "wait": "weapon"
+            },
+            "user": {},
+            "application": {}
+        },
+        "version": "1.0"
+    }
+
+
+@pytest.fixture()
+def not_win_answer():
+    return {
+        "meta": meta(),
+        "session": session(),
+        "request": {
+            "command": "подсвечник",
+            "original_utterance": "Подсвечник",
+            "nlu": {
+                "tokens": [
+                    "веревка"
+                ],
+                "entities": [],
+                "intents": {}
+            },
+            "markup": {
+                "dangerous_context": False
+            },
+            "type": "SimpleUtterance"
+        },
+        "state": {
+            "session": {
+                "game": game_for_test(),
+                "suspect": "Профессор Плам",
+                "room": "Гостиная",
+                "wait": "weapon"
+            },
+            "user": {},
+            "application": {}
+        },
+        "version": "1.0"
+    }
+
+
 def test_hello(start_session):
     ans = main.handler(start_session)
     assert 'Привет!' in ans['response']['text']
@@ -265,3 +333,13 @@ def test_answer_suspect_wrong(first_answer_wrong):
     assert ans['session_state']['wait'] == 'suspect'
 
 
+def test_win_answer(win_answer):
+    ans = main.handler(win_answer)
+
+    assert ans['response']['end_session']
+
+
+def test_not_win_answer(not_win_answer):
+    ans = main.handler(not_win_answer)
+
+    assert len(ans['response']['buttons']) == 2

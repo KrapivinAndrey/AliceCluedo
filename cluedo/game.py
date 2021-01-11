@@ -103,7 +103,7 @@ class GameEngine:
 
             # Случайный ход, исключая имеющиеся карты
             myCards = self._playerCards[index]
-            myCards.append(self.suspects()[index])
+            myCards.append(self.suspects()[index-1])
 
             suspect = get_random_card(self.suspects(), myCards)
             room = get_random_card(self.rooms(), myCards)
@@ -113,7 +113,7 @@ class GameEngine:
 
         def make_suggestion(suggestion, index):
             # Обработчик предположения игрока
-            i = index + 1
+            i = (index + 1) % self.num_players
             while i != index:
                 cross = set(self._playerCards[i]) & suggestion
                 if cross:
@@ -141,7 +141,7 @@ class GameEngine:
 
         if not result['win']:
             result['moves'] = [move(mySuggestion, 0)]
-            for i in range(self.num_players-1):
+            for i in range(1, self.num_players):
                 result['moves'].append(move(randomCards(i), i))
 
         return result

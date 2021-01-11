@@ -90,12 +90,12 @@ def handler(event: dict, context=None):
             game.restore(game_state)
             turn = game.game_turn(suspect, room, weapon)
 
-            if turn.win:
+            if turn['win']:
                 text, tts = texts.win_game()
                 answer.text(text).tts(tts).\
                     end()
             else:
-                text, tts = texts.gossip(turn.moves)
+                text, tts = texts.gossip(turn['moves'])
                 answer.text(text).tts(tts). \
                     saveState("text", text). \
                     saveState("tts", tts). \

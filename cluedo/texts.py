@@ -69,15 +69,15 @@ def gossip(moves):
     for move in moves:
         texts.append(
             "{} предположил: {} убил в {} использовав {}, но {} опроверг".format(
-                move.player,
-                move.move[0],
-                move.move[1],
-                move.move[2],
-                move.player_stop
+                move['player'],
+                move['move'][0],
+                move['move'][1],
+                move['move'][2],
+                move['player_stop']
             )
         )
 
-    texts.insert(1, "Показал карту: {}".format(player_move.card))
+    texts.insert(1, "Показал карту: {}".format(player_move['card']))
     text = '/n'.join(texts)
     tts = text
 
