@@ -78,7 +78,7 @@ def gossip(moves):
         )
 
     texts.insert(1, "Показал карту: {}".format(player_move['card']))
-    text = '/n'.join(texts)
+    text = '\n'.join(texts)
     tts = text
 
     return text, tts
