@@ -1,10 +1,11 @@
 import copy
+import random
 
 
 class GameEngine:
 
     def __init__(self):
-        self._secret = []
+        self._secret = tuple()
         self.num_players = 6  # 5 игроков и детектив
         self._playerCards = [[] for i in range(self.num_players)]
 
@@ -21,6 +22,17 @@ class GameEngine:
     @staticmethod
     def suspects():
         return [
+            "Миссис Пикок",
+            "Мисс Скарлет",
+            "Полковник Мастард",
+            "Профессор Плам",
+            "Преподобный Грин"
+        ]
+
+    @staticmethod
+    def players():
+        return [
+            "Вы",
             "Миссис Пикок",
             "Мисс Скарлет",
             "Полковник Мастард",
@@ -58,7 +70,6 @@ class GameEngine:
         return self._playerCards[0]
 
     def new_game(self):
-        import random
         weapons = self.weapons()
         rooms = self.rooms()
         suspects = self.suspects()
@@ -67,9 +78,7 @@ class GameEngine:
         random.shuffle(rooms)
         random.shuffle(weapons)
 
-        self._secret.append(suspects.pop())
-        self._secret.append(rooms.pop())
-        self._secret.append(weapons.pop())
+        self._secret = (suspects.pop(), rooms.pop(), weapons.pop())
 
         #  Ради цельной истоии игруку тоже дадим по одной из каждой колоды
         self._playerCards[0] = [suspects.pop(), rooms.pop(), weapons.pop()]
@@ -84,3 +93,73 @@ class GameEngine:
                 i = 1
             else:
                 i += 1
+
+    def game_turn(self, suspect, room, weapon):
+
+        def randomCards(index):
+
+            def get_random_card(cards, exclude_cards):
+                return random.choice(tuple(set(cards) - set(exclude_cards)))
+
+            # Случайный ход, исключая имеющиеся карты
+            myCards = self._playerCards[index]
+            myCards.append(self.suspects()[index-1])
+
+            suspect = get_random_card(self.suspects(), myCards)
+            room = get_random_card(self.rooms(), myCards)
+            weapon = get_random_card(self.weapons(), myCards)
+
+            return suspect, room, weapon
+
+        def make_suggestion(suggestion, index):
+            # Обработчик предположения игрока
+            i = (index + 1) % self.num_players
+            while i != index:
+                cross = set(self._playerCards[i]) & suggestion
+                if cross:
+                    return self.players()[i], random.choice(tuple(cross))
+                i = (i + 1) % self.num_players
+
+            return None, None
+
+        def move(suggestion: tuple, index: int) -> dict:
+            denial = make_suggestion(set(suggestion), index)
+            return {
+                'player': self.players()[index],
+                'move': suggestion,
+                'player_stop': denial[0],
+                'card': denial[1]
+            }
+
+        # Расчет раунда. Передается ход игрока. Возвращается набор ответов
+        # Ответ - массив: Ход, Кто опроверг, Какую карту показал(только для игрока)
+
+        # Сначала наш ход
+        mySuggestion = (suspect, room, weapon)
+
+        result = {"win": mySuggestion == self._secret}
+
+        if not result['win']:
+            result['moves'] = [move(mySuggestion, 0)]
+            for i in range(1, self.num_players):
+                result['moves'].append(move(randomCards(i), i))
+
+        return result
+
+    def it_is_suspect(self, suspect: str) -> str:
+        for x in self.suspects():
+            if suspect == x.lower():
+                return x
+        return ''
+
+    def it_is_room(self, room: str) -> str:
+        for x in self.rooms():
+            if room == x.lower():
+                return x
+        return ''
+
+    def it_is_weapon(self, weapon: str) -> str:
+        for x in self.weapons():
+            if weapon == x.lower():
+                return x
+        return ''
