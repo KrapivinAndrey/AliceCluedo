@@ -157,9 +157,18 @@ class AliceResponse(Chain):
         self._asImageGallery = True
 
     def saveState(self, name: str, value):
+        """Сохранить переменную в течении сессии
+        Получить значения можно в запросе state.session.<name>
+
+        Параметры:
+             name -- имя переменной для сохранения
+             value -- сохраняемое значение
+        """
         self._response_dict['session_state'][name] = value
 
     def clearState(self):
+        """При инициализаци сохранаяется предыдущее состояние
+        Это процедура позволяет его очистить"""
         self._response_dict.pop("session_state")
 
     def end(self):

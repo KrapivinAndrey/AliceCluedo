@@ -5,7 +5,7 @@ import random
 class GameEngine:
 
     def __init__(self):
-        self._secret = []
+        self._secret = tuple()
         self.num_players = 6  # 5 игроков и детектив
         self._playerCards = [[] for i in range(self.num_players)]
 
@@ -78,9 +78,7 @@ class GameEngine:
         random.shuffle(rooms)
         random.shuffle(weapons)
 
-        self._secret.append(suspects.pop())
-        self._secret.append(rooms.pop())
-        self._secret.append(weapons.pop())
+        self._secret = (suspects.pop(), rooms.pop(), weapons.pop())
 
         #  Ради цельной истоии игруку тоже дадим по одной из каждой колоды
         self._playerCards[0] = [suspects.pop(), rooms.pop(), weapons.pop()]
@@ -138,9 +136,13 @@ class GameEngine:
 
         # Сначала наш ход
         mySuggestion = (suspect, room, weapon)
-        result = [move(mySuggestion, 0)]
-        for i in range(self.num_players-1):
-            result.append(move(randomCards(i), i))
+
+        result = {"win": mySuggestion == self._secret}
+
+        if not result['win']:
+            result['moves'] = [move(mySuggestion, 0)]
+            for i in range(self.num_players-1):
+                result['moves'].append(move(randomCards(i), i))
 
         return result
 

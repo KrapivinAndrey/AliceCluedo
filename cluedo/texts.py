@@ -59,3 +59,10 @@ def wrong_answer():
     Попробуйте еще раз или скажите "Варианты" чтобы получить подсказку"""
     tts = text
     return text, tts
+
+
+def gossip(moves):
+    text = tts = ''
+
+    # 1. Сначала ход игрока
+    player_move = moves[0]

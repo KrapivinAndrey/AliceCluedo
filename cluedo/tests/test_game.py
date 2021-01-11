@@ -13,7 +13,7 @@ from game import GameEngine
 @pytest.fixture()
 def gameState():
     return {
-        'secret': ["Преподобный Грин", "Бильярдная", "Кинжал"],
+        'secret': ("Преподобный Грин", "Бильярдная", "Кинжал"),
         'cards': [
             ["Мисс Скарлет", "Библиотека", "Револьвер"],
             ["Зимний сад", "Холл", "Веревка"],
@@ -63,10 +63,13 @@ def test_game_turn(gameState):
 
     result = game.game_turn("Преподобный Грин", "Гостиная", "Подсвечник")
 
-    assert len(result) == 6  # Должны быть ответы для каждого игрока
-    assert result[0]['player'] == "Вы"
-    assert result[0]['player_stop'] == "Профессор Плам"  # Остановились на данном игроке
-    assert result[0]['card'] in ("Гостиная", "Подсвечник")  # Показал одну из карт
+    assert not result['win']
+
+    moves = result['moves']
+    assert len(moves) == 6  # Должны быть ответы для каждого игрока
+    assert moves[0]['player'] == "Вы"
+    assert moves[0]['player_stop'] == "Профессор Плам"  # Остановились на данном игроке
+    assert moves[0]['card'] in ("Гостиная", "Подсвечник")  # Показал одну из карт
 
 
 def test_it_is_suspect():

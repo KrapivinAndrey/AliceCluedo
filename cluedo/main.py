@@ -13,11 +13,11 @@ def handler(event: dict, context=None):
 
     command = event.get('request', {}).get('command', {})
     wait = event.get('state', {}).get('session', {}).get('wait', '')
-    itIsNewGame = event.get('session', {}).get('new', False)
+    it_is_new_game = event.get('session', {}).get('new', False)
     logging.info('command %s', command)
     logging.info('state %s', wait)
 
-    if itIsNewGame:
+    if it_is_new_game:
         text, tts = texts.hello()
         answer.text(text).tts(tts).\
             button("Начать игру").button("Правила")
@@ -57,38 +57,44 @@ def handler(event: dict, context=None):
             saveState("wait", "suspect").\
             setButtons(game.suspects())
     elif wait == 'suspect':  # Ожидали ввод подозреваемых
-        playerAnswer = game.it_is_suspect(command)
-        if playerAnswer:
+        player_answer = game.it_is_suspect(command)
+        if player_answer:
             text, tts = texts.in_which_room()
             answer.text(text).tts(tts). \
                 saveState("wait", "room").\
-                saveState('suspect', playerAnswer).\
+                saveState('suspect', player_answer).\
                 setButtons(game.rooms())
         else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts).\
                 setButtons(game.suspects())
     elif wait == 'room':
-        playerAnswer = game.it_is_room(command)
-        if playerAnswer:
+        player_answer = game.it_is_room(command)
+        if player_answer:
             text, tts = texts.what_weapon()
             answer.text(text).tts(tts). \
                 saveState("wait", "weapon"). \
-                saveState('room', playerAnswer). \
+                saveState('room', player_answer). \
                 setButtons(game.weapons())
         else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts).\
                 setButtons(game.rooms())
     elif wait == 'weapon':
-        playerAnswer = game.it_is_weapon(command)
-        if playerAnswer:
-            gameState = event.get('state', {}).get('session', {}).get('game', {})
+        player_answer = game.it_is_weapon(command)
+        if player_answer:
+            game_state = event.get('state', {}).get('session', {}).get('game', {})
             suspect = event.get('state', {}).get('session', {}).get('suspect')
             room = event.get('state', {}).get('session', {}).get('room', {})
-            weapon = playerAnswer
-            game.restore(gameState)
+            weapon = player_answer
+            game.restore(game_state)
             turn = game.game_turn(suspect, room, weapon)
+
+            if turn.win:
+                # TODO: Поздравить с победой. Закончить игруку
+                pass
+            else:
+                text, tts = texts.gossip(trun.moves)
         else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts). \
