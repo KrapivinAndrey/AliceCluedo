@@ -62,7 +62,22 @@ def wrong_answer():
 
 
 def gossip(moves):
-    text = tts = ''
+    text = ''
 
     # 1. Сначала ход игрока
     player_move = moves[0]
+    for move in moves:
+        text += "{} предположил: {} убил в {} использовав {}, но {} опроверг \n".format(move.player,
+                                                                                       move.move[0],
+                                                                                       move.move[1],
+                                                                                       move.move[2],
+                                                                                       move.player_stop)
+    text.insert(1, "Показал карту: {}".format(player_move.card))
+    tts = text
+
+    return text, tts
+
+
+def win_game():
+    text = tts = "Поздравляю"
+    return text, tts

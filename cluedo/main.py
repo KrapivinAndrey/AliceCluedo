@@ -91,10 +91,16 @@ def handler(event: dict, context=None):
             turn = game.game_turn(suspect, room, weapon)
 
             if turn.win:
-                # TODO: Поздравить с победой. Закончить игруку
-                pass
+                text, tts = texts.win_game()
+                answer.text(text).tts(tts).\
+                    end()
             else:
-                text, tts = texts.gossip(trun.moves)
+                text, tts = texts.gossip(turn.moves)
+                answer.text(text).tts(tts). \
+                    saveState("text", text). \
+                    saveState("tts", tts). \
+                    setButtons(['Продолжить', 'Повторить'])
+
         else:
             text, tts = texts.wrong_answer()
             answer.text(text).tts(tts). \
