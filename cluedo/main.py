@@ -143,7 +143,7 @@ def handler(event: dict, context=None):
             setButtons(buttons)
     elif dialog == 'Repeat':
         previous = event.get('state', {}).get('session', {}).get('previous', {})
-        answer.text(previous[0]).tts(previous[1]). \
-            setButtons(previous[3]).button('Повторить')
+        answer.text(previous[0]).tts(previous[1]).\
+            setButtons(previous[2]).button('Повторить')
 
     return answer.body

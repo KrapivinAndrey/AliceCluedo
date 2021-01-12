@@ -161,8 +161,42 @@ def start_game():
 
 
 @pytest.fixture()
-def full_player_answer():
-    return {}
+def repeat():
+    return {
+            "meta": meta(),
+            "session": session(),
+            "request": {
+                "command": "повторить",
+                "original_utterance": "Повторить",
+                "nlu": {
+                  "tokens": [
+                    "повторить"
+                  ],
+                  "entities": [],
+                  "intents": {}
+                },
+                "markup": {
+                  "dangerous_context": False
+                },
+                "type": "SimpleUtterance"
+              },
+            "state": {
+                "session": {
+                    "myState": "list",
+                    "game": game_for_test(),
+                    "previous": [
+                        "test_text",
+                        "test_tts",
+                        [
+                        "test_button"
+                        ]
+                    ]
+                },
+                "user": {},
+                "application": {}
+              },
+            "version": "1.0"
+        }
 
 
 @pytest.fixture()
@@ -348,3 +382,10 @@ def test_not_win_answer(not_win_answer):
     ans = main.handler(not_win_answer)
 
     assert len(ans['response']['buttons']) == 2
+
+
+def test_try_repeat(repeat):
+    ans = main.handler(repeat)
+
+    assert ans['response']['text'] == 'test_text'
+    assert ans['response']['tts'] == 'test_tts'
