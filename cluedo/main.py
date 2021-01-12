@@ -14,20 +14,24 @@ def handler(event: dict, context=None):
     command = event.get('request', {}).get('command', {})
     wait = event.get('state', {}).get('session', {}).get('wait', '')
     it_is_new_game = event.get('session', {}).get('new', False)
-    logging.info('command %s', command)
-    logging.info('state %s', wait)
 
     if it_is_new_game:
         text, tts = texts.hello()
         answer.text(text).tts(tts).\
             button("Начать игру").button("Правила")
 
-# Обработчики ПОМОЩЬ
+# Рассказать правила
 
     elif command == 'правила':
         text, tts = texts.rules()
+        answer.text(text).tts(tts).\
+            saveState("wait", "rules").\
+            setButtons(['Да', 'Нет'])
+    elif wait == 'rules' and command == 'Да':
+        text, tts = texts.all_cards(game.suspects(), game.rooms(), game.weapons())
         answer.text(text).tts(tts). \
-            button("Начать игру")
+            saveState("wait", "cards"). \
+            setButtons(['Да', 'Нет'])
     elif command == 'варианты':
         if wait == 'suspect':
             text, tts = texts.cards(wait, game.suspects())
