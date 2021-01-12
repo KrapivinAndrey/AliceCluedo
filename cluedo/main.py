@@ -22,7 +22,7 @@ def handler(event: dict, context=None):
     elif state == 'new_game':
         if command == 'правила':
             dialog = 'Rules'
-        elif command == 'начать игру':
+        elif command == 'начать':
             dialog = 'Start'
     elif state == 'rules':
         if command == 'да':
@@ -35,10 +35,10 @@ def handler(event: dict, context=None):
         elif command == 'продолжить':
             dialog = 'New Game'
     elif state == 'new_turn':
-        if command == 'продолжить':
-            dialog = 'Choose suspect'
-        elif command == 'повторить':
+        if command == 'повторить':
             dialog = 'Repeat'
+        elif command == 'продолжить':
+            dialog = 'Choose suspect'
     elif state == 'suspect':
         player_answer = game.it_is_suspect(command)
         if player_answer:
