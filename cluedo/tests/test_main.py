@@ -119,6 +119,11 @@ def need_rules():
             },
             "type": "SimpleUtterance"
           },
+        "state": {
+            "session": {
+                "myState": "new_game"
+            }
+        },
         "version": "1.0"
     }
 
@@ -156,8 +161,42 @@ def start_game():
 
 
 @pytest.fixture()
-def full_player_answer():
-    return {}
+def repeat():
+    return {
+            "meta": meta(),
+            "session": session(),
+            "request": {
+                "command": "повторить",
+                "original_utterance": "Повторить",
+                "nlu": {
+                  "tokens": [
+                    "повторить"
+                  ],
+                  "entities": [],
+                  "intents": {}
+                },
+                "markup": {
+                  "dangerous_context": False
+                },
+                "type": "SimpleUtterance"
+              },
+            "state": {
+                "session": {
+                    "myState": "list",
+                    "game": game_for_test(),
+                    "previous": [
+                        "test_text",
+                        "test_tts",
+                        [
+                        "test_button"
+                        ]
+                    ]
+                },
+                "user": {},
+                "application": {}
+              },
+            "version": "1.0"
+        }
 
 
 @pytest.fixture()
@@ -186,7 +225,7 @@ def first_answer_right():
           "game": game_for_test(),
           "text": "Мисс Скарлет Кухня Кубок",
           "tts": "Мисс Скарлет Кухня Кубок",
-          "wait": "suspect"
+          "myState": "suspect"
         },
         "user": {},
         "application": {}
@@ -221,7 +260,7 @@ def first_answer_wrong():
           "game": game_for_test(),
           "text": "Мисс Скарлет Кухня Кубок",
           "tts": "Мисс Скарлет Кухня Кубок",
-          "wait": "suspect"
+          "myState": "suspect"
         },
         "user": {},
         "application": {}
@@ -255,7 +294,7 @@ def win_answer():
                 "game": game_for_test(),
                 "suspect": "Профессор Плам",
                 "room": "Гостиная",
-                "wait": "weapon"
+                "myState": "weapon"
             },
             "user": {},
             "application": {}
@@ -289,7 +328,7 @@ def not_win_answer():
                 "game": game_for_test(),
                 "suspect": "Профессор Плам",
                 "room": "Гостиная",
-                "wait": "weapon"
+                "myState": "weapon"
             },
             "user": {},
             "application": {}
@@ -310,7 +349,7 @@ def test_rule(need_rules):
 
     assert 'Правила игры' in ans['response']['text']
     assert 'Правила игры' in ans['response']['tts']
-    assert len(ans['response']['buttons']) == 1
+    assert len(ans['response']['buttons']) == 2
 
 
 def test_new_game(start_game):
@@ -323,14 +362,14 @@ def test_answer_suspect_right(first_answer_right):
     ans = main.handler(first_answer_right)
 
     assert ans is not None
-    assert ans['session_state']['wait'] == 'room'
+    assert ans['session_state']['myState'] == 'room'
 
 
 def test_answer_suspect_wrong(first_answer_wrong):
     ans = main.handler(first_answer_wrong)
 
     assert ans is not None
-    assert ans['session_state']['wait'] == 'suspect'
+    assert ans['session_state']['myState'] == 'suspect'
 
 
 def test_win_answer(win_answer):
@@ -343,3 +382,10 @@ def test_not_win_answer(not_win_answer):
     ans = main.handler(not_win_answer)
 
     assert len(ans['response']['buttons']) == 2
+
+
+def test_try_repeat(repeat):
+    ans = main.handler(repeat)
+
+    assert ans['response']['text'] == 'test_text'
+    assert ans['response']['tts'] == 'test_tts'
