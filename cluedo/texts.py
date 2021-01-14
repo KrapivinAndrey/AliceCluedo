@@ -78,11 +78,11 @@ def detective_list(suspects, rooms, weapons):
     return text, tts
 
 
-def start_game(suspect, room, weapon):
+def start_game(suspect: str, room: str, weapon: str):
 
     morph = pymorphy2.MorphAnalyzer()
-    room_text = morph.parse(room)[0].inflext({'loct'})
-    weapon_text = morph.parse(weapon)[0].inflext({'ablt'})
+    room_text = morph.parse(room)[0].inflect({'loct'})[0]
+    weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
 
     text = """Черт! Знал же, что не надо было идти на эту вечеринку.
             Будет весело, говорили они. Отдохнешь, развеешься.
@@ -93,9 +93,9 @@ def start_game(suspect, room, weapon):
             Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
             И судя по следам, мистера Блек не могли убить {}.
             Кто же тогда? Где он убил его? И чем?
-            Продолжить или повторить?""".format(suspect,
-                                                room_text,
-                                                weapon_text)
+            Продолжить или повторить?""".format(suspect.upper(),
+                                                room_text.upper(),
+                                                weapon_text.upper())
     tts = """Черт! Знал же, что не надо было идти на эту вечеринку.
                 Будет весело, говорили они. Отдохнешь, развеешься.
                 В самый разгар мы нашли тело мистера Блэк в подвале.
