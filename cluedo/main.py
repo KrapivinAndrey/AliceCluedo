@@ -35,9 +35,9 @@ def handler(event: dict, context=None):
         elif command == 'продолжить':
             dialog = 'New Game'
     elif state == 'new_turn':
-        if command == 'повторить':
+        if command == 'да':
             dialog = 'Repeat'
-        elif command == 'продолжить':
+        elif command == 'нет':
             dialog = 'Choose suspect'
     elif state == 'suspect':
         player_answer = game.it_is_suspect(command)
@@ -81,15 +81,15 @@ def handler(event: dict, context=None):
         answer.text(text).tts(tts). \
             saveState("myState", 'list').\
             saveState("previous", [text, tts, ['Начать']]). \
-            button('Начать').button('Повторить')
+            button('Да').button('Нет')
     elif dialog == 'Start':
         game.new_game()
         text, tts = texts.start_game(game.playerCards[0], game.playerCards[1], game.playerCards[2])
         answer.text(text).tts(tts). \
             saveState("game", game.dump()). \
             saveState("myState", 'new_turn').\
-            saveState("previous", [text, tts, ['Продолжить']]). \
-            setButtons(['Продолжить', 'Повторить'])
+            saveState("previous", [text, tts]). \
+            button('Да').button('Нет')
     elif dialog == 'Choose suspect':
         text, tts = texts.who_do_you_suspect()
         answer.text(text).tts(tts).\
@@ -127,8 +127,8 @@ def handler(event: dict, context=None):
             text, tts = texts.gossip(turn['moves'])
             answer.text(text).tts(tts). \
                 saveState("myState", 'new_turn'). \
-                saveState("previous", [text, tts, ['Продолжить']]). \
-                setButtons(['Продолжить', 'Повторить'])
+                saveState("previous", [text, tts]). \
+                button('Да').button('Нет')
     elif command == 'варианты':
         if state == 'suspect':
             text, tts = texts.cards(state, game.suspects())
@@ -144,6 +144,6 @@ def handler(event: dict, context=None):
     elif dialog == 'Repeat':
         previous = event.get('state', {}).get('session', {}).get('previous', {})
         answer.text(previous[0]).tts(previous[1]).\
-            setButtons(previous[2]).button('Повторить')
+            button('Да').button('Нет')
 
     return answer.body
