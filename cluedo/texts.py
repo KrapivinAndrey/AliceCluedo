@@ -93,9 +93,7 @@ def start_game(suspect: str, room: str, weapon: str):
             Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
             И судя по следам, мистера Блэк не могли убить {}.
             Кто же тогда? Где он убил его? И чем?
-            Повторить?""".format(suspect.upper(),
-                                                room_text.upper(),
-                                                weapon_text.upper())
+            Повторить?""".format(suspect.upper(), room_text.upper(), weapon_text.upper())
     tts = """Черт! Знал же, что не надо было идти на эту вечеринку.
                 Будет весело, говорили они. Отдохнешь, развеешься.
                 <speaker audio="alice-sounds-human-crowd-2.opus">
