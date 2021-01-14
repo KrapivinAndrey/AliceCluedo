@@ -58,8 +58,8 @@ jobs:
         with:
           token: ${{ secrets.YAAUTH }}
           function_id: ${{ secrets.CLUEDO_TEST_ID }}
-          runtime: 'python37'
-          memory: '256'
+          runtime: 'python37-preview'
+          memory: '128'
           environment: DEBUG=True
           entrypoint: 'main.handler'
           source: './cluedo'
