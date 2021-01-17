@@ -31,7 +31,7 @@ def handler(event: dict, context=None):
             dialog = 'Start'
     elif state == 'list':
         if command == 'повторить':
-            dialog = 'Repeat'
+            dialog = 'list'
         elif command == 'начать':
             dialog = 'New Game'
     elif state == 'new_turn':
@@ -81,7 +81,7 @@ def handler(event: dict, context=None):
         answer.text(text).tts(tts). \
             saveState("myState", 'list').\
             saveState("previous", [text, tts, ['Начать']]). \
-            button('Да').button('Нет')
+            button('Начать').button('Повторить')
     elif dialog == 'Start':
         game.new_game()
         text, tts = texts.start_game(game.playerCards[0], game.playerCards[1], game.playerCards[2])
