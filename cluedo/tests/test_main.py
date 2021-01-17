@@ -136,12 +136,11 @@ def start_game():
           "meta": meta(),
           "session": session(),
           "request": {
-            "command": "начать игру",
-            "original_utterance": "Начать игру",
+            "command": "начать",
+            "original_utterance": "Начать",
             "nlu": {
               "tokens": [
-                "начать",
-                "игру"
+                "начать"
               ],
               "entities": [],
               "intents": {}
@@ -152,7 +151,9 @@ def start_game():
             "type": "SimpleUtterance"
           },
           "state": {
-            "session": {},
+            "session": {
+                "myState": "new_game"
+            },
             "user": {},
             "application": {}
           },

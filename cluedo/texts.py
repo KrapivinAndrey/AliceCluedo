@@ -1,4 +1,8 @@
 import random
+import pymorphy2
+
+
+morph = pymorphy2.MorphAnalyzer()
 
 
 def hello():
@@ -77,9 +81,33 @@ def detective_list(suspects, rooms, weapons):
     return text, tts
 
 
-def start_game(suspect, room, weapon):
-    text = ' '.join([suspect, room, weapon])
-    tts = text
+def start_game(suspect: str, room: str, weapon: str):
+
+    room_text = morph.parse(room)[0].inflect({'loct'})[0]
+    weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
+
+    text = """Черт! Знал же, что не надо было идти на эту вечеринку.
+            Будет весело, говорили они. Отдохнешь, развеешься.
+            В самый разгар мы нашли тело мистера Блэк в подвале.
+            Убийца явно один из тех, кто был в доме. Так что за работу!
+            Это явно не {}, мы были вместе почти весь вечер.
+            Тело явно перенесли в подвал. Откуда?
+            Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
+            И судя по следам, мистера Блэк не могли убить {}.
+            Кто же тогда? Где он убил его? И чем?
+            Повторить?""".format(suspect.upper(), room_text.upper(), weapon_text.upper())
+    tts = """Черт! Знал же, что не надо было идти на эту вечеринку.
+                Будет весело, говорили они. Отдохнешь, развеешься.
+                <speaker audio="alice-sounds-human-crowd-2.opus">
+                В самый разгар мы нашли тело мистера Блэк в подвале.
+                Убийца явно один из тех, кто был в доме. Так что за работу!
+                Это явно не {}, мы были вместе почти весь вечер.
+                Тело явно перенесли в подвал. Откуда?
+                Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
+                И судя по следам, мистера Блэк не могли убить {}.
+                Кто же тогда? Где он убил его? И чем?
+                <sil 500>
+                Повторить?""".format(suspect, room_text, weapon_text)
     return text, tts
 
 
@@ -148,26 +176,52 @@ def wrong_answer():
 
 
 def gossip(moves):
+
     texts = []
 
-    # 1. Сначала ход игрока
-    player_move = moves[0]
     for move in moves:
-        texts.append(
-            "{} предположил: {} убил в {} использовав {}, но {} опроверг".format(
-                move['player'],
-                move['move'][0],
-                move['move'][1],
-                move['move'][2],
-                move['player_stop']
-            )
-        )
 
-    texts.insert(1, "Показал карту: {}".format(player_move['card']))
+        suspect = move['move'][0]
+        room = move['move'][1]
+        weapon = move['move'][2]
+
+        texts.append(text_gossip(move['player'], suspect, room, weapon, move['player_stop']))
+
+    texts.insert(1, "Показал карту: {}".format(moves[0]['card'].upper()))
     text = '\n'.join(texts)
-    tts = text
+    tts = '\n<sil 500>'.join(texts)
 
     return text, tts
+
+
+def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str) -> str:
+
+    think_list = [
+        'предположить',
+        'заявить',
+        'допустить',
+        'решить'
+    ]
+
+    use_list = [
+        'использовав',
+        'с помощью'
+    ]
+
+    sex = str(morph.parse(player)[0].tag.gender)
+    think = morph.parse(random.choice(think_list))[0].inflect({sex, 'VERB'}).word
+
+    sex = str(morph.parse(suspect)[0].tag.gender)
+    kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
+
+    room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
+    weapon_text = morph.parse(weapon)[0].inflect({'accs'})[0]
+
+    use = random.choice(use_list)
+
+    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()} ' \
+           f'{use} {weapon_text.upper()}, но {player_stop.upper()} опроверг'
+    return text
 
 
 def win_game():
