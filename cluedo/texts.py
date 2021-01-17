@@ -2,6 +2,9 @@ import random
 import pymorphy2
 
 
+morph = pymorphy2.MorphAnalyzer()
+
+
 def hello():
     text = """Привет! Почувствуй себя настроящим сыщиком.
         Выдвигай версии, собирай факты и найди виновного.
@@ -80,7 +83,6 @@ def detective_list(suspects, rooms, weapons):
 
 def start_game(suspect: str, room: str, weapon: str):
 
-    morph = pymorphy2.MorphAnalyzer()
     room_text = morph.parse(room)[0].inflect({'loct'})[0]
     weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
 
@@ -175,19 +177,6 @@ def wrong_answer():
 
 def gossip(moves):
 
-    morph = pymorphy2.MorphAnalyzer()
-
-    think = [
-        'предположить',
-        'думать',
-        'допустить'
-    ]
-
-    use = [
-        'использовав',
-        'с помощью'
-    ]
-
     texts = []
 
     # 1. Сначала ход игрока
@@ -196,17 +185,8 @@ def gossip(moves):
     suspect = player_move['move'][0]
     room = player_move['move'][1]
     weapon = player_move['move'][2]
-    room_text = morph.parse(room)[0].inflect({'loct'})[0]
-    weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
 
-    texts.append(
-        "ВЫ предположили: {} убил в {} использовав {}, но {} опроверг".format(
-            suspect.upper(),
-            room_text.upper(),
-            weapon_text.upper(),
-            player_move['player_stop'].upper()
-        )
-    )
+    texts.append(text_gossip("Детектив", suspect, room, weapon, player_move['player_stop']))
 
     for num in range(1, 6):
         move = moves[num]
@@ -214,24 +194,43 @@ def gossip(moves):
         suspect = move['move'][0]
         room = move['move'][1]
         weapon = move['move'][2]
-        room_text = morph.parse(room)[0].inflect({'loct'})[0]
-        weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
 
-        texts.append(
-            "{} предположил: {} убил в {} использовав {}, но {} опроверг".format(
-                move['player'].upper(),
-                suspect.upper(),
-                room_text.upper(),
-                weapon_text.upper(),
-                move['player_stop'].upper()
-            )
-        )
+        texts.append(text_gossip(move['player'], suspect, room, weapon, move['player_stop']))
 
     texts.insert(1, "Показал карту: {}".format(player_move['card'].upper()))
     text = '\n'.join(texts)
     tts = text
 
     return text, tts
+
+
+def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str) -> str:
+
+    think = [
+        'предположить',
+        'заявить',
+        'допустить',
+        'решить'
+    ]
+
+    use = [
+        'использовав',
+        'с помощью'
+    ]
+    sex = str(morph.parse(player)[0].tag.gender)
+    think_text = morph.parse(random.choice(think))[0].inflect({sex, 'VERB'}).word
+    room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
+    weapon_text = morph.parse(weapon)[0].inflect({'accs'})[0]
+
+    text = "{} {}: {} убил в {} использовав {}, но {} опроверг".format(
+                player.upper(),
+                think_text,
+                suspect.upper(),
+                room_text.upper(),
+                weapon_text.upper(),
+                player_stop.upper()
+            )
+    return text
 
 
 def win_game():
