@@ -179,17 +179,7 @@ def gossip(moves):
 
     texts = []
 
-    # 1. Сначала ход игрока
-    player_move = moves[0]
-
-    suspect = player_move['move'][0]
-    room = player_move['move'][1]
-    weapon = player_move['move'][2]
-
-    texts.append(text_gossip("Детектив", suspect, room, weapon, player_move['player_stop']))
-
-    for num in range(1, 6):
-        move = moves[num]
+    for move in moves:
 
         suspect = move['move'][0]
         room = move['move'][1]
@@ -197,9 +187,9 @@ def gossip(moves):
 
         texts.append(text_gossip(move['player'], suspect, room, weapon, move['player_stop']))
 
-    texts.insert(1, "Показал карту: {}".format(player_move['card'].upper()))
+    texts.insert(1, "Показал карту: {}".format(moves[0]['card'].upper()))
     text = '\n'.join(texts)
-    tts = text
+    tts = '\n<sil 500>'.join(texts)
 
     return text, tts
 
