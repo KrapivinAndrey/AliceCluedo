@@ -167,11 +167,11 @@ def repeat():
             "meta": meta(),
             "session": session(),
             "request": {
-                "command": "повторить",
-                "original_utterance": "Повторить",
+                "command": "да",
+                "original_utterance": "Да",
                 "nlu": {
                   "tokens": [
-                    "повторить"
+                    "Да"
                   ],
                   "entities": [],
                   "intents": {}
@@ -183,7 +183,7 @@ def repeat():
               },
             "state": {
                 "session": {
-                    "myState": "list",
+                    "myState": "new_turn",
                     "game": game_for_test(),
                     "previous": [
                         "test_text",

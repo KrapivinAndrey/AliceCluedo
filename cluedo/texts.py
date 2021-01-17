@@ -211,7 +211,7 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     sex = str(morph.parse(player)[0].tag.gender)
     think = morph.parse(random.choice(think_list))[0].inflect({sex, 'VERB'}).word
 
-    sex = str(morph.parse(suspect)[0].tag.gender)
+    sex = str(morph.parse(suspect.split()[0])[0].tag.gender)
     kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
