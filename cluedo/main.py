@@ -61,7 +61,6 @@ def handler(event: dict, context=None):
             dialog = 'Wrong choice'
             buttons = game.weapons()
 
-    print(dialog)
 # Новая сессия
 
     if dialog == 'New Game':

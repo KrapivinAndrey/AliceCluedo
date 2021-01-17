@@ -174,22 +174,53 @@ def wrong_answer():
 
 
 def gossip(moves):
+
+    morph = pymorphy2.MorphAnalyzer()
+
+    think = [
+        'предположить',
+        'думать',
+        'допустить'
+    ]
+
+    use = [
+        'использовав',
+        'с помощью'
+    ]
+
     texts = []
 
     # 1. Сначала ход игрока
     player_move = moves[0]
-    for move in moves:
+
+    suspect = player_move['move'][0]
+    weapon = player_move['move'][1]
+    room = player_move['move'][2]
+    room_text = morph.parse(room)[0].inflect({'loct'})[0]
+    weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
+
+    texts.append(
+        "ВЫ предположили: {} убил в {} использовав {}, но {} опроверг".format(
+            suspect.upper(),
+            room_text.upper(),
+            weapon_text.upper,
+            player_move['player_stop'].upper()
+        )
+    )
+
+    for num in range(1, 6):
+        move = moves[num]
         texts.append(
             "{} предположил: {} убил в {} использовав {}, но {} опроверг".format(
-                move['player'],
-                move['move'][0],
-                move['move'][1],
-                move['move'][2],
-                move['player_stop']
+                move['player'].upper(),
+                move['move'][0].upper(),
+                move['move'][1].upper(),
+                move['move'][2].upper,
+                move['player_stop'].upper()
             )
         )
 
-    texts.insert(1, "Показал карту: {}".format(player_move['card']))
+    texts.insert(1, "Показал карту: {}".format(player_move['card'].upper()))
     text = '\n'.join(texts)
     tts = text
 
