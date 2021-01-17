@@ -210,12 +210,19 @@ def gossip(moves):
 
     for num in range(1, 6):
         move = moves[num]
+
+        suspect = move['move'][0]
+        room = move['move'][1]
+        weapon = move['move'][2]
+        room_text = morph.parse(room)[0].inflect({'loct'})[0]
+        weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
+
         texts.append(
             "{} предположил: {} убил в {} использовав {}, но {} опроверг".format(
                 move['player'].upper(),
-                move['move'][0].upper(),
-                move['move'][1].upper(),
-                move['move'][2].upper(),
+                suspect.upper(),
+                room_text.upper(),
+                weapon_text.upper(),
                 move['player_stop'].upper()
             )
         )
