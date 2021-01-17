@@ -206,30 +206,31 @@ def gossip(moves):
 
 def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str) -> str:
 
-    think = [
+    think_list = [
         'предположить',
         'заявить',
         'допустить',
         'решить'
     ]
 
-    use = [
+    use_list = [
         'использовав',
         'с помощью'
     ]
+
     sex = str(morph.parse(player)[0].tag.gender)
-    think_text = morph.parse(random.choice(think))[0].inflect({sex, 'VERB'}).word
+    think = morph.parse(random.choice(think_list))[0].inflect({sex, 'VERB'}).word
+
+    sex = str(morph.parse(suspect)[0].tag.gender)
+    kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
+
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
     weapon_text = morph.parse(weapon)[0].inflect({'accs'})[0]
 
-    text = "{} {}: {} убил в {} использовав {}, но {} опроверг".format(
-                player.upper(),
-                think_text,
-                suspect.upper(),
-                room_text.upper(),
-                weapon_text.upper(),
-                player_stop.upper()
-            )
+    use = random.choice(use_list)
+
+    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()} ' \
+           f'{use} {weapon_text.upper()}, но {player_stop.upper()} опроверг'
     return text
 
 
