@@ -106,7 +106,7 @@ def handler(event: dict, context=None):
         answer.text(text).tts(tts). \
             saveState("myState", "weapon"). \
             saveState("room", player_answer). \
-            setButtons(game.rooms())
+            setButtons(game.weapons())
     elif dialog == 'Wrong choice':
         text, tts = texts.wrong_answer()
         answer.text(text).tts(tts). \
