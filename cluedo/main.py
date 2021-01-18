@@ -33,7 +33,7 @@ def handler(event: dict, context=None):
         if command == 'повторить':
             dialog = 'List'
         elif command == 'начать':
-            dialog = 'New Game'
+            dialog = 'Start'
     elif state == 'new_turn':
         if command == 'да':
             dialog = 'Repeat'
