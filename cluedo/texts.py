@@ -10,9 +10,7 @@ def hello():
     Выдвигай версии, собирай факты и найди виновного.
     Чтобы узнать как играть скажи "Правила".
     Или "Начать", чтобы начать расследование"""
-    tts = text + '<speaker audio="dialogs-upload/' \
-        '3308dc06-b901-4f7e-8882-beb1b84c0753/' \
-        'd52ac572-c0e8-4190-b1bf-2768335fb13b.opus">'
+    tts = text
     return text, tts
 
 
@@ -189,7 +187,7 @@ def gossip(moves):
 
     texts.insert(1, "Показал карту: {}".format(moves[0]['card'].upper()))
     text = '\n'.join(texts)
-    tts = '\nsil <[500]>'.join(texts)
+    tts = '\nsil <[1000]>'.join(texts)
 
     return text, tts
 
@@ -200,12 +198,14 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         'предположить',
         'заявить',
         'допустить',
-        'решить'
+        'решить',
+        'сказать',
+        'обвинить'
     ]
 
     use_list = [
-        'использовав',
-        'с помощью'
+        ('использовав', 'accs'),
+        ('с помощью', 'gent')
     ]
 
     sex = str(morph.parse(player)[0].tag.gender)
@@ -215,9 +215,10 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
-    weapon_text = morph.parse(weapon)[0].inflect({'accs'})[0]
 
     use = random.choice(use_list)
+    weapon_text = morph.parse(weapon)[0].inflect({use[1]}).word
+    use = use[0]
 
     text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()} ' \
            f'{use} {weapon_text.upper()}, но {player_stop.upper()} опроверг'
