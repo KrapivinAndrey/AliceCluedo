@@ -192,7 +192,7 @@ def gossip(moves):
     return text, tts
 
 
-def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str) -> str:
+def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str, think_num=None, use_num=None) -> str:
 
     think_list = [
         'предположить',
@@ -209,14 +209,21 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     ]
 
     sex = str(morph.parse(player)[0].tag.gender)
-    think = morph.parse(random.choice(think_list))[0].inflect({sex, 'VERB'}).word
+    if think_num is None:
+        think_text = random.choice(think_list)
+    else:
+        think_text = think_list[think_num]
+    think = morph.parse(think_text)[0].inflect({sex, 'VERB'}).word
 
     sex = str(morph.parse(suspect.split()[0])[0].tag.gender)
     kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
 
-    use = random.choice(use_list)
+    if use_num is None:
+        use = random.choice(use_list)
+    else:
+        use = use_list[use_num]
     weapon_text = morph.parse(weapon)[0].inflect({use[1]}).word
     use = use[0]
 
