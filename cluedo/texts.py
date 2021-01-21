@@ -192,7 +192,10 @@ def gossip(moves):
     return text, tts
 
 
-def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str, think_num=None, use_num=None) -> str:
+def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str,
+                think_num=None,
+                use_num=None,
+                denial_num=None) -> str:
 
     think_list = [
         'предположить',
@@ -208,6 +211,19 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         ('с помощью', 'gent')
     ]
 
+    denial_list1 = [
+        'сказать',
+        'заявить',
+        'крикнуть'
+    ]
+
+    denial_list2 = [
+        ', что это чушь.',
+        ', чтобы словами не бросались',
+        ', что это бред.',
+        ', что этого не может быть.'
+    ]
+
     sex = str(morph.parse(player)[0].tag.gender)
     if think_num is None:
         think_text = random.choice(think_list)
@@ -221,14 +237,23 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
 
     if use_num is None:
-        use = random.choice(use_list)
+        use_text = random.choice(use_list)
     else:
-        use = use_list[use_num]
-    weapon_text = morph.parse(weapon)[0].inflect({use[1]}).word
-    use = use[0]
+        use_text = use_list[use_num]
+    weapon_text = morph.parse(weapon)[0].inflect({use_text[1]}).word
+    use = use_text[0]
 
-    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()} ' \
-           f'{use} {weapon_text.upper()}, но {player_stop.upper()} опроверг'
+    sex = str(morph.parse(player_stop)[0].tag.gender)
+    if denial_num is None:
+        denial_text1 = random.choice(denial_list1)
+        denial_text2 = random.choice(denial_list2)
+    else:
+        denial_text1 = denial_list1[denial_num]
+        denial_text2 = denial_list2[denial_num]
+    denial = morph.parse(denial_text1)[0].inflect({sex, 'VERB'}).word + denial_text2
+
+    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, ' \
+           f'{use} {weapon_text.upper()}. Но {player_stop.upper()} {denial}'
     return text
 
 
