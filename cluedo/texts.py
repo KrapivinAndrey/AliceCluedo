@@ -240,7 +240,8 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         use_text = random.choice(use_list)
     else:
         use_text = use_list[use_num]
-    weapon_text = morph.parse(weapon)[0].inflect({use_text[1]}).word
+    weapon_text = ' '.join([morph.parse(x)[0].inflect({use_text[1]})[0] for x in weapon.split()])
+
     use = use_text[0]
 
     sex = str(morph.parse(player_stop)[0].tag.gender)

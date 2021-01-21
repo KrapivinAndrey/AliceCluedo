@@ -310,8 +310,8 @@ def not_win_answer():
         "meta": meta(),
         "session": session(),
         "request": {
-            "command": "подсвечник",
-            "original_utterance": "Подсвечник",
+            "command": "гаечный ключ",
+            "original_utterance": "Гаечный ключ",
             "nlu": {
                 "tokens": [
                     "веревка"
