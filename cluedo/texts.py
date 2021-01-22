@@ -214,7 +214,8 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     denial_list1 = [
         'сказать',
         'заявить',
-        'крикнуть'
+        'крикнуть',
+        'возмутиться'
     ]
 
     denial_list2 = [
@@ -259,5 +260,8 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
 
 
 def win_game():
-    text = tts = "Поздравляю"
+    text = tts = """Поздравляем! Вы вычислили убийцу.
+    Правосудие восторжествовало.
+    Это была сложная задача. Надеюсь Вам понравилось.
+    Не забудьте поставить оценку навыку."""
     return text, tts
