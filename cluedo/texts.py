@@ -247,7 +247,7 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         use_text = random.choice(use_list)
     else:
         use_text = use_list[use_num]
-    weapon_text = ' '.join([morph.parse(x)[0].inflect({use_text[1]})[0] for x in weapon.split()])
+    weapon_text = ' '.join([morph.parse(x)[-1].inflect({use_text[1]}).word for x in weapon.split(' ')])
 
     use = use_text[0]
 
