@@ -5,6 +5,14 @@ import pymorphy2
 morph = pymorphy2.MorphAnalyzer()
 
 
+def __get_sex(name_player):
+    return str(morph.parse(name_player.split(' ')[0])[0].tag.gender)
+
+
+def __inflect(word, case):
+    return ' '.join([morph.parse(x)[-1].inflect(case).word for x in word.split(' ')])
+
+
 def hello():
     text = """Привет! Почувствуй себя настоящим сыщиком.
     Выдвигай версии, собирай факты и найди виновного.
@@ -83,8 +91,8 @@ def detective_list(suspects, rooms, weapons):
 
 def start_game(suspect: str, room: str, weapon: str):
 
-    room_text = morph.parse(room)[0].inflect({'loct'})[0]
-    weapon_text = morph.parse(weapon)[0].inflect({'ablt'})[0]
+    room_text = __inflect(room, {'loct'})
+    weapon_text = __inflect(weapon, {'ablt'})
 
     text = """Черт! Знал же, что не надо было идти на эту вечеринку.
             Будет весело, говорили они. Отдохнешь, развеешься.
@@ -194,10 +202,6 @@ def gossip(moves):
     return text, tts
 
 
-def __get_sex(name_player):
-    return str(morph.parse(name_player.split(' ')[0])[0].tag.gender)
-
-
 def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str,
                 think_num=None,
                 use_num=None,
@@ -236,18 +240,18 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         think_text = random.choice(think_list)
     else:
         think_text = think_list[think_num]
-    think = morph.parse(think_text)[0].inflect({sex, 'VERB'}).word
+    think = __inflect(think_text, {sex, 'VERB'})
 
     sex = __get_sex(suspect)
-    kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
+    kill = __inflect('убить', {sex, 'VERB'})
 
-    room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
+    room_text = __inflect(room, {'loct', 'sing'})
 
     if use_num is None:
         use_text = random.choice(use_list)
     else:
         use_text = use_list[use_num]
-    weapon_text = ' '.join([morph.parse(x)[-1].inflect({use_text[1]}).word for x in weapon.split(' ')])
+    weapon_text = __inflect(weapon, {use_text[1]})
 
     use = use_text[0]
 
@@ -258,7 +262,7 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     else:
         denial_text1 = denial_list1[denial_num]
         denial_text2 = denial_list2[denial_num]
-    denial = morph.parse(denial_text1)[0].inflect({sex, 'VERB'}).word + denial_text2
+    denial = __inflect(denial_text1, {sex, 'VERB'}) + denial_text2
 
     text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, ' \
            f'{use} {weapon_text.upper()}. Но {player_stop.upper()} {denial}'
