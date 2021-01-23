@@ -10,7 +10,9 @@ def hello():
     Выдвигай версии, собирай факты и найди виновного.
     Чтобы узнать как играть скажи "Правила".
     Или "Начать", чтобы начать расследование"""
-    tts = text
+    tts = '<speaker audio="dialogs-upload/' \
+          '3308dc06-b901-4f7e-8882-beb1b84c0753/' \
+          '988b4c6d-88dd-4082-8487-1fc587e19311.opus">'
     return text, tts
 
 
@@ -104,7 +106,7 @@ def start_game(suspect: str, room: str, weapon: str):
                 Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
                 И судя по следам, мистера Блэк не могли убить {}.
                 Кто же тогда? Где он убил его? И чем?
-                sil <[500]>
+                sil <[1500]>
                 Повторить?""".format(suspect, room_text, weapon_text)
     return text, tts
 
@@ -225,7 +227,7 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         ', что этого не может быть.'
     ]
 
-    sex = str(morph.parse(player)[0].tag.gender)
+    sex = str(morph.parse(player.split(' ')[0])[0].tag.gender)
     if think_num is None:
         think_text = random.choice(think_list)
     else:

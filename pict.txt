@@ -5,8 +5,10 @@ weapon: "Гаечный ключ", "Подсвечник", "Кинжал", "Ку
 player_stop: "Детектив", "Миссис Пикок", "Мисс Скарлет", "Полковник Мастард", "Профессор Плам", "Преподобный Грин"
 think: 0, 1, 2, 3, 4, 5
 use: 0, 1
+denial: 0, 1, 2, 3
 
-{player, think} @ 2
-{weapon, use} @ 2
+{player, think} @ 1
+{suspect, use, weapon} @ 2
+{player_stop, denial} @ 2
 
 [player] <> [suspect] and [player_stop] <> [player] and [player_stop] <> [suspect];

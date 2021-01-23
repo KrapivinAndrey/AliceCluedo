@@ -341,7 +341,6 @@ def not_win_answer():
 def test_hello(start_session):
     ans = main.handler(start_session)
     assert 'Привет!' in ans['response']['text']
-    assert 'Привет!' in ans['response']['tts']
     assert len(ans['response']['buttons']) == 2
 
 
