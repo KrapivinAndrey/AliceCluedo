@@ -10,7 +10,9 @@ def hello():
     Выдвигай версии, собирай факты и найди виновного.
     Чтобы узнать как играть скажи "Правила".
     Или "Начать", чтобы начать расследование"""
-    tts = text
+    tts = '<speaker audio="dialogs-upload/' \
+          '3308dc06-b901-4f7e-8882-beb1b84c0753/' \
+          '988b4c6d-88dd-4082-8487-1fc587e19311.opus">'
     return text, tts
 
 
@@ -104,7 +106,7 @@ def start_game(suspect: str, room: str, weapon: str):
                 Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
                 И судя по следам, мистера Блэк не могли убить {}.
                 Кто же тогда? Где он убил его? И чем?
-                sil <[500]>
+                sil <[1500]>
                 Повторить?""".format(suspect, room_text, weapon_text)
     return text, tts
 
@@ -192,7 +194,14 @@ def gossip(moves):
     return text, tts
 
 
-def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str) -> str:
+def __get_sex(name_player):
+    return str(morph.parse(name_player.split(' ')[0])[0].tag.gender)
+
+
+def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str,
+                think_num=None,
+                use_num=None,
+                denial_num=None) -> str:
 
     think_list = [
         'предположить',
@@ -208,23 +217,57 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         ('с помощью', 'gent')
     ]
 
-    sex = str(morph.parse(player)[0].tag.gender)
-    think = morph.parse(random.choice(think_list))[0].inflect({sex, 'VERB'}).word
+    denial_list1 = [
+        'сказать',
+        'заявить',
+        'крикнуть',
+        'возмутиться'
+    ]
 
-    sex = str(morph.parse(suspect.split()[0])[0].tag.gender)
+    denial_list2 = [
+        ', что это чушь.',
+        ', чтобы словами зря не бросались.',
+        ', что это бред.',
+        ', что этого не может быть.'
+    ]
+
+    sex = __get_sex(player)
+    if think_num is None:
+        think_text = random.choice(think_list)
+    else:
+        think_text = think_list[think_num]
+    think = morph.parse(think_text)[0].inflect({sex, 'VERB'}).word
+
+    sex = __get_sex(suspect)
     kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
 
-    use = random.choice(use_list)
-    weapon_text = morph.parse(weapon)[0].inflect({use[1]}).word
-    use = use[0]
+    if use_num is None:
+        use_text = random.choice(use_list)
+    else:
+        use_text = use_list[use_num]
+    weapon_text = ' '.join([morph.parse(x)[-1].inflect({use_text[1]}).word for x in weapon.split(' ')])
 
-    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()} ' \
-           f'{use} {weapon_text.upper()}, но {player_stop.upper()} опроверг'
+    use = use_text[0]
+
+    sex = __get_sex(player_stop)
+    if denial_num is None:
+        denial_text1 = random.choice(denial_list1)
+        denial_text2 = random.choice(denial_list2)
+    else:
+        denial_text1 = denial_list1[denial_num]
+        denial_text2 = denial_list2[denial_num]
+    denial = morph.parse(denial_text1)[0].inflect({sex, 'VERB'}).word + denial_text2
+
+    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, ' \
+           f'{use} {weapon_text.upper()}. Но {player_stop.upper()} {denial}'
     return text
 
 
 def win_game():
-    text = tts = "Поздравляю"
+    text = tts = """Поздравляем! Вы вычислили убийцу.
+    Правосудие восторжествовало.
+    Это была сложная задача. Надеюсь Вам понравилось.
+    Не забудьте поставить оценку навыку."""
     return text, tts
