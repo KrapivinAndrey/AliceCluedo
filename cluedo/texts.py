@@ -194,6 +194,10 @@ def gossip(moves):
     return text, tts
 
 
+def __get_sex(name_player):
+    return str(morph.parse(name_player.split(' ')[0])[0].tag.gender)
+
+
 def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str,
                 think_num=None,
                 use_num=None,
@@ -222,19 +226,19 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
 
     denial_list2 = [
         ', что это чушь.',
-        ', чтобы словами не бросались',
+        ', чтобы словами зря не бросались.',
         ', что это бред.',
         ', что этого не может быть.'
     ]
 
-    sex = str(morph.parse(player.split(' ')[0])[0].tag.gender)
+    sex = __get_sex(player)
     if think_num is None:
         think_text = random.choice(think_list)
     else:
         think_text = think_list[think_num]
     think = morph.parse(think_text)[0].inflect({sex, 'VERB'}).word
 
-    sex = str(morph.parse(suspect.split()[0])[0].tag.gender)
+    sex = __get_sex(suspect)
     kill = morph.parse('убить')[0].inflect({sex, 'VERB'}).word
 
     room_text = ' '.join([morph.parse(x)[0].inflect({'loct'})[0] for x in room.split()])
@@ -247,7 +251,7 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
 
     use = use_text[0]
 
-    sex = str(morph.parse(player_stop)[0].tag.gender)
+    sex = __get_sex(player_stop)
     if denial_num is None:
         denial_text1 = random.choice(denial_list1)
         denial_text2 = random.choice(denial_list2)
