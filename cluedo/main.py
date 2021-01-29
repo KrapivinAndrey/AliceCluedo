@@ -5,17 +5,18 @@ import logging
 import sys
 
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+game = GameEngine()
 
 
 def handler(event: dict, context=None):
-    game = GameEngine()
+
     answer = AliceResponse(event)
 
     command = event.get('request', {}).get('command', {})
-    state = event.get('state', {}).get('session', {}).get('myState', '')
+    state = event.get('state', {}).get('session', {}).get('GameState', '')
     it_is_new_game = event.get('session', {}).get('new', False)
 
-    dialog = 'Unknown'
+# region Dialog
 
     if it_is_new_game:
         dialog = 'New Game'
@@ -24,6 +25,8 @@ def handler(event: dict, context=None):
             dialog = 'Rules'
         elif command == 'начать':
             dialog = 'Start'
+        else:
+            dialog = 'not_understand'
     elif state == 'rules':
         if command == 'да':
             dialog = 'List'
@@ -44,29 +47,29 @@ def handler(event: dict, context=None):
         if player_answer:
             dialog = 'Choice room'
         else:
-            dialog = 'Wrong choice'
-            buttons = game.suspects()
+            dialog = 'Wrong_choice_suspect'
     elif state == 'room':
         player_answer = game.it_is_room(command)
         if player_answer:
             dialog = 'Choice weapon'
         else:
-            dialog = 'Wrong choice'
-            buttons = game.rooms()
+            dialog = 'Wrong_choice_room'
     elif state == 'weapon':
         player_answer = game.it_is_weapon(command)
         if player_answer:
             dialog = 'Game turn'
         else:
-            dialog = 'Wrong choice'
-            buttons = game.weapons()
+            dialog = 'Wrong_choice_weapon'
+
+# endregion
+
 
 # Новая сессия
 
     if dialog == 'New Game':
         text, tts = texts.hello()
         answer.text(text).tts(tts).\
-            saveState('myState', 'new_game').\
+            saveState('GameState', 'new_game').\
             button("Начать").button("Правила")
 
 # Переход из состояния Новая игра
@@ -74,12 +77,12 @@ def handler(event: dict, context=None):
     elif dialog == 'Rules':
         text, tts = texts.rules()
         answer.text(text).tts(tts).\
-            saveState("myState", "rules").\
+            saveState("GameState", "rules").\
             setButtons(['Да', 'Нет'])
     elif dialog == 'List':
         text, tts = texts.detective_list(game.suspects(), game.rooms(), game.weapons())
         answer.text(text).tts(tts). \
-            saveState("myState", 'list').\
+            saveState("GameState", 'list').\
             saveState("previous", [text, tts, ['Начать']]). \
             button('Начать').button('Повторить')
     elif dialog == 'Start':
@@ -87,30 +90,38 @@ def handler(event: dict, context=None):
         text, tts = texts.start_game(game.playerCards[0], game.playerCards[1], game.playerCards[2])
         answer.text(text).tts(tts). \
             saveState("game", game.dump()). \
-            saveState("myState", 'new_turn').\
+            saveState("GameState", 'new_turn').\
             saveState("previous", [text, tts]). \
             button('Да').button('Нет')
     elif dialog == 'Choose suspect':
         text, tts = texts.who_do_you_suspect()
         answer.text(text).tts(tts).\
-            saveState("myState", "suspect").\
+            saveState("GameState", "suspect").\
             setButtons(game.suspects())
     elif dialog == 'Choice room':
         text, tts = texts.in_which_room()
         answer.text(text).tts(tts). \
-            saveState("myState", "room"). \
+            saveState("GameState", "room"). \
             saveState("suspect", player_answer). \
             setButtons(game.rooms())
     elif dialog == 'Choice weapon':
         text, tts = texts.what_weapon()
         answer.text(text).tts(tts). \
-            saveState("myState", "weapon"). \
+            saveState("GameState", "weapon"). \
             saveState("room", player_answer). \
             setButtons(game.weapons())
-    elif dialog == 'Wrong choice':
+    elif dialog == 'Wrong_choice_suspect':
         text, tts = texts.wrong_answer()
         answer.text(text).tts(tts). \
-            setButtons(buttons)
+            setButtons(game.suspects())
+    elif dialog == 'Wrong_choice_room':
+        text, tts = texts.wrong_answer()
+        answer.text(text).tts(tts). \
+            setButtons(game.rooms())
+    elif dialog == 'Wrong_choice_weapon':
+        text, tts = texts.wrong_answer()
+        answer.text(text).tts(tts). \
+            setButtons(game.weapons())
     elif dialog == 'Game turn':
         game_state = event.get('state', {}).get('session', {}).get('game', {})
         suspect = event.get('state', {}).get('session', {}).get('suspect')
@@ -126,7 +137,7 @@ def handler(event: dict, context=None):
         else:
             text, tts = texts.gossip(turn['moves'])
             answer.text(text).tts(tts). \
-                saveState("myState", 'new_turn'). \
+                saveState("GameState", 'new_turn'). \
                 saveState("previous", [text, tts]). \
                 button('Да').button('Нет')
     elif command == 'варианты':

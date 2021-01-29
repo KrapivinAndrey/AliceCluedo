@@ -127,9 +127,9 @@ def who_do_you_suspect():
         'Кто же мог совершить это преступление?'
     ]
 
-    text = """{}
-    Скажите "Варианты", чтобы узнать какие есть подозреваемые""".format(random.choice(texts))
-    tts = text
+    text = random.choice(texts)
+    tts = """{}
+    Скажите "Варианты", чтобы узнать какие есть подозреваемые""".format(text)
     return text, tts
 
 
@@ -141,9 +141,10 @@ def in_which_room():
         'Но в какой же комнате?'
     ]
 
-    text = """{}
-    Скажите "Варианты", чтобы узнать какие есть комнаты""".format(random.choice(texts))
-    tts = text
+    text = random.choice(texts)
+
+    tts = """{}
+    Скажите "Варианты", чтобы узнать какие есть комнаты""".format(text)
     return text, tts
 
 
@@ -155,9 +156,10 @@ def what_weapon():
         'Что послужило орудием преступления?'
     ]
 
-    text = """{}
-    Скажите "Варианты", чтобы узнать возможные предметы""".format(random.choice(texts))
-    tts = text
+    text = random.choice(texts)
+
+    tts = """{}
+    Скажите "Варианты", чтобы узнать возможные предметы""".format(text)
     return text, tts
 
 

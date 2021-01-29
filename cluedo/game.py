@@ -7,7 +7,7 @@ class GameEngine:
     def __init__(self):
         self._secret = tuple()
         self.num_players = 6  # 5 игроков и детектив
-        self._playerCards = [[] for i in range(self.num_players)]
+        self._playerCards = [[] for _ in range(self.num_players)]
 
     def dump(self):
         return {
@@ -101,23 +101,27 @@ class GameEngine:
                 return random.choice(tuple(set(cards) - set(exclude_cards)))
 
             # Случайный ход, исключая имеющиеся карты
-            myCards = self._playerCards[index]
-            myCards.append(self.suspects()[index-1])
+            my_cards = self._playerCards[index]
+            my_cards.append(self.suspects()[index-1])
 
-            suspect = get_random_card(self.suspects(), myCards)
-            room = get_random_card(self.rooms(), myCards)
-            weapon = get_random_card(self.weapons(), myCards)
+            while True:
 
-            return suspect, room, weapon
+                s = get_random_card(self.suspects(), my_cards)
+                r = get_random_card(self.rooms(), my_cards)
+                w = get_random_card(self.weapons(), my_cards)
+                if not (s, r, w) == self._secret:
+                    break
+
+            return s, r, w
 
         def make_suggestion(suggestion, index):
             # Обработчик предположения игрока
-            i = (index + 1) % self.num_players
-            while i != index:
-                cross = set(self._playerCards[i]) & suggestion
+            turn = (index + 1) % self.num_players
+            while turn != index:
+                cross = set(self._playerCards[turn]) & suggestion
                 if cross:
-                    return self.players()[i], random.choice(tuple(cross))
-                i = (i + 1) % self.num_players
+                    return self.players()[turn], random.choice(tuple(cross))
+                turn = (turn + 1) % self.num_players
 
             return None, None
 
@@ -134,12 +138,12 @@ class GameEngine:
         # Ответ - массив: Ход, Кто опроверг, Какую карту показал(только для игрока)
 
         # Сначала наш ход
-        mySuggestion = (suspect, room, weapon)
+        my_suggestion = (suspect, room, weapon)
 
-        result = {"win": mySuggestion == self._secret}
+        result = {"win": my_suggestion == self._secret}
 
         if not result['win']:
-            result['moves'] = [move(mySuggestion, 0)]
+            result['moves'] = [move(my_suggestion, 0)]
             for i in range(1, self.num_players):
                 result['moves'].append(move(randomCards(i), i))
 

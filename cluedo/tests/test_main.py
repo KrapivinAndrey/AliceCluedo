@@ -121,7 +121,7 @@ def need_rules():
           },
         "state": {
             "session": {
-                "myState": "new_game"
+                "GameState": "new_game"
             }
         },
         "version": "1.0"
@@ -152,7 +152,7 @@ def start_game():
           },
           "state": {
             "session": {
-                "myState": "new_game"
+                "GameState": "new_game"
             },
             "user": {},
             "application": {}
@@ -183,7 +183,7 @@ def repeat():
               },
             "state": {
                 "session": {
-                    "myState": "new_turn",
+                    "GameState": "new_turn",
                     "game": game_for_test(),
                     "previous": [
                         "test_text",
@@ -226,7 +226,7 @@ def first_answer_right():
           "game": game_for_test(),
           "text": "Мисс Скарлет Кухня Кубок",
           "tts": "Мисс Скарлет Кухня Кубок",
-          "myState": "suspect"
+          "GameState": "suspect"
         },
         "user": {},
         "application": {}
@@ -261,7 +261,7 @@ def first_answer_wrong():
           "game": game_for_test(),
           "text": "Мисс Скарлет Кухня Кубок",
           "tts": "Мисс Скарлет Кухня Кубок",
-          "myState": "suspect"
+          "GameState": "suspect"
         },
         "user": {},
         "application": {}
@@ -295,7 +295,7 @@ def win_answer():
                 "game": game_for_test(),
                 "suspect": "Профессор Плам",
                 "room": "Гостиная",
-                "myState": "weapon"
+                "GameState": "weapon"
             },
             "user": {},
             "application": {}
@@ -329,7 +329,7 @@ def not_win_answer():
                 "game": game_for_test(),
                 "suspect": "Профессор Плам",
                 "room": "Гостиная",
-                "myState": "weapon"
+                "GameState": "weapon"
             },
             "user": {},
             "application": {}
@@ -362,14 +362,14 @@ def test_answer_suspect_right(first_answer_right):
     ans = main.handler(first_answer_right)
 
     assert ans is not None
-    assert ans['session_state']['myState'] == 'room'
+    assert ans['session_state']['GameState'] == 'room'
 
 
 def test_answer_suspect_wrong(first_answer_wrong):
     ans = main.handler(first_answer_wrong)
 
     assert ans is not None
-    assert ans['session_state']['myState'] == 'suspect'
+    assert ans['session_state']['GameState'] == 'suspect'
 
 
 def test_win_answer(win_answer):
