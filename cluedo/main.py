@@ -6,7 +6,14 @@ from cluedo.alice import Request
 from cluedo.scenes import DEFAULT_SCENE, SCENES
 from cluedo.state import STATE_REQUEST_KEY
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+root.addHandler(handler)
 
 
 def handler(event, context):
