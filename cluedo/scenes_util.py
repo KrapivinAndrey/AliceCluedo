@@ -6,6 +6,13 @@ from cluedo.state import STATE_RESPONSE_KEY, PERMANENT_VALUES
 
 
 class Scene(ABC):
+
+    def __str__(self):
+        return self.__name__
+
+    def __repr__(self):
+        return str(self)
+
     @classmethod
     def id(cls):
         return cls.__name__
