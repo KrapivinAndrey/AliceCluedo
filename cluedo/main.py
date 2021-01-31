@@ -12,7 +12,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 def handler(event, context):
 
     request = Request(event)
-    logging.debug(json.dumps(request))
+    logging.debug(json.dumps(event))
 
     current_scene_id = event.get("state", {}).get(STATE_REQUEST_KEY, {}).get("scene")
     if current_scene_id is None:

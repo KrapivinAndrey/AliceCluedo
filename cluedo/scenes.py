@@ -30,6 +30,7 @@ class GlobalScene(Scene):
             state=save_state,
         )
 
+
 class Welcome(GlobalScene):
 
     def reply(self, request: Request):
