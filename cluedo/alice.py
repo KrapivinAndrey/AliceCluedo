@@ -110,7 +110,6 @@ class AliceResponse(Chain):
 
     def setButtons(self, buttons: list):
         """Вывести несколько кнопок
-
         Параметры:
             buttons -- массив заголовков
         """
@@ -119,7 +118,6 @@ class AliceResponse(Chain):
 
     def button(self, text: str, url="", payload="", hide=False):
         """Добавить кнопку
-
         Параметры:
             title -- Текст кнопки, возвращается как выполненная команда request.command
             url -- URL, который должна открывать кнопка
@@ -159,7 +157,6 @@ class AliceResponse(Chain):
     def saveState(self, name: str, value):
         """Сохранить переменную в течении сессии
         Получить значения можно в запросе state.session.<name>
-
         Параметры:
              name -- имя переменной для сохранения
              value -- сохраняемое значение
@@ -180,3 +177,26 @@ class AliceResponse(Chain):
         if self._images:
             self._response_dict['card'] = self.__prepare_card()
         return self._response_dict.copy()
+
+class Request:
+    def __init__(self, request_body):
+        self.request_body = request_body
+
+    def __getitem__(self, key):
+        return self.request_body[key]
+
+    @property
+    def intents(self):
+        return self.request_body["request"].get("nlu", {}).get("intents", {})
+
+    @property
+    def type(self):
+        return self.request_body.get("request", {}).get("type")
+
+    @property
+    def state_session(self):
+        return self.request_body.get("state", {}).get("session", {})
+
+    @property
+    def state_user(self):
+        return self.request_body.get("state", {}).get("user", {})
