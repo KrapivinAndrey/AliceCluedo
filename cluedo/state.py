@@ -4,8 +4,9 @@ STATE_USER_RESPONSE_KEY = "user_state_update"
 
 # region State of dialog
 
+GAME = "game"
 
 # endregion
 
 MUST_BE_SAVE = {}
-PERMANENT_VALUES = {}
+PERMANENT_VALUES = {GAME}

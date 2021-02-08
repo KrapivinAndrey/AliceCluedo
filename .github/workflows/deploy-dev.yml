@@ -17,5 +17,5 @@ jobs:
           memory: '128'
           environment: DEBUG=True
           entrypoint: 'cluedo.main.handler'
-          source: './'
-          exclude: './cluedo/tests'
+          source: '.'
+          exclude: '**.jpg'

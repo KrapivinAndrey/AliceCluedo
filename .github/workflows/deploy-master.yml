@@ -17,4 +17,4 @@ jobs:
         environment: DEBUG=False
         entrypoint: 'cluedo.main.handler'
         source: '.'
-        exclude: './cluedo/tests'
+        exclude: '**.jpg'

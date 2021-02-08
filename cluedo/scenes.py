@@ -1,10 +1,14 @@
 import inspect
 import sys
 
-from cluedo.alice import Request
-from cluedo.responce_helpers import button, image_gallery, big_image
-from cluedo.scenes_util import Scene
 import cluedo.texts as texts
+from cluedo import intents, state
+from cluedo.alice import Request
+from cluedo.game import GameEngine
+from cluedo.responce_helpers import big_image, button, image_gallery
+from cluedo.scenes_util import Scene
+
+game = GameEngine()
 
 
 class GlobalScene(Scene):
@@ -12,8 +16,7 @@ class GlobalScene(Scene):
         pass
 
     def handle_global_intents(self, request):
-        if intents.TELL_ABOUT in request.intents:
-            return WhoIs()
+        pass
 
     def handle_local_intents(self, request: Request):
         pass
@@ -31,8 +34,10 @@ class GlobalScene(Scene):
         )
 
 
-class Welcome(GlobalScene):
+# region Начало игры
 
+
+class Welcome(GlobalScene):
     def reply(self, request: Request):
         text, tts = texts.hello()
 
@@ -41,13 +46,80 @@ class Welcome(GlobalScene):
             text,
             tts,
             buttons=[
-                button("Сыграть в викторину"),
-                button("Расскажи экскурсию"),
+                button("Начать игру"),
+                button("Правила"),
             ],
         )
 
     def handle_local_intents(self, request: Request):
-        pass
+        if intents.RULES in request.intents:
+            return Rules()
+        elif intents.NewGame in request.intents:
+            return NewGame()
+
+
+class Rules(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.rules()
+        return self.make_response(request, text, tts, buttons=YES_NO)
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return DetectiveList()
+        elif intents.REJECT in request.intents:
+            return NewGame()
+
+
+class DetectiveList(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.detective_list()
+        return self.make_response(
+            self, text, tts, buttons=[button("Начать игру"), button("Повторить")]
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.NewGame in request.intents:
+            return NewGame()
+        elif intents.REPEAT in request.intents:
+            return DetectiveList()
+
+
+# endregion
+
+
+class NewGame(GlobalScene):
+    def reply(self, request: Request):
+        game.new_game()
+        text, tts = texts.start_game(
+            game.playerCards[0], game.playerCards[1], game.playerCards[2]
+        )
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return NewGameLite()
+        elif intents.REJECT in request.intents:
+            return ChooseSuspect()
+
+
+class NewGameLite(GlobalScene):
+    def reply(self, request: Request):
+        game_state = request.state_session[state.GAME]
+        game.restore(game_state)
+        text, tts = texts.start_game_lite(
+            game.playerCards[0], game.playerCards[1], game.playerCards[2]
+        )
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return NewGameLite()
+        elif intents.REJECT in request.intents:
+            return ChooseSuspect()
 
 
 def _list_scenes():
@@ -62,3 +134,4 @@ def _list_scenes():
 SCENES = {scene.id(): scene for scene in _list_scenes()}
 
 DEFAULT_SCENE = Welcome
+YES_NO = [button("Да"), button("Нет")]
