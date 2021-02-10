@@ -54,7 +54,7 @@ class Welcome(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
             return Rules()
-        elif intents.NewGame in request.intents:
+        elif intents.NEW_GAME in request.intents:
             return NewGame()
 
 

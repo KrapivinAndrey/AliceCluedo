@@ -3,6 +3,7 @@ STATE_RESPONSE_KEY = "session_state"
 USERSTATE_RESPONSE_KEY = "user_state_update"
 
 # region State of dialog
+WELCOME = "Welcome"
 
 GAME = "game"
 WEAPON = "weapon"

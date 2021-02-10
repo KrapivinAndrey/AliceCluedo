@@ -7,4 +7,5 @@ REPEAT = "YANDEX.REPEAT"
 
 # region Start game
 RULES = "rules"
+NEW_GAME = "new_game"
 # endregion

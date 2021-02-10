@@ -1,7 +1,9 @@
 import pytest
 from fluentcheck import Check
 
+import cluedo.intents as intents
 import cluedo.main as main
+import cluedo.state as state
 
 
 def game_for_test():
@@ -75,7 +77,9 @@ def start_session():
 
 @pytest.fixture()
 def need_rules():
-    return prepare_request(intents=intent("Rules"))
+    return prepare_request(
+        intents=intent(intents.RULES), state_session={"scene": state.WELCOME}
+    )
 
 
 @pytest.fixture()
@@ -111,7 +115,7 @@ def test_rule(need_rules):
     ans = main.handler(need_rules, None)
     Check(ans).is_dict().has_keys("response")
     Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_string().matches("^Привет!.*")
+    Check(ans["response"]["text"]).is_string().matches("^Правила игры")
 
 
 def test_new_game(start_game):
