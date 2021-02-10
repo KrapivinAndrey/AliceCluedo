@@ -4,7 +4,7 @@ import sys
 import cluedo.texts as texts
 from cluedo import intents, state
 from cluedo.alice import Request
-from cluedo.game import GameEngine
+from cluedo.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from cluedo.responce_helpers import big_image, button, image_gallery
 from cluedo.scenes_util import Scene
 
@@ -86,6 +86,8 @@ class DetectiveList(GlobalScene):
 
 # endregion
 
+# region Start new game
+
 
 class NewGame(GlobalScene):
     def reply(self, request: Request):
@@ -120,6 +122,68 @@ class NewGameLite(GlobalScene):
             return NewGameLite()
         elif intents.REJECT in request.intents:
             return ChooseSuspect()
+
+
+# endregion
+
+# region Game turn
+
+
+class ChooseSuspect(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.who_do_you_suspect()
+        return self.make_response(
+            request, text, tts, buttons=[button(x) for x in SUSPECTS]
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.Suspect in request.intents:
+            return ChooseRoom(request.slots(intents.Suspect)[0])
+
+    def fallback(self, request: Request):
+        pass
+
+
+class ChooseRoom(GlobalScene):
+    def __init__(self, suspect: str):
+        super.__init__()
+        self.suspect = suspect
+
+    def reply(self, request: Request):
+        text, tts = texts.in_which_room()
+        return self.make_response(
+            request,
+            text,
+            tts,
+            buttons=[button(x) for x in ROOMS],
+            state={state.SUSPECT: self.suspect},
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.Room in request.intents:
+            return ChooseWeapon(request.slots(intents.Room)[0])
+
+
+class ChooseWeapon(GlobalScene):
+    def __init__(self, room: str):
+        super.__init__()
+        self.room = room
+
+    def reply(self, request: Request):
+        text, tts = texts.what_weapon()
+        return self.make_response(
+            request,
+            text,
+            tts,
+            buttons=[button(x) for x in WEAPONS],
+            state={state.WEAPON: self.weapon},
+        )
+
+    def handle_local_intents(self, request: Request):
+        pass
+
+
+# endregion
 
 
 def _list_scenes():

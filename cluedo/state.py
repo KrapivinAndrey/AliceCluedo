@@ -5,8 +5,11 @@ STATE_USER_RESPONSE_KEY = "user_state_update"
 # region State of dialog
 
 GAME = "game"
+WEAPON = "weapon"
+ROOM = "room"
+SUSPECT = "suspect"
 
 # endregion
 
 MUST_BE_SAVE = {}
-PERMANENT_VALUES = {GAME}
+PERMANENT_VALUES = {GAME, WEAPON, ROOM, SUSPECT}

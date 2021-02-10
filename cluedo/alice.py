@@ -47,6 +47,17 @@ class Request:
     def application(self):
         return self.request_body.get("state", {}).get("application", {})
 
+    def slots(self, intent: str):
+        return (
+            self.request_body["request"]
+            .get("nlu", {})
+            .get("intents", {})[intent]
+            .get(
+                "slots",
+            )
+            .keys()
+        )
+
 
 class AliceResponse(Chain):
     def __init__(self, request: Request):
@@ -55,11 +66,10 @@ class AliceResponse(Chain):
             "version": "1.0",
             "session": request["session"],  # для отладки
             "response": {"end_session": False, "buttons": []},
-            "session_state":  {}
-
+            "session_state": {},
         }
         for el in MUST_BE_SAVE:
-            self._response_dict['session_state'][el] = request.session[el]
+            self._response_dict["session_state"][el] = request.session[el]
 
         self._images = []
         self._header = ""

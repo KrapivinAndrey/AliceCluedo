@@ -2,11 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from cluedo.alice import Request
-from cluedo.state import STATE_RESPONSE_KEY, PERMANENT_VALUES
+from cluedo.state import STATE_SESSION_RESPONSE_KEY, PERMANENT_VALUES, STATE_REQUEST_KEY
 
 
 class Scene(ABC):
-
     def __str__(self):
         return self.__name__
 
@@ -69,13 +68,13 @@ class Scene(ABC):
         webhook_response = {
             "response": response,
             "version": "1.0",
-            STATE_RESPONSE_KEY: {
+            STATE_REQUEST_KEY: {
                 "scene": self.id(),
             },
         }
-        for key, value in request.state_session.items():
+        for key, value in request.session.items():
             if key in PERMANENT_VALUES:
-                webhook_response[STATE_RESPONSE_KEY][key] = value
+                webhook_response[STATE_SESSION_RESPONSE_KEY][key] = value
         if state is not None:
-            webhook_response[STATE_RESPONSE_KEY].update(state)
+            webhook_response[STATE_SESSION_RESPONSE_KEY].update(state)
         return webhook_response
