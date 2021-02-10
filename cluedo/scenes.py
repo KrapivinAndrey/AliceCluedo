@@ -74,7 +74,7 @@ class DetectiveList(GlobalScene):
     def reply(self, request: Request):
         text, tts = texts.detective_list()
         return self.make_response(
-            self, text, tts, buttons=[button("Начать игру"), button("Повторить")]
+            request, text, tts, buttons=[button("Начать игру"), button("Повторить")]
         )
 
     def handle_local_intents(self, request: Request):

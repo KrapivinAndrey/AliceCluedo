@@ -83,6 +83,13 @@ def need_rules():
 
 
 @pytest.fixture()
+def list_detective():
+    return prepare_request(
+        intents=intent(intents.CONFIRM), state_session={"scene": state.RULES}
+    )
+
+
+@pytest.fixture()
 def start_game():
     return {
         "meta": meta(),
@@ -116,6 +123,13 @@ def test_rule(need_rules):
     Check(ans).is_dict().has_keys("response")
     Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
     Check(ans["response"]["text"]).is_string().matches("^Правила игры")
+
+
+def test_list(list_detective):
+    ans = main.handler(list_detective, None)
+    Check(ans).is_dict().has_keys("response")
+    Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
+    Check(ans["response"]["text"]).is_string().matches("^Возьмите лист бумаги")
 
 
 def test_new_game(start_game):
