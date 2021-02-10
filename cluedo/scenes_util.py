@@ -1,17 +1,12 @@
 from abc import ABC, abstractmethod
+import json
 from typing import Optional
 
 from cluedo.alice import Request
-from cluedo.state import STATE_SESSION_RESPONSE_KEY, PERMANENT_VALUES, STATE_REQUEST_KEY
+from cluedo.state import STATE_RESPONSE_KEY, USERSTATE_RESPONSE_KEY, PERMANENT_VALUES
 
 
 class Scene(ABC):
-    def __str__(self):
-        return self.__name__
-
-    def __repr__(self):
-        return str(self)
-
     @classmethod
     def id(cls):
         return cls.__name__
@@ -49,13 +44,14 @@ class Scene(ABC):
         tts=None,
         card=None,
         state=None,
+        user_state=None,
         buttons=None,
         directives=None,
         end_session=False,
     ):
         response = {
-            "text": text,
-            "tts": tts if tts is not None else text,
+            "text": text[:1024],
+            "tts": tts[:1024] if tts is not None else text[:1024],
         }
         if card:
             response["card"] = card
@@ -68,13 +64,17 @@ class Scene(ABC):
         webhook_response = {
             "response": response,
             "version": "1.0",
-            STATE_REQUEST_KEY: {
+            STATE_RESPONSE_KEY: {
                 "scene": self.id(),
             },
         }
         for key, value in request.session.items():
             if key in PERMANENT_VALUES:
-                webhook_response[STATE_SESSION_RESPONSE_KEY][key] = value
+                webhook_response[STATE_RESPONSE_KEY][key] = value
         if state is not None:
-            webhook_response[STATE_SESSION_RESPONSE_KEY].update(state)
+            webhook_response[STATE_RESPONSE_KEY].update(state)
+        if user_state is not None:
+            webhook_response[USERSTATE_RESPONSE_KEY] = user_state
+
+        print(f"RESPONSE {json.dumps(webhook_response, ensure_ascii=False)}")
         return webhook_response
