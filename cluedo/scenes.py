@@ -137,7 +137,7 @@ class ChooseSuspect(GlobalScene):
         )
 
     def handle_local_intents(self, request: Request):
-        if intents.Suspect in request.intents:
+        if intents.SUSPECT in request.intents:
             return ChooseRoom(request.slots(intents.Suspect)[0])
 
     def fallback(self, request: Request):

@@ -1,0 +1,13 @@
+root:
+    %lemma
+    .* ($Suspect|$Room|$Weapon) .* ($Suspect|$Room|$Weapon)* .* ($Suspect|$Room|$Weapon)*
+slots:
+    Suspect:
+        source: $Suspect
+        type: Suspect
+    Room:
+        source: $Room
+        type: Room
+    Weapon:
+        source: $Weapon
+        type: Weapon

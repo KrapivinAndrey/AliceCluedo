@@ -9,3 +9,9 @@ REPEAT = "YANDEX.REPEAT"
 RULES = "rules"
 NEW_GAME = "new_game"
 # endregion
+
+# region Game turn
+
+SUSPECT = "suspect"
+
+# endregion
