@@ -1,9 +1,9 @@
 import pytest
 from fluentcheck import Check
 
-import cluedo.intents as intents
-import cluedo.main as main
-import cluedo.state as state
+import skill.intents as intents
+import skill.main as main
+import skill.state as state
 
 
 def game_for_test():

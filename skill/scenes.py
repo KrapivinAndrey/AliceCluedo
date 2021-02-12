@@ -1,12 +1,12 @@
 import inspect
 import sys
 
-import cluedo.texts as texts
-from cluedo import intents, state
-from cluedo.alice import Request
-from cluedo.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
-from cluedo.responce_helpers import big_image, button, image_gallery
-from cluedo.scenes_util import Scene
+import skill.texts as texts
+from skill import intents, state
+from skill.alice import Request
+from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
+from skill.responce_helpers import big_image, button, image_gallery
+from skill.scenes_util import Scene
 
 game = GameEngine()
 

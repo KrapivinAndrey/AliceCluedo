@@ -1,4 +1,4 @@
-import cluedo.main as main
+import skill.main as main
 
 true = True
 false = False

@@ -1,8 +1,8 @@
 import json
 
-from cluedo.alice import Request
-from cluedo.scenes import DEFAULT_SCENE, SCENES
-from cluedo.state import STATE_REQUEST_KEY
+from skill.alice import Request
+from skill.scenes import DEFAULT_SCENE, SCENES
+from skill.state import STATE_REQUEST_KEY
 
 
 def handler(event, context):

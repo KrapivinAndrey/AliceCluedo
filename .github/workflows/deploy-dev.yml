@@ -16,6 +16,6 @@ jobs:
           runtime: 'python37-preview'
           memory: '128'
           environment: DEBUG=True
-          entrypoint: 'cluedo.main.handler'
+          entrypoint: 'skill.main.handler'
           source: '.'
           exclude: '**.jpg'

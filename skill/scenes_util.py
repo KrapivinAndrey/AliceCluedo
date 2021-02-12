@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 import json
 from typing import Optional
 
-from cluedo.alice import Request
-from cluedo.state import STATE_RESPONSE_KEY, USERSTATE_RESPONSE_KEY, PERMANENT_VALUES
+from skill.alice import Request
+from skill.state import STATE_RESPONSE_KEY, USERSTATE_RESPONSE_KEY, PERMANENT_VALUES
 
 
 class Scene(ABC):

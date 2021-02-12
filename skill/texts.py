@@ -2,7 +2,7 @@ import random
 
 import pymorphy2
 
-from cluedo.game import ROOMS, SUSPECTS, WEAPONS
+from skill.game import ROOMS, SUSPECTS, WEAPONS
 
 morph = pymorphy2.MorphAnalyzer()
 
