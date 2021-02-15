@@ -1,16 +1,18 @@
 import random
+
 import pymorphy2
 
+from skill.game import ROOMS, SUSPECTS, WEAPONS
 
 morph = pymorphy2.MorphAnalyzer()
 
 
 def __get_sex(name_player):
-    return str(morph.parse(name_player.split(' ')[0])[0].tag.gender)
+    return str(morph.parse(name_player.split(" ")[0])[0].tag.gender)
 
 
 def __inflect(word, case):
-    return ' '.join([morph.parse(x)[-1].inflect(case).word for x in word.split(' ')])
+    return " ".join([morph.parse(x)[-1].inflect(case).word for x in word.split(" ")])
 
 
 def hello():
@@ -18,9 +20,11 @@ def hello():
     Выдвигай версии, собирай факты и найди виновного.
     Чтобы узнать как играть скажи "Правила".
     Или "Начать", чтобы начать расследование"""
-    tts = '<speaker audio="dialogs-upload/' \
-          '3308dc06-b901-4f7e-8882-beb1b84c0753/' \
-          '988b4c6d-88dd-4082-8487-1fc587e19311.opus">'
+    tts = (
+        '<speaker audio="dialogs-upload/'
+        "3308dc06-b901-4f7e-8882-beb1b84c0753/"
+        '988b4c6d-88dd-4082-8487-1fc587e19311.opus">'
+    )
     return text, tts
 
 
@@ -37,6 +41,7 @@ def rules():
     Это и будет ответ на загадку.
     Очень удобно отмечать версии в Листе детектива.
     Хотите узнать, как нарисовать Лист детектива? Задодно познакомитесь с картами"""
+
     tts = """Правила игры.
     В игре есть несколько карт подозреваемых, мест преступления и орудий.
     В начале игры вы получите карты, которые т+очно не являются ответом.
@@ -51,10 +56,11 @@ def rules():
     Очень удобно отмечать версии в Листе детектива.
     Хот+ите узнать. к+ак нарисов+ать Лист детектива?
     Заодно познакомитесь с картами"""
+
     return text, tts
 
 
-def detective_list(suspects, rooms, weapons):
+def detective_list():
     text = """Возьмите лист бумаги. Лучше в клетку, чтобы было удобно рисовать.
     Нарисуйте один широкий столбец.
     Сначала выпишите карты подозреваемых. Запишите следующих:
@@ -66,10 +72,9 @@ def detective_list(suspects, rooms, weapons):
     Теперь нарисуйте узкие столбцы по количеству подозреваемых.
     Так вы сможете отмечать у кого какие карты.
     Скажите "Начать", чтобы начать расследование.
-    Или "Повторить", чтобы прослушать еще раз""".format("\n".join(suspects),
-                                                        "\n".join(rooms),
-                                                        "\n".join(weapons)
-                                                        )
+    Или "Повторить", чтобы прослушать еще раз""".format(
+        "\n".join(SUSPECTS), "\n".join(ROOMS), "\n".join(WEAPONS)
+    )
     tts = """Возьмите лист бумаги. Лучше в клетку, чтобы было удобно рисовать.
     Нарисуйте один широкий столбец.
     Сначала выпишите карты подозреваемых. Запишите следующих:
@@ -81,98 +86,122 @@ def detective_list(suspects, rooms, weapons):
     Теперь нарисуйте узкие столбцы по количеству подозреваемых.
     Так вы сможете отмечать у кого какие карты.
     Скажите "Начать", чтобы начать расследование.
-    Или "Повторить", чтобы прослушать еще раз""".format("\n sil <[500]>".join(suspects),
-                                                        "\n sil <[500]>".join(rooms),
-                                                        "\n sil <[500]>".join(weapons)
-                                                        )
+    Или "Повторить", чтобы прослушать еще раз""".format(
+        "\n sil <[500]>".join(SUSPECTS),
+        "\n sil <[500]>".join(ROOMS),
+        "\n sil <[500]>".join(WEAPONS),
+    )
 
     return text, tts
 
 
 def start_game(suspect: str, room: str, weapon: str):
 
-    room_text = __inflect(room, {'loct'})
-    weapon_text = __inflect(weapon, {'ablt'})
+    room_text = __inflect(room, {"loct"})
+    weapon_text = __inflect(weapon, {"ablt"})
 
-    text = """Черт! Знал же, что не надо было идти на эту вечеринку.
+    text = f"""Черт! Знал же, что не надо было идти на эту вечеринку.
             Будет весело, говорили они. Отдохнешь, развеешься.
             В самый разгар мы нашли тело мистера Блэк в подвале.
             Убийца явно один из тех, кто был в доме. Так что за работу!
-            Это явно не {}, мы были вместе почти весь вечер.
+            Это явно не {suspect.upper()}, мы были вместе почти весь вечер.
             Похоже тело перенесли в подвал. Откуда?
-            Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
-            И судя по следам, мистера Блэк не могли убить {}.
+            Большую часть вечеринки я просидел в {room_text.upper()}, но тут еще полно комнат.
+            И судя по следам, мистера Блэк не могли убить {weapon_text.upper()}.
             Кто же тогда? Где он убил его? И чем?
-            Повторить?""".format(suspect.upper(), room_text.upper(), weapon_text.upper())
+            Повторить еще раз, если не успели всех отметить?"""
+
     tts = """Черт! Знал же, что не надо было идти на эту вечеринку.
                 Будет весело, говорили они. Отдохнешь, развеешься.
                 <speaker audio="alice-sounds-human-crowd-2.opus">
                 В самый разгар мы нашли тело мистера Блэк в подвале.
                 Убийца явно один из тех, кто был в доме. Так что за работу!
-                Это явно не {}, мы были вместе почти весь вечер.
+                Это явно не {suspect}, мы были вместе почти весь вечер.
                 Похоже тело перенесли в подвал. Откуда?
-                Большую часть вечеринки я просидел в {}, но тут еще полно комнат.
-                И судя по следам, мистера Блэк не могли убить {}.
+                Большую часть вечеринки я просидел в {room_text}, но тут еще полно комнат.
+                И судя по следам, мистера Блэк не могли убить {weapon_text}.
                 Кто же тогда? Где он убил его? И чем?
                 sil <[1500]>
-                Повторить?""".format(suspect, room_text, weapon_text)
+                Повторить еще раз, если не успели всех отметить?"""
+    return text, tts
+
+
+def start_game_lite(suspect: str, room: str, weapon: str):
+    text = f"""Вот карты, которые точно не являются загадкой:
+    {suspect.upper()}.
+    {room.upper()}.
+    {weapon.upper()}.
+    Повторить еще раз, если не успели всех отметить?"""
+
+    tts = f"""Вот карты, которые точно не являются загадкой:
+    {suspect}. sil <[1000]>
+    {room}. sil <[1000]>
+    {weapon}. sil <[1000]>
+    Повторить еще раз, если не успели всех отметить?"""
+
     return text, tts
 
 
 def who_do_you_suspect():
 
     texts = [
-        'Кого вы подозреваете?',
-        'Кто же убийца, по вашему?',
-        'Кто же мог совершить это преступление?'
+        "Кого вы подозреваете?",
+        "Кто же убийца, по вашему?",
+        "Кто же мог совершить это преступление?",
     ]
 
     text = random.choice(texts)
     tts = """{}
-    Скажите "Варианты", чтобы узнать какие есть подозреваемые""".format(text)
+    Скажите "Варианты", чтобы узнать какие есть подозреваемые""".format(
+        text
+    )
     return text, tts
 
 
 def in_which_room():
 
     texts = [
-        'Где произошло преступление?',
-        'А в какой комнате мистер Блэк мог быть убит?',
-        'Но в какой же комнате?'
+        "Где произошло преступление?",
+        "А в какой комнате мистер Блэк мог быть убит?",
+        "Но в какой же комнате?",
     ]
 
     text = random.choice(texts)
 
     tts = """{}
-    Скажите "Варианты", чтобы узнать какие есть комнаты""".format(text)
+    Скажите "Варианты", чтобы узнать какие есть комнаты""".format(
+        text
+    )
     return text, tts
 
 
 def what_weapon():
 
     texts = [
-        'Чем был убит мистер Блэк?',
-        'Что использовал убийца?',
-        'Что послужило орудием преступления?'
+        "Чем был убит мистер Блэк?",
+        "Что использовал убийца?",
+        "Что послужило орудием преступления?",
     ]
 
     text = random.choice(texts)
 
     tts = """{}
-    Скажите "Варианты", чтобы узнать возможные предметы""".format(text)
+    Скажите "Варианты", чтобы узнать возможные предметы""".format(
+        text
+    )
     return text, tts
 
 
 def cards(state: str, list_of_cards: list):
-    text = ''
-    if state == 'suspect':  # Подсказать подозреваемых
+    text = ""
+    if state == "suspect":  # Подсказать подозреваемых
         text = "Вы подозреваете следующих: \n"
-    elif state == 'room':  # Подсказать комнату
+    elif state == "room":  # Подсказать комнату
         text = "В доме есть следующие комнаты: \n"
-    elif state == 'weapon':  # Подсказать подозреваемых
+    elif state == "weapon":  # Подсказать подозреваемых
         text = "Возможные орудия убийства: \n"
 
-    text += '\n'.join(list_of_cards)
+    text += "\n".join(list_of_cards)
     tts = text
 
     return text, tts
@@ -191,50 +220,50 @@ def gossip(moves):
 
     for move in moves:
 
-        suspect = move['move'][0]
-        room = move['move'][1]
-        weapon = move['move'][2]
+        suspect = move["move"][0]
+        room = move["move"][1]
+        weapon = move["move"][2]
 
-        texts.append(text_gossip(move['player'], suspect, room, weapon, move['player_stop']))
+        texts.append(
+            text_gossip(move["player"], suspect, room, weapon, move["player_stop"])
+        )
 
-    texts.insert(1, "Показал карту: {}".format(moves[0]['card'].upper()))
-    text = '\n'.join(texts)
-    tts = '\nsil <[1000]>'.join(texts)
+    texts.insert(1, "Показал карту: {}".format(moves[0]["card"].upper()))
+    text = "\n".join(texts)
+    tts = "\nsil <[1000]>".join(texts)
 
     return text, tts
 
 
-def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: str,
-                think_num=None,
-                use_num=None,
-                denial_num=None) -> str:
+def text_gossip(
+    player: str,
+    suspect: str,
+    room: str,
+    weapon: str,
+    player_stop: str,
+    think_num=None,
+    use_num=None,
+    denial_num=None,
+) -> str:
 
     think_list = [
-        'предположить',
-        'заявить',
-        'допустить',
-        'решить',
-        'сказать',
-        'обвинить'
+        "предположить",
+        "заявить",
+        "допустить",
+        "решить",
+        "сказать",
+        "обвинить",
     ]
 
-    use_list = [
-        ('использовав', 'accs'),
-        ('с помощью', 'gent')
-    ]
+    use_list = [("использовав", "accs"), ("с помощью", "gent")]
 
-    denial_list1 = [
-        'сказать',
-        'заявить',
-        'крикнуть',
-        'возмутиться'
-    ]
+    denial_list1 = ["сказать", "заявить", "крикнуть", "возмутиться"]
 
     denial_list2 = [
-        ', что это чушь.',
-        ', чтобы словами зря не бросались.',
-        ', что это бред.',
-        ', что этого не может быть.'
+        ", что это чушь.",
+        ", чтобы словами зря не бросались.",
+        ", что это бред.",
+        ", что этого не может быть.",
     ]
 
     sex = __get_sex(player)
@@ -242,12 +271,12 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
         think_text = random.choice(think_list)
     else:
         think_text = think_list[think_num]
-    think = __inflect(think_text, {sex, 'VERB'})
+    think = __inflect(think_text, {sex, "VERB"})
 
     sex = __get_sex(suspect)
-    kill = __inflect('убить', {sex, 'VERB'})
+    kill = __inflect("убить", {sex, "VERB"})
 
-    room_text = __inflect(room, {'loct', 'sing'})
+    room_text = __inflect(room, {"loct", "sing"})
 
     if use_num is None:
         use_text = random.choice(use_list)
@@ -264,10 +293,12 @@ def text_gossip(player: str, suspect: str, room: str, weapon: str, player_stop: 
     else:
         denial_text1 = denial_list1[denial_num]
         denial_text2 = denial_list2[denial_num]
-    denial = __inflect(denial_text1, {sex, 'VERB'}) + denial_text2
+    denial = __inflect(denial_text1, {sex, "VERB"}) + denial_text2
 
-    text = f'{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, ' \
-           f'{use} {weapon_text.upper()}. Но {player_stop.upper()} {denial}'
+    text = (
+        f"{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, "
+        f"{use} {weapon_text.upper()}. Но {player_stop.upper()} {denial}"
+    )
     return text
 
 

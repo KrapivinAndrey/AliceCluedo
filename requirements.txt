@@ -1,1 +1,2 @@
 pymorphy2==0.8
+fluentcheck
