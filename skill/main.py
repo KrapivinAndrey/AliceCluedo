@@ -16,7 +16,6 @@ def handler(event, context):
         return DEFAULT_SCENE().reply(request)
     current_scene = SCENES.get(current_scene_id, DEFAULT_SCENE)()
     next_scene = current_scene.move(request)
-    print(f"Next scene: {next_scene}")
     if next_scene is not None:
         print(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
         return next_scene.reply(request)

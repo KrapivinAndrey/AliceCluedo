@@ -181,8 +181,8 @@ class GameTurn(Scene):
                 "Gun": "Пистолет",
                 "Rope": "Верервка",
             }
-            if intents.ROOM in req.slots(intents.GOSSIP) and move[state.ROOM] is None:
-                move[state.ROOM] = temp[req.slot(intents.GOSSIP, intents.ROOM)]
+            if intents.WEAPON in req.slots(intents.GOSSIP) and move[state.WEAPON] is None:
+                move[state.WEAPON] = temp[req.slot(intents.GOSSIP, intents.WEAPON)]
 
         def full_answer(move):
             return (
