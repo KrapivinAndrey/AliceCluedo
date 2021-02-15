@@ -1,5 +1,6 @@
 import inspect
 import sys
+from abc import ABC
 
 import skill.texts as texts
 from skill import intents, state
@@ -129,11 +130,17 @@ class NewGameLite(GlobalScene):
 # region Game turn
 
 
-class GameTurn(GlobalScene):
-    def __init__(self, move={}):
-        self.move = {k: v for k, v in move.items() if v is not None}
+class GameTurn(Scene):
+    def __init__(self, move=None):
+        if move:
+            self.player_choose = {k: v for k, v in move.items() if v is not None}
+        else:
+            self.player_choose = {}
 
-    def reply(self, request: Request):
+    def reply(self):
+        pass
+
+    def fallback(self, request):
         pass
 
     def handle_local_intents(self, request: Request):
@@ -203,19 +210,21 @@ class GameTurn(GlobalScene):
                     return WinGame()
                 else:
                     return EndTour(turn["moves"])
-        elif player_move[state.SUSPECT] is None:
-            return ChooseSuspect(player_move)
-        elif player_move[state.ROOM] is None:
-            return ChooseRoom(player_move)
-        elif player_move[state.WEAPON] is None:
-            return ChooseWeapon(player_move)
+            elif player_move[state.SUSPECT] is None:
+                return ChooseSuspect(player_move)
+            elif player_move[state.ROOM] is None:
+                return ChooseRoom(player_move)
+            elif player_move[state.WEAPON] is None:
+                return ChooseWeapon(player_move)
 
+    def handle_global_intents(self, request: Request):
+        pass
 
 class ChooseSuspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in SUSPECTS], state=self.move
+            request, text, tts, buttons=[button(x) for x in SUSPECTS], state=self.player_choose
         )
 
 
@@ -223,7 +232,7 @@ class ChooseRoom(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in ROOMS], state=self.move
+            request, text, tts, buttons=[button(x) for x in ROOMS], state=self.player_choose
         )
 
 
@@ -231,7 +240,7 @@ class ChooseWeapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in WEAPONS], state=self.move
+            request, text, tts, buttons=[button(x) for x in WEAPONS], state=self.player_choose
         )
 
 

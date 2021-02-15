@@ -16,7 +16,11 @@ def game_for_test():
             ["Нож", "Подсвечник", "Бильярдная"],
             ["Миссис Пикок", "Преподобный Грин"],
         ],
-        "secret": ("Профессор Плам", "Гостиная", "Веревка"),
+        "secret": {
+            "suspect": "Профессор Плам",
+            "room": "Гостиная",
+            "weapon": "Веревка",
+        },
     }
 
 
@@ -106,6 +110,26 @@ def start_game():
     }
 
 
+@pytest.fixture()
+def move_suspect():
+
+    return prepare_request(
+        intents=intent(
+            "gossip",
+            {
+                "slots": {
+                    "suspect": {
+                        "type": "Suspect",
+                        "tokens": {"start": 0, "end": 2},
+                        "value": "Peacock",
+                    }
+                }
+            },
+        ),
+        state_session={"screen": state.SUSPECT, "game": game_for_test()},
+    )
+
+
 # endregion
 
 # region start
@@ -135,6 +159,8 @@ def test_list(list_detective):
 def test_new_game(start_game):
     ans = main.handler(start_game, None)
     assert ans
+
+
 
 
 # endregion

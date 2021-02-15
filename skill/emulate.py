@@ -16,8 +16,8 @@ REQUEST = {
         },
     },
     "session": {
-        "message_id": 1,
-        "session_id": "3d3ef0d4-a1d0-45fa-a528-f2b202146403",
+        "message_id": 3,
+        "session_id": "83121456-3020-40e3-b932-de95f3885117",
         "skill_id": "3308dc06-b901-4f7e-8882-beb1b84c0753",
         "user": {
             "user_id": "2D3566FF6B2A05868FE43CDCE5D5E167F13EEDCA13DD4B5BD0F656065D0350E9"
@@ -29,24 +29,19 @@ REQUEST = {
         "new": false,
     },
     "request": {
-        "command": "я думаю убил профессор в столовой",
-        "original_utterance": "я думаю убил профессор в столовой",
+        "command": "миссис пикок",
+        "original_utterance": "Миссис Пикок",
         "nlu": {
-            "tokens": ["я", "думаю", "убил", "профессор", "в", "столовой"],
+            "tokens": ["миссис", "пикок"],
             "entities": [],
             "intents": {
                 "gossip": {
                     "slots": {
                         "suspect": {
                             "type": "Suspect",
-                            "tokens": {"start": 3, "end": 4},
-                            "value": "Plum",
-                        },
-                        "room": {
-                            "type": "Room",
-                            "tokens": {"start": 5, "end": 6},
-                            "value": "DiningRoom",
-                        },
+                            "tokens": {"start": 0, "end": 2},
+                            "value": "Peacock",
+                        }
                     }
                 }
             },
@@ -54,7 +49,28 @@ REQUEST = {
         "markup": {"dangerous_context": false},
         "type": "SimpleUtterance",
     },
-    "state": {"session": {"scene": "GameTurn"}, "user": {}, "application": {}},
+    "state": {
+        "session": {
+            "scene": "ChooseSuspect",
+            "game": {
+                "cards": [
+                    ["Полковник Мастард", "Кабинет", "Гаечный ключ"],
+                    ["Нож", "Преподобный Грин", "Бальный зал"],
+                    ["Вестибюль", "Мисс Скарлет", "Подсвечник"],
+                    ["Кухня", "Профессор Плам", "Веревка"],
+                    ["Бильярдная", "Столовая"],
+                    ["Свинцовая труба", "Библиотека"],
+                ],
+                "secret": {
+                    "suspect": "Миссис Пикок",
+                    "room": "Гостиная",
+                    "weapon": "Пистолет",
+                },
+            },
+        },
+        "user": {},
+        "application": {},
+    },
     "version": "1.0",
 }
 

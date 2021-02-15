@@ -51,7 +51,8 @@ class Request:
         return (
             self.request_body["request"]
             .get("nlu", {})
-            .get("intents", {})[intent]
+            .get("intents", {})
+            .get(intent, {})
             .get("slots", {})
             .keys()
         )
