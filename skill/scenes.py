@@ -181,7 +181,10 @@ class GameTurn(Scene):
                 "Gun": "Пистолет",
                 "Rope": "Верервка",
             }
-            if intents.WEAPON in req.slots(intents.GOSSIP) and move[state.WEAPON] is None:
+            if (
+                intents.WEAPON in req.slots(intents.GOSSIP)
+                and move[state.WEAPON] is None
+            ):
                 move[state.WEAPON] = temp[req.slot(intents.GOSSIP, intents.WEAPON)]
 
         def full_answer(move):
@@ -220,11 +223,16 @@ class GameTurn(Scene):
     def handle_global_intents(self, request: Request):
         pass
 
+
 class ChooseSuspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in SUSPECTS], state=self.player_choose
+            request,
+            text,
+            tts,
+            buttons=[button(x) for x in SUSPECTS],
+            state=self.player_choose,
         )
 
 
@@ -232,7 +240,11 @@ class ChooseRoom(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in ROOMS], state=self.player_choose
+            request,
+            text,
+            tts,
+            buttons=[button(x) for x in ROOMS],
+            state=self.player_choose,
         )
 
 
@@ -240,7 +252,11 @@ class ChooseWeapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in WEAPONS], state=self.player_choose
+            request,
+            text,
+            tts,
+            buttons=[button(x) for x in WEAPONS],
+            state=self.player_choose,
         )
 
 
