@@ -78,7 +78,7 @@ class DetectiveList(GlobalScene):
         )
 
     def handle_local_intents(self, request: Request):
-        if intents.NewGame in request.intents:
+        if intents.NEW_GAME in request.intents:
             return NewGame()
         elif intents.REPEAT in request.intents:
             return DetectiveList()
@@ -265,7 +265,7 @@ class ChooseWeapon(GameTurn):
 class WinGame(GlobalScene):
     def reply(self, request: Request):
         text, tts = texts.win_game()
-        self.make_response(request, text, tts, end_session=True)
+        return self.make_response(request, text, tts, end_session=True)
 
 
 class EndTour(GlobalScene):
@@ -274,7 +274,7 @@ class EndTour(GlobalScene):
 
     def reply(self, request: Request):
         text, tts = texts.gossip(self.turn)
-        self.make_response(request, text, tts, buttons=YES_NO)
+        return self.make_response(request, text, tts, buttons=YES_NO)
 
 
 def _list_scenes():
