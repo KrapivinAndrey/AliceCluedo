@@ -129,61 +129,128 @@ class NewGameLite(GlobalScene):
 # region Game turn
 
 
-class ChooseSuspect(GlobalScene):
+class GameTurn(GlobalScene):
+    def __init__(self, move={}):
+        self.move = {k: v for k, v in move.items() if v is not None}
+
+    def reply(self, request: Request):
+        pass
+
+    def handle_local_intents(self, request: Request):
+        def check_suspect(move, req):
+            temp = {
+                "Plum": "Профессор Плам",
+                "Mustard": "Полковник Мастард",
+                "Green": "Преподобный Грин",
+                "Peacock": "Миссис Пикок",
+                "Scarlet": "Мисс Скарлет",
+            }
+            if (
+                intents.SUSPECT in req.slots(intents.GOSSIP)
+                and move[state.SUSPECT] is None
+            ):
+                move[state.SUSPECT] = temp[req.slot(intents.GOSSIP, intents.SUSPECT)]
+
+        def check_room(move, req):
+            temp = {
+                "BilliardRoom": "Бильярдная",
+                "Library": "Библиотека",
+                "Lobby": "Вестибюль",
+                "Cabinet": "Кабинет",
+                "Kitchen": "Кухня",
+                "LivingRoom": "Гостиная",
+                "DiningRoom": "Столовая",
+                "BallRoom": "Бальный зал",
+            }
+            if intents.ROOM in req.slots(intents.GOSSIP) and move[state.ROOM] is None:
+                move[state.ROOM] = temp[req.slot(intents.GOSSIP, intents.ROOM)]
+
+        def check_weapon(move, req):
+            temp = {
+                "Wrench": "Гаечный ключ",
+                "Candlestick": "Подсвечник",
+                "Knife": "Нож",
+                "Pipe": "Свинцовая",
+                "Gun": "Пистолет",
+                "Rope": "Верервка",
+            }
+            if intents.ROOM in req.slots(intents.GOSSIP) and move[state.ROOM] is None:
+                move[state.ROOM] = temp[req.slot(intents.GOSSIP, intents.ROOM)]
+
+        def full_answer(move):
+            return (
+                move[state.SUSPECT] is not None
+                and move[state.ROOM] is not None
+                and move[state.WEAPON] is not None
+            )
+
+        player_move = {
+            state.SUSPECT: request.session.get(state.SUSPECT, None),
+            state.ROOM: request.session.get(state.ROOM, None),
+            state.WEAPON: request.session.get(state.WEAPON, None),
+        }
+        if intents.GOSSIP in request.intents:
+            check_suspect(player_move, request)
+            check_room(player_move, request)
+            check_weapon(player_move, request)
+            if full_answer(player_move):
+                game.restore(request.session.get("game", {}))
+                turn = game.game_turn(
+                    player_move["suspect"], player_move["room"], player_move["weapon"]
+                )
+
+                if turn["win"]:
+                    return WinGame()
+                else:
+                    return EndTour(turn["moves"])
+        elif player_move[state.SUSPECT] is None:
+            return ChooseSuspect(player_move)
+        elif player_move[state.ROOM] is None:
+            return ChooseRoom(player_move)
+        elif player_move[state.WEAPON] is None:
+            return ChooseWeapon(player_move)
+
+
+class ChooseSuspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
-            request, text, tts, buttons=[button(x) for x in SUSPECTS]
+            request, text, tts, buttons=[button(x) for x in SUSPECTS], state=self.move
         )
 
-    def handle_local_intents(self, request: Request):
-        if intents.SUSPECT in request.intents:
-            return ChooseRoom(request.slots(intents.Suspect)[0])
 
-    def fallback(self, request: Request):
-        pass
-
-
-class ChooseRoom(GlobalScene):
-    def __init__(self, suspect: str):
-        super.__init__()
-        self.suspect = suspect
-
+class ChooseRoom(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
-            request,
-            text,
-            tts,
-            buttons=[button(x) for x in ROOMS],
-            state={state.SUSPECT: self.suspect},
+            request, text, tts, buttons=[button(x) for x in ROOMS], state=self.move
         )
 
-    def handle_local_intents(self, request: Request):
-        if intents.Room in request.intents:
-            return ChooseWeapon(request.slots(intents.Room)[0])
 
-
-class ChooseWeapon(GlobalScene):
-    def __init__(self, room: str):
-        super.__init__()
-        self.room = room
-
+class ChooseWeapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
-            request,
-            text,
-            tts,
-            buttons=[button(x) for x in WEAPONS],
-            state={state.WEAPON: self.weapon},
+            request, text, tts, buttons=[button(x) for x in WEAPONS], state=self.move
         )
-
-    def handle_local_intents(self, request: Request):
-        pass
 
 
 # endregion
+
+
+class WinGame(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.win_game()
+        self.make_response(request, text, tts, end_session=True)
+
+
+class EndTour(GlobalScene):
+    def __init__(self, turn=None):
+        self.turn = turn
+
+    def reply(self, request: Request):
+        text, tts = texts.gossip(self.turn)
+        self.make_response(request, text, tts, buttons=YES_NO)
 
 
 def _list_scenes():

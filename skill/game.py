@@ -101,7 +101,11 @@ class GameEngine:
         random.shuffle(rooms)
         random.shuffle(weapons)
 
-        self._secret = (suspects.pop(), rooms.pop(), weapons.pop())
+        self._secret = {
+            "suspect": suspects.pop(),
+            "room": rooms.pop(),
+            "weapon": weapons.pop(),
+        }
 
         #  Ради цельной истоии игруку тоже дадим по одной из каждой колоды
         self._playerCards[0] = [suspects.pop(), rooms.pop(), weapons.pop()]

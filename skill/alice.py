@@ -52,10 +52,18 @@ class Request:
             self.request_body["request"]
             .get("nlu", {})
             .get("intents", {})[intent]
-            .get(
-                "slots",
-            )
+            .get("slots", {})
             .keys()
+        )
+
+    def slot(self, intent: str, slot: str):
+        return (
+            self.request_body["request"]
+            .get("nlu", {})
+            .get("intents", {})[intent]
+            .get("slots", {})
+            .get(slot, {})
+            .get("value", None)
         )
 
 

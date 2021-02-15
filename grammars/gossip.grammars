@@ -2,12 +2,12 @@ root:
     %lemma
     .* ($Suspect|$Room|$Weapon) .* ($Suspect|$Room|$Weapon)* .* ($Suspect|$Room|$Weapon)*
 slots:
-    Suspect:
+    suspect:
         source: $Suspect
         type: Suspect
-    Room:
+    room:
         source: $Room
         type: Room
-    Weapon:
+    weapon:
         source: $Weapon
         type: Weapon

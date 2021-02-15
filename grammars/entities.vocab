@@ -9,16 +9,53 @@ entity Suspect:
             полковник
             мастрад
             полковник мастрад
+        Green:
+            преподобный
+            грин
+            преподобный грин
+        Peacock:
+            миссис пикок
+            пикок
+        Scarlet:
+            мисс скарлет
+            скарлет
 entity Room:
     lemma: true
     values:
-        Billiard:
+        BilliardRoom:
             бильярдная
-        Dining:
+        Library:
+            библиотека
+        Lobby:
+            вестибюль
+        Cabinet:
+            кабинет
+        Kitchen:
+            кухня
+        LivingRoom:
+            гостиная
+        DiningRoom:
             столовая
+        BallRoom:
+            бальный зал
 entity Weapon:
     lemma: true
     values:
+        Wrench:
+            гаечный ключ
+            ключ
+        Candlestick:
+            подсвечник
+            канделябр
         Knife:
             нож
             кинжал
+        Pipe:
+            свинцовая труба
+            труба
+        Gun:
+            пистолет
+            револьвер
+            застрелил
+        Rope:
+            веревка

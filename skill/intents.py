@@ -12,6 +12,9 @@ NEW_GAME = "new_game"
 
 # region Game turn
 
+GOSSIP = "gossip"
 SUSPECT = "suspect"
+ROOM = "room"
+WEAPON = "weapon"
 
 # endregion
