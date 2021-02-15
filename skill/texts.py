@@ -232,6 +232,8 @@ def gossip(moves):
     text = "\n".join(texts)
     tts = "\nsil <[1000]>".join(texts)
 
+    return "test", "test"
+
     return text, tts
 
 
