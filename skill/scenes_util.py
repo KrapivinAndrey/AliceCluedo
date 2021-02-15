@@ -53,8 +53,8 @@ class Scene(ABC):
             "text": text[:1024],
             "tts": tts[:1024] if tts is not None else text[:1024],
         }
-        print(f"Text length: {len(response.text)}")
-        print(f"TTS length: {len(response.tts)}")
+        print(f"Text length: {len(response['text'])}")
+        print(f"TTS length: {len(response['tts'])}")
         if card:
             response["card"] = card
         if buttons:
