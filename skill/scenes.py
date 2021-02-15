@@ -1,6 +1,5 @@
 import inspect
 import sys
-from abc import ABC
 
 import skill.texts as texts
 from skill import intents, state
@@ -26,8 +25,8 @@ class GlobalScene(Scene):
         save_state = {}
         # Сохраним важные состояние
         for save in state.MUST_BE_SAVE:
-            if save in request.state_session:
-                save_state.update({save: request.state_session[save]})
+            if save in request.session:
+                save_state.update({save: request.session[save]})
         return self.make_response(
             request=request,
             text="Извините, я вас не поняла. Пожалуйста, попробуйте переформулировать вопрос.",
@@ -109,7 +108,7 @@ class NewGame(GlobalScene):
 
 class NewGameLite(GlobalScene):
     def reply(self, request: Request):
-        game_state = request.state_session[state.GAME]
+        game_state = request.session[state.GAME]
         game.restore(game_state)
         text, tts = texts.start_game_lite(
             game.playerCards[0], game.playerCards[1], game.playerCards[2]
@@ -137,7 +136,7 @@ class GameTurn(Scene):
         else:
             self.player_choose = {}
 
-    def reply(self):
+    def reply(self, request: Request):
         pass
 
     def fallback(self, request):
