@@ -29,9 +29,7 @@ def hello():
 
 
 def hello_fallback():
-    text = """Извините. Не понял Вас. 
-    Начинаем новую игру?"""
-    tts = text
+    text = tts = "Извините. Не понял Вас." "Начинаем новую игру?"
     return text, tts
 
 
