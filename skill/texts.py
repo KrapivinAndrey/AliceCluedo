@@ -34,12 +34,6 @@ def hello_fallback():
     return text, tts
 
 
-def hello_need_rules():
-    text = tts = """Жаль...
-    Возможно, тебе хочется сначала узнать правила игры?"""
-    return text, tts
-
-
 def rules():
     text = """Правила игры.
     В игре есть несколько карт подозреваемых, мест преступления и орудий.
