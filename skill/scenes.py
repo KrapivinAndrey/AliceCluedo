@@ -58,11 +58,15 @@ class Welcome(GlobalScene):
             return NewGame()
         elif intents.REJECT in request.intents:
             return HelloNeedRules()
+        elif request.session.get("not_understood", False):
+            return Goodbye()
 
     def fallback(self, request: Request):
         text, tts = texts.hello_fallback()
 
-        return self.make_response(request, text, tts, buttons=YES_NO)
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={"not_understood": True}
+        )
 
 
 class HelloNeedRules(GlobalScene):
@@ -86,12 +90,8 @@ class HelloNeedRules(GlobalScene):
 class Goodbye(GlobalScene):
     def reply(self, request: Request):
         text, tts = texts.goodbye()
-        return self.make_response(
-            request,
-            text,
-            tts,
-            end_session=True
-        )
+        return self.make_response(request, text, tts, end_session=True)
+
 
 class Rules(GlobalScene):
     def reply(self, request: Request):
