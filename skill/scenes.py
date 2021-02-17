@@ -274,7 +274,9 @@ class EndTour(GlobalScene):
 
     def reply(self, request: Request):
         text, tts = texts.gossip(self.turn)
-        return self.make_response(request, text, tts, buttons=YES_NO)
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={"turn": self.turn}
+        )
 
 
 def _list_scenes():

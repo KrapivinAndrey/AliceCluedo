@@ -49,7 +49,13 @@ def session(new=False):
     }
 
 
-def prepare_request(new=False, intents={}, state_session={}, state_user={}):
+def prepare_request(new=False, intents=None, state_session=None, state_user=None):
+    if intents is None:
+        intents = {}
+    if state_session is None:
+        state_session = {}
+    if state_user is None:
+        state_user = {}
     req = {
         "meta": meta(),
         "session": session(new),
@@ -67,7 +73,9 @@ def prepare_request(new=False, intents={}, state_session={}, state_user={}):
     return req
 
 
-def intent(name, slots=[]):
+def intent(name, slots=None):
+    if slots is None:
+        slots = []
     return {name: {"slots": slots}}
 
 
@@ -137,23 +145,23 @@ def move_suspect():
 
 def test_hello(start_session):
     ans = main.handler(start_session, None)
-    Check(ans).is_dict().has_keys("response")
-    Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_string().matches("^Привет!.*")
+    Check(ans).is_not_none().is_dict().has_keys("response")
+    Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
+    Check(ans["response"]["text"]).is_not_none().is_string().matches("^Привет!.*")
 
 
 def test_rule(need_rules):
     ans = main.handler(need_rules, None)
-    Check(ans).is_dict().has_keys("response")
-    Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_string().matches("^Правила игры")
+    Check(ans).is_not_none().is_dict().has_keys("response")
+    Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
+    Check(ans["response"]["text"]).is_not_none().is_string().matches("^Правила игры")
 
 
 def test_list(list_detective):
     ans = main.handler(list_detective, None)
-    Check(ans).is_dict().has_keys("response")
-    Check(ans.get("response", {})).is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_string().matches("^Возьмите лист бумаги")
+    Check(ans).is_not_none().is_dict().has_keys("response")
+    Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
+    Check(ans["response"]["text"]).is_not_none().is_string().matches("^Возьмите лист бумаги")
 
 
 def test_new_game(start_game):
