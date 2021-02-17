@@ -31,7 +31,15 @@ def hello():
 def hello_fallback():
     text = """Извините. Не понял Вас. 
     Начинаем новую игру?"""
-    return text, text
+    tts = text
+    return text, tts
+
+
+def hello_need_rules():
+    text = """Жаль...
+    Возможно, тебе хочется сначала узнать правила игры?"""
+    tts = text
+    return text, tts
 
 
 def rules():
@@ -313,4 +321,12 @@ def win_game():
     Правосудие восторжествовало.
     Это была сложная задача. Надеюсь Вам понравилось.
     Не забудьте поставить оценку навыку."""
+    return text, tts
+
+
+def goodbye():
+    text = """Кажется игра у нас не клеится.
+    Ладно. Возвращайтесь в любое время.
+    До свидания!"""
+    tts = "<speaker audio='alice-sounds-game-loss-3.opus'>" + text
     return text, tts

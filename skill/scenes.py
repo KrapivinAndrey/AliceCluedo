@@ -56,12 +56,42 @@ class Welcome(GlobalScene):
             return Rules()
         elif intents.NEW_GAME in request.intents or intents.CONFIRM in request.intents:
             return NewGame()
+        elif intents.REJECT in request.intents:
+            return HelloNeedRules()
 
     def fallback(self, request: Request):
         text, tts = texts.hello_fallback()
 
         return self.make_response(request, text, tts, buttons=YES_NO)
 
+
+class HelloNeedRules(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.hello_need_rules()
+
+        return self.make_response(
+            request,
+            text,
+            tts,
+            buttons=YES_NO,
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return Rules()
+        else:
+            return Goodbye()
+
+
+class Goodbye(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.goodbye()
+        return self.make_response(
+            request,
+            text,
+            tts,
+            end_session=True
+        )
 
 class Rules(GlobalScene):
     def reply(self, request: Request):
