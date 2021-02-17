@@ -28,6 +28,12 @@ def hello():
     return text, tts
 
 
+def hello_fallback():
+    text = """Извините. Не понял Вас. 
+    Начинаем новую игру?"""
+    return text, text
+
+
 def rules():
     text = """Правила игры.
     В игре есть несколько карт подозреваемых, мест преступления и орудий.

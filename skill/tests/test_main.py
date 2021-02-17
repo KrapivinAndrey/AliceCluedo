@@ -102,23 +102,6 @@ def list_detective():
 
 
 @pytest.fixture()
-def start_game():
-    return {
-        "meta": meta(),
-        "session": session(),
-        "request": {
-            "command": "начать",
-            "original_utterance": "Начать",
-            "nlu": {"tokens": ["начать"], "entities": [], "intents": {}},
-            "markup": {"dangerous_context": False},
-            "type": "SimpleUtterance",
-        },
-        "state": {"session": {"GameState": "new_game"}, "user": {}, "application": {}},
-        "version": "1.0",
-    }
-
-
-@pytest.fixture()
 def move_suspect():
 
     return prepare_request(
@@ -162,13 +145,6 @@ def test_list(list_detective):
     Check(ans).is_not_none().is_dict().has_keys("response")
     Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
     Check(ans["response"]["text"]).is_not_none().is_string().matches("^Возьмите лист бумаги")
-
-
-def test_new_game(start_game):
-    ans = main.handler(start_game, None)
-    assert ans
-
-
 
 
 # endregion

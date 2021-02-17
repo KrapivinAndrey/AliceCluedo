@@ -54,8 +54,13 @@ class Welcome(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
             return Rules()
-        elif intents.NEW_GAME in request.intents:
+        elif intents.NEW_GAME in request.intents or intents.CONFIRM in request.intents:
             return NewGame()
+
+    def fallback(self, request: Request):
+        text, tts = texts.hello_fallback()
+
+        return self.make_response(request, text, tts, buttons=YES_NO)
 
 
 class Rules(GlobalScene):
