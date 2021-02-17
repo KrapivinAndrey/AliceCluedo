@@ -145,4 +145,3 @@ class GameEngine:
                 result["moves"].append(move(randomCards(i), i))
 
         return result
-
