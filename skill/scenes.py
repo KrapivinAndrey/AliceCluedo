@@ -54,7 +54,7 @@ class Welcome(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
             return Rules()
-        elif intents.NEW_GAME in request.intents or intents.CONFIRM in request.intents:
+        elif intents.NEW_GAME in request.intents:
             return NewGame()
 
 
@@ -68,16 +68,6 @@ class Rules(GlobalScene):
             return DetectiveList()
         elif intents.REJECT in request.intents:
             return NewGame()
-
-    def fallback(self, request: Request):
-        if request.session.get("not_understood", False):
-            text, tts = texts.goodbye()
-            return self.make_response(request, text, tts, end_session=True)
-        else:
-            text, tts = texts.rules_fallback()
-            return self.make_response(
-                request, text, tts, buttons=YES_NO, state={"not_understood": True}
-            )
 
 
 class DetectiveList(GlobalScene):
