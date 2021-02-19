@@ -29,7 +29,7 @@ class GlobalScene(Scene):
                 save_state.update({save: request.session[save]})
         return self.make_response(
             request=request,
-            text="Извините, я вас не поняла. Пожалуйста, попробуйте переформулировать вопрос.",
+            text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
             state=save_state,
         )
 
@@ -103,7 +103,7 @@ class NewGame(GlobalScene):
         if intents.CONFIRM in request.intents:
             return NewGameLite()
         elif intents.REJECT in request.intents:
-            return ChooseSuspect()
+            return suspect()
 
 
 class NewGameLite(GlobalScene):
@@ -121,7 +121,7 @@ class NewGameLite(GlobalScene):
         if intents.CONFIRM in request.intents:
             return NewGameLite()
         elif intents.REJECT in request.intents:
-            return ChooseSuspect()
+            return suspect()
 
 
 # endregion
@@ -139,8 +139,27 @@ class GameTurn(Scene):
     def reply(self, request: Request):
         pass
 
-    def fallback(self, request):
-        pass
+    def fallback(self, request: Request):
+
+        text, tts = texts.wrong_answer()
+
+        if request.session.get("scene", "") == state.SUSPECT:
+            buttons = [button(x) for x in SUSPECTS]
+            text_, tts_ = texts.who_do_you_suspect()
+        elif request.session.get("scene", "") == state.ROOM:
+            buttons = [button(x) for x in ROOMS]
+            text_, tts_ = texts.in_which_room()
+        elif request.session.get("scene", "") == state.WEAPON:
+            buttons = [button(x) for x in WEAPONS]
+            text_, tts_ = texts.what_weapon()
+
+        return self.make_response(
+            request,
+            text + "\n" + text_,
+            tts + "sil <[1000]>" + text_,
+            buttons=buttons,
+            state=self.player_choose,
+        )
 
     def handle_local_intents(self, request: Request):
         def check_suspect(move, req):
@@ -213,17 +232,17 @@ class GameTurn(Scene):
                 else:
                     return EndTour(turn["moves"])
             elif player_move[state.SUSPECT] is None:
-                return ChooseSuspect(player_move)
+                return suspect(player_move)
             elif player_move[state.ROOM] is None:
-                return ChooseRoom(player_move)
+                return room(player_move)
             elif player_move[state.WEAPON] is None:
-                return ChooseWeapon(player_move)
+                return weapon(player_move)
 
     def handle_global_intents(self, request: Request):
         pass
 
 
-class ChooseSuspect(GameTurn):
+class suspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
@@ -235,7 +254,7 @@ class ChooseSuspect(GameTurn):
         )
 
 
-class ChooseRoom(GameTurn):
+class room(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
@@ -247,7 +266,7 @@ class ChooseRoom(GameTurn):
         )
 
 
-class ChooseWeapon(GameTurn):
+class weapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
@@ -274,7 +293,9 @@ class EndTour(GlobalScene):
 
     def reply(self, request: Request):
         text, tts = texts.gossip(self.turn)
-        return self.make_response(request, text, tts, buttons=YES_NO)
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={"turn": self.turn}
+        )
 
 
 def _list_scenes():

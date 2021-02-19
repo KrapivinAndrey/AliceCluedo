@@ -45,48 +45,19 @@ class GameEngine:
 
     @staticmethod
     def suspects():
-        return [
-            "Миссис Пикок",
-            "Мисс Скарлет",
-            "Полковник Мастард",
-            "Профессор Плам",
-            "Преподобный Грин",
-        ]
+        return SUSPECTS.copy()
 
     @staticmethod
     def players():
-        return [
-            "Детектив",
-            "Миссис Пикок",
-            "Мисс Скарлет",
-            "Полковник Мастард",
-            "Профессор Плам",
-            "Преподобный Грин",
-        ]
+        return (["Детектив"] + SUSPECTS).copy()
 
     @staticmethod
     def weapons():
-        return [
-            "Гаечный ключ",
-            "Подсвечник",
-            "Нож",
-            "Свинцовая труба",
-            "Пистолет",
-            "Веревка",
-        ]
+        return WEAPONS.copy()
 
     @staticmethod
     def rooms():
-        return [
-            "Бильярдная",
-            "Библиотека",
-            "Вестибюль",
-            "Кабинет",
-            "Кухня",
-            "Гостиная",
-            "Столовая",
-            "Бальный зал",
-        ]
+        return ROOMS.copy()
 
     @property
     def playerCards(self):
@@ -174,21 +145,3 @@ class GameEngine:
                 result["moves"].append(move(randomCards(i), i))
 
         return result
-
-    def it_is_suspect(self, suspect: str) -> str:
-        for x in self.suspects():
-            if suspect == x.lower():
-                return x
-        return ""
-
-    def it_is_room(self, room: str) -> str:
-        for x in self.rooms():
-            if room == x.lower():
-                return x
-        return ""
-
-    def it_is_weapon(self, weapon: str) -> str:
-        for x in self.weapons():
-            if weapon == x.lower():
-                return x
-        return ""

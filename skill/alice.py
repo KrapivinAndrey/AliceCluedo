@@ -36,7 +36,7 @@ class Request:
         return self.request_body.get("request", {}).get("type")
 
     @property
-    def session(self):
+    def session(self) -> dict:
         return self.request_body.get("state", {}).get("session", {})
 
     @property
