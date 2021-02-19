@@ -18,4 +18,4 @@ jobs:
           environment: DEBUG=True
           entrypoint: 'skill.main.handler'
           source: '.'
-          exclude: '*/**.png'
+          exclude: 'Pictures/'
