@@ -240,7 +240,7 @@ def gossip(moves):
             text_gossip(move["player"], suspect, room, weapon, move["player_stop"])
         )
 
-    texts.insert(1, "Показал карту: {}".format(moves[0]["card"].upper()))
+    texts.insert(1, "Карта: {}".format(moves[0]["card"].upper()))
     text = "\n".join(texts)
     tts = "\nsil <[1000]>".join(texts)
 

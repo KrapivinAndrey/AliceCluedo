@@ -7,6 +7,7 @@ from skill.alice import Request
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from skill.responce_helpers import big_image, button, image_gallery
 from skill.scenes_util import Scene
+import skill.gallery as gallery
 
 game = GameEngine()
 
@@ -250,6 +251,7 @@ class suspect(GameTurn):
             text,
             tts,
             buttons=[button(x) for x in SUSPECTS],
+            card=image_gallery(gallery.SUSPECTS),
             state=self.player_choose,
         )
 
@@ -262,6 +264,7 @@ class room(GameTurn):
             text,
             tts,
             buttons=[button(x) for x in ROOMS],
+            card=image_gallery(gallery.ROOMS),
             state=self.player_choose,
         )
 
@@ -274,6 +277,7 @@ class weapon(GameTurn):
             text,
             tts,
             buttons=[button(x) for x in WEAPONS],
+            card=image_gallery(gallery.WEAPONS),
             state=self.player_choose,
         )
 
