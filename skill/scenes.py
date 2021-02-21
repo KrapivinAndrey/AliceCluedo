@@ -7,6 +7,7 @@ from skill.alice import Request
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from skill.responce_helpers import big_image, button, image_gallery
 from skill.scenes_util import Scene
+import skill.gallery as gallery
 
 game = GameEngine()
 
@@ -146,12 +147,15 @@ class GameTurn(Scene):
         if request.session.get("scene", "") == state.SUSPECT:
             buttons = [button(x) for x in SUSPECTS]
             text_, tts_ = texts.who_do_you_suspect()
+            images = image_gallery(gallery.SUSPECTS)
         elif request.session.get("scene", "") == state.ROOM:
             buttons = [button(x) for x in ROOMS]
             text_, tts_ = texts.in_which_room()
+            images = image_gallery(gallery.ROOMS)
         elif request.session.get("scene", "") == state.WEAPON:
             buttons = [button(x) for x in WEAPONS]
             text_, tts_ = texts.what_weapon()
+            images = image_gallery(gallery.WEAPONS)
 
         return self.make_response(
             request,
@@ -159,6 +163,7 @@ class GameTurn(Scene):
             tts + "sil <[1000]>" + text_,
             buttons=buttons,
             state=self.player_choose,
+            card=images
         )
 
     def handle_local_intents(self, request: Request):
