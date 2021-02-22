@@ -73,7 +73,7 @@ class HelpMenu(GlobalScene):
                     ),
                 ]
             ),
-            buttons = [button("Продолжить")]
+            buttons=[button("Продолжить")]
         )
 
 
