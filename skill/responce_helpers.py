@@ -55,7 +55,7 @@ def image_gallery(image_ids: list):
 
 
 def image_button(
-    image_id: str,
+    image_id="",
     title="",
     description="",
     button_text="",
