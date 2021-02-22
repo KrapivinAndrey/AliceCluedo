@@ -82,7 +82,7 @@ class HelpMenu(GlobalScene):
                         "Комнаты",
                     ),
                     image_button(
-                        "",
+                        gallery.MENU_NEXT,
                         "Продолжить",
                         "",
                         "Продолжить",
