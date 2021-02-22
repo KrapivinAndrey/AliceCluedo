@@ -71,9 +71,9 @@ class HelpMenu(GlobalScene):
                     image_button(
                         gallery.MENU_ROOM, "Комнаты", "Карты комнат, где могли убить"
                     ),
-                ],
-                button_text="Продолжить",
+                ]
             ),
+            buttons = [button("Продолжить")]
         )
 
 
