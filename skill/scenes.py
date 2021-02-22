@@ -23,7 +23,8 @@ class GlobalScene(Scene):
         pass
 
     def handle_global_intents(self, request):
-        pass
+        if intents.HELP in request.intents or intents.WHAT_CAN_YOU_DO in request.intents:
+            return HelpMenu()
 
     def handle_local_intents(self, request: Request):
         pass
@@ -282,8 +283,9 @@ class GameTurn(Scene):
             elif player_move[state.WEAPON] is None:
                 return weapon(player_move)
 
-    def handle_global_intents(self, request: Request):
-        pass
+    def handle_global_intents(self, request):
+        if intents.HELP in request.intents or intents.WHAT_CAN_YOU_DO in request.intents:
+            return HelpMenu()
 
 
 class suspect(GameTurn):
