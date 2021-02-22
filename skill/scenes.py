@@ -1,13 +1,19 @@
 import inspect
 import sys
 
+import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
 from skill.alice import Request
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
-from skill.responce_helpers import big_image, button, image_gallery
+from skill.responce_helpers import (
+    big_image,
+    button,
+    image_button,
+    image_gallery,
+    image_list,
+)
 from skill.scenes_util import Scene
-import skill.gallery as gallery
 
 game = GameEngine()
 
@@ -34,6 +40,43 @@ class GlobalScene(Scene):
             state=save_state,
         )
 
+
+# region Обязательные сцены
+
+
+class HelpMenu(GlobalScene):
+    def __init__(self, save_scene=""):
+        self.__save_scene = save_scene
+
+    def reply(self, request: Request):
+        text, tts = texts.help_menu()
+        return self.make_response(
+            request,
+            text,
+            tts,
+            card=image_list(
+                [
+                    image_button(gallery.MENU_RULE, "Правила", "Правила игры"),
+                    image_button(
+                        gallery.MENU_SUSPECT,
+                        "Подозреваемые",
+                        "Карты подозреваемых, кто мог бы убить",
+                    ),
+                    image_button(
+                        gallery.MENU_WEAPON,
+                        "Орудия",
+                        "Карты орудий преступления, чем могли убить",
+                    ),
+                    image_button(
+                        gallery.MENU_ROOM, "Комнаты", "Карты комнат, где могли убить"
+                    ),
+                ],
+                button_text="Продолжить",
+            ),
+        )
+
+
+# endregion
 
 # region Начало игры
 

@@ -12,6 +12,36 @@ def big_image(image_id: list, title=None, description=None):
     return big_image
 
 
+def image_list(
+    image_ids: list,
+    header="",
+    footer="",
+    button_text="",
+    button_url="",
+    button_payload="",
+):
+    card = {
+        "type": "ItemsList",
+        "items": image_ids,
+    }
+    if header:
+        card["header"] = {"text": header}
+    if footer or button_text or button_url or button_payload:
+        card["footer"] = {}
+        if footer:
+            card["footer"]["text"] = footer
+        if button_text or button_url or button_payload:
+            card["footer"]["button"] = {}
+            if button_text:
+                card["footer"]["button"]["text"] = button_text
+            if button_url:
+                card["footer"]["button"]["url"] = button_url
+            if button_payload:
+                card["footer"]["button"]["payload"] = button_payload
+
+    return card
+
+
 def image_gallery(image_ids: list):
     if image_ids and image_ids[0] != "":
 
@@ -22,6 +52,34 @@ def image_gallery(image_ids: list):
         }
     else:
         return {}
+
+
+def image_button(
+    image_id: str,
+    title="",
+    description="",
+    button_text="",
+    button_url="",
+    button_payload="",
+):
+    image = {
+        "image_id": image_id,
+    }
+    if title:
+        image["title"] = title
+    if description:
+        image["description"] = description
+    if button_text or button_url or button_payload:
+        button = {}
+        if button_text:
+            button["text"] = button_text
+        if button_url:
+            button["url"] = button_url
+        if button_payload:
+            button["payload"] = button_payload
+        image["button"] = button
+
+    return image
 
 
 def button(title, payload=None, url=None, hide=False):
