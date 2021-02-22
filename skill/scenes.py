@@ -23,7 +23,10 @@ class GlobalScene(Scene):
         pass
 
     def handle_global_intents(self, request):
-        if intents.HELP in request.intents or intents.WHAT_CAN_YOU_DO in request.intents:
+        if (
+            intents.HELP in request.intents
+            or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
             return HelpMenu()
 
     def handle_local_intents(self, request: Request):
@@ -57,23 +60,30 @@ class HelpMenu(GlobalScene):
             tts,
             card=image_list(
                 [
-                    image_button(gallery.MENU_RULE, "Правила", "Правила игры"),
+                    image_button(
+                        gallery.MENU_RULE, "Правила", "Правила игры", "Правила"
+                    ),
                     image_button(
                         gallery.MENU_SUSPECT,
                         "Подозреваемые",
                         "Карты подозреваемых, кто мог бы убить",
+                        "Подозреваемые",
                     ),
                     image_button(
                         gallery.MENU_WEAPON,
                         "Орудия",
                         "Карты орудий преступления, чем могли убить",
+                        "Орудия",
                     ),
                     image_button(
-                        gallery.MENU_ROOM, "Комнаты", "Карты комнат, где могли убить"
+                        gallery.MENU_ROOM,
+                        "Комнаты",
+                        "Карты комнат, где могли убить",
+                        "Комнаты",
                     ),
                 ]
             ),
-            buttons=[button("Продолжить")]
+            buttons=[button("Продолжить")],
         )
 
 
@@ -284,7 +294,10 @@ class GameTurn(Scene):
                 return weapon(player_move)
 
     def handle_global_intents(self, request):
-        if intents.HELP in request.intents or intents.WHAT_CAN_YOU_DO in request.intents:
+        if (
+            intents.HELP in request.intents
+            or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
             return HelpMenu()
 
 
