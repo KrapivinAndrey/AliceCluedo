@@ -398,7 +398,7 @@ class Rules(HelpMenuItem):
         return super().reply(request, text, tts)
 
 
-class DetectiveList(GlobalScene):
+class DetectiveList(HelpMenuItem):
     def reply(self, request: Request):
         text, tts = texts.detective_list()
         return super().reply(request, text, tts)
@@ -410,13 +410,13 @@ class DetectiveList(GlobalScene):
             return super().handle_local_intents(request)
 
 
-class tell_cards(GlobalScene):
+class tell_cards(HelpMenuItem):
     def __init__(self, type_of_cards: str):
         self.type_of_cards = type_of_cards
 
     def reply(self, request: Request):
         text, tts = texts.cards(self.type_of_cards)
-        return self.make_response(request, text, tts)
+        return self.super().make_response(request, text, tts)
 
 
 # endregion

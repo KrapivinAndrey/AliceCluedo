@@ -328,7 +328,7 @@ def cards(state: str):
         head = "Возможные орудия убийства: \n"
         list_of_cards = WEAPONS
 
-    text = head + "\n".join(list_of_cards) + "\nПродолжить?"
-    tts = head + "\n sil <[500]>".join(list_of_cards) + "\nПродолжить?"
+    text = head + "\n".join(list_of_cards)
+    tts = head + "\n sil <[500]>".join(list_of_cards)
 
     return text, tts
