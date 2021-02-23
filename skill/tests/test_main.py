@@ -90,7 +90,7 @@ def start_session():
 @pytest.fixture()
 def need_rules():
     return prepare_request(
-        intents=intent(intents.RULES), state_session={"scene": state.WELCOME}
+        intents=intent(intents.HELP), state_session={"scene": state.WELCOME}
     )
 
 

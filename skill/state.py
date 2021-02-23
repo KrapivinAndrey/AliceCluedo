@@ -4,7 +4,6 @@ USERSTATE_RESPONSE_KEY = "user_state_update"
 
 # region State of dialog
 WELCOME = "Welcome"
-RULES = "Rules"
 
 GAME = "game"
 WEAPON = "weapon"
