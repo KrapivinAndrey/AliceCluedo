@@ -176,7 +176,7 @@ class HelpMenuItem(Scene):
         )
         tts = (
             tts
-            + +"\n"
+            + "\n"
             + """Скажите ""Помощь"", чтобы снова получить подсказки. sil <[500]>
         Скажите "Продолжить", чтобы вернуться откуда начали"""
         )
@@ -222,7 +222,7 @@ class Welcome(GlobalScene):
             tts,
             buttons=[
                 button("Начать игру"),
-                button("Правила"),
+                button("Помощь"),
             ],
         )
 
@@ -395,19 +395,19 @@ class HelpMenu(GlobalScene):
 class Rules(HelpMenuItem):
     def reply(self, request: Request):
         text, tts = texts.rules()
-        return super.reply(request, text, tts)
+        return super().reply(request, text, tts)
 
 
 class DetectiveList(GlobalScene):
     def reply(self, request: Request):
         text, tts = texts.detective_list()
-        return super.reply(request, text, tts)
+        return super().reply(request, text, tts)
 
     def handle_local_intents(self, request: Request):
         if intents.REPEAT in request.intents:
             return DetectiveList()
         else:
-            return super.handle_local_intents(request)
+            return super().handle_local_intents(request)
 
 
 class tell_cards(GlobalScene):
