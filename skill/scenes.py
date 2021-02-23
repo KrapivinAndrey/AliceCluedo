@@ -378,7 +378,7 @@ class HelpMenu(GlobalScene):
                     ),
                 ]
             ),
-            state={"save_state", self.__save_scene},
+            state={"save_state": self.__save_scene},
         )
 
     def handle_local_intents(self, request: Request):
