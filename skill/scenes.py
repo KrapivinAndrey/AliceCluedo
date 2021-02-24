@@ -416,7 +416,7 @@ class tell_cards(HelpMenuItem):
 
     def reply(self, request: Request):
         text, tts = texts.cards(self.type_of_cards)
-        return self.super().make_response(request, text, tts)
+        return super().reply(request, text, tts)
 
 
 # endregion
