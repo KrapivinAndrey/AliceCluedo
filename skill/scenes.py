@@ -191,11 +191,8 @@ class HelpMenuItem(Scene):
         )
 
     def handle_local_intents(self, request: Request):
-        if (
-            intents.HELP in request.intents
-            or intents.WHAT_CAN_YOU_DO in request.intents
-        ):
-            return HelpMenu(request.session[state.PREVIOUS_STATE])
+        if intents.CONTINUE in request.intents:
+            return eval(f"{request.session[state.PREVIOUS_STATE]}()")
 
     def handle_global_intents(self, request):
         if (
@@ -421,7 +418,7 @@ class DetectiveList(HelpMenuItem):
 
 
 class AboutCards(HelpMenuItem):
-    def __init__(self, type_of_cards: str):
+    def __init__(self, type_of_cards=""):
         self.type_of_cards = type_of_cards
 
     def reply(self, request: Request):
