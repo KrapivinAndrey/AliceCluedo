@@ -152,14 +152,18 @@ class GameTurn(Scene):
                 else:
                     return EndTour(turn["moves"])
             elif player_move[state.SUSPECT] is None:
-                return suspect(player_move)
+                return Suspect(player_move)
             elif player_move[state.ROOM] is None:
-                return room(player_move)
+                return Room(player_move)
             elif player_move[state.WEAPON] is None:
-                return weapon(player_move)
+                return Weapon(player_move)
 
     def handle_global_intents(self, request):
-        pass
+        if (
+                intents.HELP in request.intents
+                or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
+            return HelpMenu(self.id())
 
 
 # класс меню помощи
@@ -193,8 +197,12 @@ class HelpMenuItem(Scene):
         ):
             return HelpMenu(request.session[state.PREVIOUS_STATE])
 
-    def handle_global_intents(self, request: Request):
-        pass
+    def handle_global_intents(self, request):
+        if (
+                intents.HELP in request.intents
+                or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
+            return HelpMenu(self.session[state.PREVIOUS_STATE])
 
     def fallback(self, request: Request):
         return self.make_response(
@@ -249,7 +257,7 @@ class NewGame(GlobalScene):
         if intents.CONFIRM in request.intents:
             return NewGameLite()
         elif intents.REJECT in request.intents:
-            return suspect()
+            return Suspect()
 
 
 class NewGameLite(GlobalScene):
@@ -267,7 +275,7 @@ class NewGameLite(GlobalScene):
         if intents.CONFIRM in request.intents:
             return NewGameLite()
         elif intents.REJECT in request.intents:
-            return suspect()
+            return Suspect()
 
 
 # endregion
@@ -275,7 +283,7 @@ class NewGameLite(GlobalScene):
 # region Game turn
 
 
-class suspect(GameTurn):
+class Suspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
@@ -288,7 +296,7 @@ class suspect(GameTurn):
         )
 
 
-class room(GameTurn):
+class Room(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
@@ -301,7 +309,7 @@ class room(GameTurn):
         )
 
 
-class weapon(GameTurn):
+class Weapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
@@ -385,11 +393,11 @@ class HelpMenu(GlobalScene):
         if intents.RULES in request.intents:
             return Rules()
         elif intents.MENU_SUSPECT in request.intents:
-            return tell_cards("suspects")
+            return AboutCards("suspects")
         elif intents.MENU_ROOMS in request.intents:
-            return tell_cards("rooms")
+            return AboutCards("rooms")
         elif intents.MENU_WEAPONS in request.intents:
-            return tell_cards("weapons")
+            return AboutCards("weapons")
         if intents.CONTINUE in request.intents:
             return eval(f"{request.session[state.PREVIOUS_STATE]}()")
 
@@ -412,7 +420,7 @@ class DetectiveList(HelpMenuItem):
             return super().handle_local_intents(request)
 
 
-class tell_cards(HelpMenuItem):
+class AboutCards(HelpMenuItem):
     def __init__(self, type_of_cards: str):
         self.type_of_cards = type_of_cards
 
