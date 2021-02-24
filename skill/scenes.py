@@ -375,7 +375,7 @@ class HelpMenu(GlobalScene):
                     ),
                 ]
             ),
-            state={state.PREVIOUS_SITE: self.__save_scene},
+            state={state.PREVIOUS_STATE: self.__save_scene},
         )
 
     def handle_local_intents(self, request: Request):
@@ -388,7 +388,7 @@ class HelpMenu(GlobalScene):
         elif intents.MENU_WEAPONS in request.intents:
             return tell_cards("weapons")
         if intents.CONTINUE in request.intents:
-            return eval(f"{request.session[state.PREVIOUS_SITE]}()")
+            return eval(f"{request.session[state.PREVIOUS_STATE]}()")
 
 
 class Rules(HelpMenuItem):
