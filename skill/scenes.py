@@ -158,6 +158,9 @@ class GameTurn(Scene):
             elif player_move[state.WEAPON] is None:
                 return weapon(player_move)
 
+    def handle_global_intents(self, request):
+        pass
+
 
 # класс меню помощи
 class HelpMenuItem(Scene):
