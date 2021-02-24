@@ -191,8 +191,6 @@ class HelpMenuItem(Scene):
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
             return HelpMenu()
-        if intents.CONTINUE in request.intents:
-            return self.go_back(request)
 
     def handle_global_intents(self, request: Request):
         pass
@@ -390,6 +388,8 @@ class HelpMenu(GlobalScene):
             return tell_cards("rooms")
         elif intents.MENU_WEAPONS in request.intents:
             return tell_cards("weapons")
+        if intents.CONTINUE in request.intents:
+            return eval(f'{request.session["save_state"]}()')
 
 
 class Rules(HelpMenuItem):
