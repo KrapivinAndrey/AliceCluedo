@@ -35,15 +35,15 @@ class GlobalScene(Scene):
         pass
 
     def fallback(self, request: Request):
-        save_state = {}
+        for_save = {}
         # Сохраним важные состояние
         for save in state.MUST_BE_SAVE:
             if save in request.session:
-                save_state.update({save: request.session[save]})
+                for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
             text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
-            state=save_state,
+            state=for_save,
         )
 
 
@@ -182,7 +182,11 @@ class HelpMenuItem(Scene):
         )
 
         return self.make_response(
-            request, text, tts, buttons=[button("Помощь"), button("Продолжить")], state = {"save_state": self.id()}
+            request,
+            text,
+            tts,
+            buttons=[button("Помощь"), button("Продолжить")],
+            state={state.PREVIOUS_STATE: self.id()},
         )
 
     def handle_local_intents(self, request: Request):
@@ -203,7 +207,7 @@ class HelpMenuItem(Scene):
 
     @staticmethod
     def go_back(request: Request):
-        previous_state = request.session.save_state
+        previous_state = request.session[state.PREVIOUS_STATE]
         return eval(f"{previous_state}()")
 
 
@@ -335,6 +339,7 @@ class EndTour(GlobalScene):
 
 # region Меню помощи
 
+
 class HelpMenu(GlobalScene):
     def __init__(self, save_scene=""):
         self.__save_scene = save_scene
@@ -376,7 +381,7 @@ class HelpMenu(GlobalScene):
                     ),
                 ]
             ),
-            state={"save_state": self.__save_scene},
+            state={state.PREVIOUS_SITE: self.__save_scene},
         )
 
     def handle_local_intents(self, request: Request):
@@ -389,7 +394,7 @@ class HelpMenu(GlobalScene):
         elif intents.MENU_WEAPONS in request.intents:
             return tell_cards("weapons")
         if intents.CONTINUE in request.intents:
-            return eval(f'{request.session["save_state"]}()')
+            return eval(f"{request.session[state.PREVIOUS_SITE]}()")
 
 
 class Rules(HelpMenuItem):
@@ -420,6 +425,7 @@ class tell_cards(HelpMenuItem):
 
 
 # endregion
+
 
 def _list_scenes():
     current_module = sys.modules[__name__]

@@ -12,5 +12,7 @@ SUSPECT = "suspect"
 
 # endregion
 
-MUST_BE_SAVE = {}
+PREVIOUS_SITE = "previous_state"
+
+MUST_BE_SAVE = {PREVIOUS_SITE}
 PERMANENT_VALUES = {GAME}
