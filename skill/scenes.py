@@ -19,6 +19,7 @@ game = GameEngine()
 
 # region Базовые классы
 
+
 # класс общая сцена
 class GlobalScene(Scene):
     def reply(self, request: Request):
@@ -162,7 +163,7 @@ class GameTurn(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu()
+            return HelpMenu(self.id())
 
 
 # класс меню помощи
