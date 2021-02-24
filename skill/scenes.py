@@ -158,13 +158,6 @@ class GameTurn(Scene):
             elif player_move[state.WEAPON] is None:
                 return weapon(player_move)
 
-    def handle_global_intents(self, request):
-        if (
-            intents.HELP in request.intents
-            or intents.WHAT_CAN_YOU_DO in request.intents
-        ):
-            return HelpMenu(self.id())
-
 
 # класс меню помощи
 class HelpMenuItem(Scene):
@@ -187,7 +180,7 @@ class HelpMenuItem(Scene):
             text,
             tts,
             buttons=[button("Помощь"), button("Продолжить")],
-            state={state.PREVIOUS_STATE: self.id()},
+            state={state.PREVIOUS_STATE: request.session[state.PREVIOUS_STATE]},
         )
 
     def handle_local_intents(self, request: Request):
@@ -195,7 +188,7 @@ class HelpMenuItem(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu()
+            return HelpMenu(request.session[state.PREVIOUS_STATE])
 
     def handle_global_intents(self, request: Request):
         pass
