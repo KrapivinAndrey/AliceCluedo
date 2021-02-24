@@ -2,13 +2,21 @@
 CONFIRM = "YANDEX.CONFIRM"
 REJECT = "YANDEX.REJECT"
 HELP = "YANDEX.HELP"
+WHAT_CAN_YOU_DO = "YANDEX.WHAT_CAN_YOU_DO"
 REPEAT = "YANDEX.REPEAT"
 # endregion
 
-# region Start game
+# region Help menu
+
+MENU_SUSPECT = "menu_suspects"
+MENU_WEAPONS = "menu_weapons"
+MENU_ROOMS = "menu_rooms"
+CONTINUE = "continue"
 RULES = "rules"
-NEW_GAME = "new_game"
+DETECTIVE_LIST = "detective_list"
 # endregion
+
+NEW_GAME = "new_game"
 
 # region Game turn
 

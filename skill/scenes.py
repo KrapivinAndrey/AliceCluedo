@@ -1,135 +1,54 @@
 import inspect
 import sys
 
+import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
 from skill.alice import Request
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
-from skill.responce_helpers import big_image, button, image_gallery
+from skill.responce_helpers import (
+    big_image,
+    button,
+    image_button,
+    image_gallery,
+    image_list,
+)
 from skill.scenes_util import Scene
-import skill.gallery as gallery
 
 game = GameEngine()
 
+# region Базовые классы
 
+
+# класс общая сцена
 class GlobalScene(Scene):
     def reply(self, request: Request):
         pass
 
     def handle_global_intents(self, request):
-        pass
+        if (
+            intents.HELP in request.intents
+            or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
+            return HelpMenu(self.id())
 
     def handle_local_intents(self, request: Request):
         pass
 
     def fallback(self, request: Request):
-        save_state = {}
+        for_save = {}
         # Сохраним важные состояние
         for save in state.MUST_BE_SAVE:
             if save in request.session:
-                save_state.update({save: request.session[save]})
+                for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
             text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
-            state=save_state,
+            state=for_save,
         )
 
 
-# region Начало игры
-
-
-class Welcome(GlobalScene):
-    def reply(self, request: Request):
-        text, tts = texts.hello()
-
-        return self.make_response(
-            request,
-            text,
-            tts,
-            buttons=[
-                button("Начать игру"),
-                button("Правила"),
-            ],
-        )
-
-    def handle_local_intents(self, request: Request):
-        if intents.RULES in request.intents:
-            return Rules()
-        elif intents.NEW_GAME in request.intents:
-            return NewGame()
-
-
-class Rules(GlobalScene):
-    def reply(self, request: Request):
-        text, tts = texts.rules()
-        return self.make_response(request, text, tts, buttons=YES_NO)
-
-    def handle_local_intents(self, request: Request):
-        if intents.CONFIRM in request.intents:
-            return DetectiveList()
-        elif intents.REJECT in request.intents:
-            return NewGame()
-
-
-class DetectiveList(GlobalScene):
-    def reply(self, request: Request):
-        text, tts = texts.detective_list()
-        return self.make_response(
-            request, text, tts, buttons=[button("Начать игру"), button("Повторить")]
-        )
-
-    def handle_local_intents(self, request: Request):
-        if intents.NEW_GAME in request.intents:
-            return NewGame()
-        elif intents.REPEAT in request.intents:
-            return DetectiveList()
-
-
-# endregion
-
-# region Start new game
-
-
-class NewGame(GlobalScene):
-    def reply(self, request: Request):
-        game.new_game()
-        text, tts = texts.start_game(
-            game.playerCards[0], game.playerCards[1], game.playerCards[2]
-        )
-        return self.make_response(
-            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
-        )
-
-    def handle_local_intents(self, request: Request):
-        if intents.CONFIRM in request.intents:
-            return NewGameLite()
-        elif intents.REJECT in request.intents:
-            return suspect()
-
-
-class NewGameLite(GlobalScene):
-    def reply(self, request: Request):
-        game_state = request.session[state.GAME]
-        game.restore(game_state)
-        text, tts = texts.start_game_lite(
-            game.playerCards[0], game.playerCards[1], game.playerCards[2]
-        )
-        return self.make_response(
-            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
-        )
-
-    def handle_local_intents(self, request: Request):
-        if intents.CONFIRM in request.intents:
-            return NewGameLite()
-        elif intents.REJECT in request.intents:
-            return suspect()
-
-
-# endregion
-
-# region Game turn
-
-
+# класс игровой шаг
 class GameTurn(Scene):
     def __init__(self, move=None):
         if move:
@@ -233,17 +152,135 @@ class GameTurn(Scene):
                 else:
                     return EndTour(turn["moves"])
             elif player_move[state.SUSPECT] is None:
-                return suspect(player_move)
+                return Suspect(player_move)
             elif player_move[state.ROOM] is None:
-                return room(player_move)
+                return Room(player_move)
             elif player_move[state.WEAPON] is None:
-                return weapon(player_move)
+                return Weapon(player_move)
 
-    def handle_global_intents(self, request: Request):
-        pass
+    def handle_global_intents(self, request):
+        if (
+                intents.HELP in request.intents
+                or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
+            return HelpMenu(self.id())
 
 
-class suspect(GameTurn):
+# класс меню помощи
+class HelpMenuItem(Scene):
+    def reply(self, request: Request, text: str, tts: str):
+        text = (
+            text
+            + "\n"
+            + """Скажите ""Помощь"", чтобы снова получить подсказки.
+        Скажите "Продолжить", чтобы вернуться откуда начали"""
+        )
+        tts = (
+            tts
+            + "\n"
+            + """Скажите ""Помощь"", чтобы снова получить подсказки. sil <[500]>
+        Скажите "Продолжить", чтобы вернуться откуда начали"""
+        )
+
+        return self.make_response(
+            request,
+            text,
+            tts,
+            buttons=[button("Помощь"), button("Продолжить")],
+            state={state.PREVIOUS_STATE: request.session[state.PREVIOUS_STATE]},
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONTINUE in request.intents:
+            return eval(f"{request.session[state.PREVIOUS_STATE]}()")
+
+    def handle_global_intents(self, request):
+        if (
+                intents.HELP in request.intents
+                or intents.WHAT_CAN_YOU_DO in request.intents
+        ):
+            return HelpMenu(self.session[state.PREVIOUS_STATE])
+
+    def fallback(self, request: Request):
+        return self.make_response(
+            request=request,
+            text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
+        )
+
+    @staticmethod
+    def go_back(request: Request):
+        previous_state = request.session[state.PREVIOUS_STATE]
+        return eval(f"{previous_state}()")
+
+
+# endregion
+
+
+class Welcome(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.hello()
+
+        return self.make_response(
+            request,
+            text,
+            tts,
+            buttons=[
+                button("Начать игру"),
+                button("Помощь"),
+            ],
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.RULES in request.intents:
+            return Rules()
+        elif intents.NEW_GAME in request.intents:
+            return NewGame()
+
+
+# region Start new game
+
+
+class NewGame(GlobalScene):
+    def reply(self, request: Request):
+        game.new_game()
+        text, tts = texts.start_game(
+            game.playerCards[0], game.playerCards[1], game.playerCards[2]
+        )
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return NewGameLite()
+        elif intents.REJECT in request.intents:
+            return Suspect()
+
+
+class NewGameLite(GlobalScene):
+    def reply(self, request: Request):
+        game_state = request.session[state.GAME]
+        game.restore(game_state)
+        text, tts = texts.start_game_lite(
+            game.playerCards[0], game.playerCards[1], game.playerCards[2]
+        )
+        return self.make_response(
+            request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.CONFIRM in request.intents:
+            return NewGameLite()
+        elif intents.REJECT in request.intents:
+            return Suspect()
+
+
+# endregion
+
+# region Game turn
+
+
+class Suspect(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.who_do_you_suspect()
         return self.make_response(
@@ -256,7 +293,7 @@ class suspect(GameTurn):
         )
 
 
-class room(GameTurn):
+class Room(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.in_which_room()
         return self.make_response(
@@ -269,7 +306,7 @@ class room(GameTurn):
         )
 
 
-class weapon(GameTurn):
+class Weapon(GameTurn):
     def reply(self, request: Request):
         text, tts = texts.what_weapon()
         return self.make_response(
@@ -300,6 +337,96 @@ class EndTour(GlobalScene):
         return self.make_response(
             request, text, tts, buttons=YES_NO, state={"turn": self.turn}
         )
+
+
+# region Меню помощи
+
+
+class HelpMenu(GlobalScene):
+    def __init__(self, save_scene=""):
+        self.__save_scene = save_scene
+
+    def reply(self, request: Request):
+        text, tts = texts.help_menu()
+        return self.make_response(
+            request,
+            text,
+            tts,
+            card=image_list(
+                [
+                    image_button(
+                        gallery.MENU_RULE, "Правила", "Правила игры", "Правила"
+                    ),
+                    image_button(
+                        gallery.MENU_SUSPECT,
+                        "Подозреваемые",
+                        "Карты подозреваемых, кто мог бы убить",
+                        "Подозреваемые",
+                    ),
+                    image_button(
+                        gallery.MENU_WEAPON,
+                        "Орудия",
+                        "Карты орудий преступления, чем могли убить",
+                        "Орудия",
+                    ),
+                    image_button(
+                        gallery.MENU_ROOM,
+                        "Комнаты",
+                        "Карты комнат, где могли убить",
+                        "Комнаты",
+                    ),
+                    image_button(
+                        gallery.MENU_NEXT,
+                        "Продолжить",
+                        "",
+                        "Продолжить",
+                    ),
+                ]
+            ),
+            state={state.PREVIOUS_STATE: self.__save_scene},
+        )
+
+    def handle_local_intents(self, request: Request):
+        if intents.RULES in request.intents:
+            return Rules()
+        elif intents.MENU_SUSPECT in request.intents:
+            return AboutCards("suspects")
+        elif intents.MENU_ROOMS in request.intents:
+            return AboutCards("rooms")
+        elif intents.MENU_WEAPONS in request.intents:
+            return AboutCards("weapons")
+        if intents.CONTINUE in request.intents:
+            return eval(f"{request.session[state.PREVIOUS_STATE]}()")
+
+
+class Rules(HelpMenuItem):
+    def reply(self, request: Request):
+        text, tts = texts.rules()
+        return super().reply(request, text, tts)
+
+
+class DetectiveList(HelpMenuItem):
+    def reply(self, request: Request):
+        text, tts = texts.detective_list()
+        return super().reply(request, text, tts)
+
+    def handle_local_intents(self, request: Request):
+        if intents.REPEAT in request.intents:
+            return DetectiveList()
+        else:
+            return super().handle_local_intents(request)
+
+
+class AboutCards(HelpMenuItem):
+    def __init__(self, type_of_cards=""):
+        self.type_of_cards = type_of_cards
+
+    def reply(self, request: Request):
+        text, tts = texts.cards(self.type_of_cards)
+        return super().reply(request, text, tts)
+
+
+# endregion
 
 
 def _list_scenes():
