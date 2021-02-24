@@ -182,7 +182,7 @@ class HelpMenuItem(Scene):
         )
 
         return self.make_response(
-            request, text, tts, buttons=[button("Помощь"), button("Продолжить")]
+            request, text, tts, buttons=[button("Помощь"), button("Продолжить")], state = {"save_state": self.id()}
         )
 
     def handle_local_intents(self, request: Request):
