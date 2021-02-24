@@ -29,7 +29,7 @@ class GlobalScene(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu()
+            return HelpMenu(self.id())
 
     def handle_local_intents(self, request: Request):
         pass
