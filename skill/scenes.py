@@ -67,13 +67,13 @@ class GameTurn(Scene):
 
         text, tts = texts.wrong_answer()
 
-        if request.session.get("scene", "") == state.SUSPECT:
+        if request.session.get("scene", "") == "Suspect":
             buttons = [button(x) for x in SUSPECTS]
             text_, tts_ = texts.who_do_you_suspect()
-        elif request.session.get("scene", "") == state.ROOM:
+        elif request.session.get("scene", "") == "Room":
             buttons = [button(x) for x in ROOMS]
             text_, tts_ = texts.in_which_room()
-        elif request.session.get("scene", "") == state.WEAPON:
+        elif request.session.get("scene", "") == "Weapon":
             buttons = [button(x) for x in WEAPONS]
             text_, tts_ = texts.what_weapon()
 
