@@ -1,8 +1,15 @@
 import json
 
+import sentry_sdk
+
 from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
 from skill.state import STATE_REQUEST_KEY
+
+sentry_sdk.init(
+    "https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
+    traces_sample_rate=1.0,
+)
 
 
 def handler(event, context):
