@@ -145,7 +145,8 @@ def gossip(moves):
             text_gossip(move["player"], suspect, room, weapon, move["player_stop"])
         )
 
-    texts.insert(1, "Карта: {}".format(moves[0]["card"].upper()))
+    if moves[0]["card"] is not None:
+        texts.insert(1, "Карта: {}".format(moves[0]["card"].upper()))
     text = "\n".join(texts)
     tts = "\nsil <[1000]>".join(texts)
 
@@ -203,14 +204,19 @@ def text_gossip(
 
     use = use_text[0]
 
-    sex = __get_sex(player_stop)
-    if denial_num is None:
-        denial_text1 = random.choice(denial_list1)
-        denial_text2 = random.choice(denial_list2)
+    if player_stop is None:
+        # Только игрок может такого добиться - если назовет все карты которые у него есть
+        player_stop = "детектив"
+        denial = "похоже забыл, он уже знает что эта версия ошибочная."
     else:
-        denial_text1 = denial_list1[denial_num]
-        denial_text2 = denial_list2[denial_num]
-    denial = __inflect(denial_text1, {sex, "VERB"}) + denial_text2
+        sex = __get_sex(player_stop)
+        if denial_num is None:
+            denial_text1 = random.choice(denial_list1)
+            denial_text2 = random.choice(denial_list2)
+        else:
+            denial_text1 = denial_list1[denial_num]
+            denial_text2 = denial_list2[denial_num]
+        denial = __inflect(denial_text1, {sex, "VERB"}) + denial_text2
 
     text = (
         f"{player.upper()} {think}: {suspect.upper()} {kill} в {room_text.upper()}, "
