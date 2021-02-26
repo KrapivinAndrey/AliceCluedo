@@ -164,8 +164,8 @@ class GameTurn(Scene):
 
     def handle_global_intents(self, request):
         if (
-                intents.HELP in request.intents
-                or intents.WHAT_CAN_YOU_DO in request.intents
+            intents.HELP in request.intents
+            or intents.WHAT_CAN_YOU_DO in request.intents
         ):
             return HelpMenu(self.id())
 
@@ -200,8 +200,8 @@ class HelpMenuItem(Scene):
 
     def handle_global_intents(self, request):
         if (
-                intents.HELP in request.intents
-                or intents.WHAT_CAN_YOU_DO in request.intents
+            intents.HELP in request.intents
+            or intents.WHAT_CAN_YOU_DO in request.intents
         ):
             return HelpMenu(self.session[state.PREVIOUS_STATE])
 
@@ -369,6 +369,12 @@ class HelpMenu(GlobalScene):
                         gallery.MENU_RULE, "Правила", "Правила игры", "Правила"
                     ),
                     image_button(
+                        gallery.MENU_LIST,
+                        "Лист детектива",
+                        "Удобная форма для того, чтобы записывать свои догадки",
+                        "Лист",
+                    ),
+                    image_button(
                         gallery.MENU_SUSPECT,
                         "Подозреваемые",
                         "Карты подозреваемых, кто мог бы убить",
@@ -400,6 +406,8 @@ class HelpMenu(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
             return Rules()
+        elif intents.DETECTIVE_LIST in request.intents:
+            return DetectiveList()
         elif intents.MENU_SUSPECT in request.intents:
             return AboutCards("suspects")
         elif intents.MENU_ROOMS in request.intents:

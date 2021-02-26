@@ -13,7 +13,7 @@ MENU_WEAPONS = "menu_weapons"
 MENU_ROOMS = "menu_rooms"
 CONTINUE = "continue"
 RULES = "rules"
-DETECTIVE_LIST = "detective_list"
+MENU_LIST = "detective_list"
 # endregion
 
 NEW_GAME = "new_game"
