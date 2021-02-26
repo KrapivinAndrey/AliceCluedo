@@ -9,10 +9,14 @@ GAME = "game"
 WEAPON = "weapon"
 ROOM = "room"
 SUSPECT = "suspect"
+TURN = "turn"
 
 # endregion
 
 PREVIOUS_STATE = "previous_state"
 
-MUST_BE_SAVE = {PREVIOUS_STATE}
+# Эти состояния будут сохранены в fallback
+MUST_BE_SAVE = {PREVIOUS_STATE, TURN}
+
+# Эти состояния сохраняются на каждый ход
 PERMANENT_VALUES = {GAME}
