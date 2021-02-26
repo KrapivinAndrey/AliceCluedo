@@ -30,7 +30,11 @@ class GlobalScene(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(self.id())
+            if self.id() == state.WELCOME:
+                button_name = "Начать игру"
+            else:
+                button_name = "Продолжить"
+            return HelpMenu(self.id(), button_name)
 
     def handle_local_intents(self, request: Request):
         pass
@@ -343,8 +347,9 @@ class EndTour(GlobalScene):
 
 
 class HelpMenu(GlobalScene):
-    def __init__(self, save_scene=""):
-        self.__save_scene = save_scene
+    def __init__(self, save_scene="", next_button="Продолжить"):
+        self.save_scene = save_scene
+        self.next_button = next_button
 
     def reply(self, request: Request):
         text, tts = texts.help_menu()
@@ -377,13 +382,13 @@ class HelpMenu(GlobalScene):
                     ),
                     image_button(
                         gallery.MENU_NEXT,
-                        "Продолжить",
+                        self.next_button,
                         "",
-                        "Продолжить",
+                        self.next_button,
                     ),
                 ]
             ),
-            state={state.PREVIOUS_STATE: self.__save_scene},
+            state={state.PREVIOUS_STATE: self.save_scene},
         )
 
     def handle_local_intents(self, request: Request):
@@ -395,7 +400,9 @@ class HelpMenu(GlobalScene):
             return AboutCards("rooms")
         elif intents.MENU_WEAPONS in request.intents:
             return AboutCards("weapons")
-        if intents.CONTINUE in request.intents:
+        elif intents.NEW_GAME in request.intents:
+            return NewGame()
+        elif intents.CONTINUE in request.intents:
             return eval(f"{request.session[state.PREVIOUS_STATE]}()")
 
 
