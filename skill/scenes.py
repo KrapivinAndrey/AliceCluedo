@@ -346,7 +346,7 @@ class EndTour(GlobalScene):
         if intents.CONFIRM in request.intents or intents.REPEAT in request.intents:
             return EndTour(request.session[state.TURN])
         else:
-            return Suspect
+            return Suspect()
 
 
 # region Меню помощи
