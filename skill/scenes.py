@@ -203,7 +203,7 @@ class HelpMenuItem(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(self.session[state.PREVIOUS_STATE])
+            return HelpMenu(request.session[state.PREVIOUS_STATE])
 
     def fallback(self, request: Request):
         return self.make_response(
