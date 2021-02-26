@@ -401,7 +401,7 @@ class HelpMenu(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
             return Rules()
-        elif intents.DETECTIVE_LIST in request.intents:
+        elif intents.MENU_LIST in request.intents:
             return DetectiveList()
         elif intents.MENU_SUSPECT in request.intents:
             return AboutCards("suspects")
