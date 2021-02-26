@@ -384,7 +384,7 @@ class HelpMenu(GlobalScene):
                         gallery.MENU_WEAPON,
                         "Орудия",
                         "Карты орудий преступления, чем могли убить",
-                        "Орудия",
+                        "Оружие",
                     ),
                     image_button(
                         gallery.MENU_ROOM,
