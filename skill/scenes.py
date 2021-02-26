@@ -358,7 +358,7 @@ class HelpMenu(GlobalScene):
         self.next_button = next_button
 
     def reply(self, request: Request):
-        text, tts = texts.help_menu(next_button)
+        text, tts = texts.help_menu(self.next_button)
         return self.make_response(
             request,
             text,
