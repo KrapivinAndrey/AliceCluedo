@@ -147,6 +147,7 @@ def gossip(moves):
 
     if moves[0]["card"] is not None:
         texts.insert(1, "Карта: {}".format(moves[0]["card"].upper()))
+    texts.append("Повторить еще раз, если не успели?")
     text = "\n".join(texts)
     tts = "\nsil <[1000]>".join(texts)
 
