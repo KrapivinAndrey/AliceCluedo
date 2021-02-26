@@ -391,15 +391,10 @@ class HelpMenu(GlobalScene):
                         "Комнаты",
                         "Карты комнат, где могли убить",
                         "Комнаты",
-                    ),
-                    image_button(
-                        gallery.MENU_NEXT,
-                        self.next_button,
-                        "",
-                        self.next_button,
-                    ),
-                ]
+                    )
+                ],
             ),
+            buttons=[button(self.next_button)],
             state={state.PREVIOUS_STATE: self.save_scene},
         )
 
