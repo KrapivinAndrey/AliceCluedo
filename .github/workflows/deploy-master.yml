@@ -8,7 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - uses: goodsmileduck/yandex-serverless-action@v1
+    - name: YA Serverless
+      uses: goodsmileduck/yandex-serverless-action@v1
       with:
         token: ${{ secrets.YAAUTH }}
         function_id: ${{ secrets.FUNCTION_ID }}
@@ -18,3 +19,11 @@ jobs:
         entrypoint: 'skill.main.handler'
         source: '.'
         exclude: '**.jpg'
+    - name: Create Sentry release
+      uses: getsentry/action-release@v1
+      env:
+        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+      with:
+        environment: production
