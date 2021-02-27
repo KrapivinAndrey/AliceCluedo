@@ -89,7 +89,7 @@ class GameTurn(Scene):
         def check_suspect(move, req):
             temp = {
                 "Plum": "Профессор Плам",
-                "Mustrad": "Полковник Мастард",
+                "Mustard": "Полковник Мастард",
                 "Green": "Преподобный Грин",
                 "Peacock": "Миссис Пикок",
                 "Scarlet": "Мисс Скарлет",
