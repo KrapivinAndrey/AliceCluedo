@@ -1,9 +1,11 @@
 # region Base of yandex
+
 CONFIRM = "YANDEX.CONFIRM"
 REJECT = "YANDEX.REJECT"
 HELP = "YANDEX.HELP"
 WHAT_CAN_YOU_DO = "YANDEX.WHAT_CAN_YOU_DO"
 REPEAT = "YANDEX.REPEAT"
+
 # endregion
 
 # region Help menu
@@ -14,6 +16,7 @@ MENU_ROOMS = "menu_rooms"
 CONTINUE = "continue"
 RULES = "rules"
 MENU_LIST = "detective_list"
+
 # endregion
 
 NEW_GAME = "new_game"

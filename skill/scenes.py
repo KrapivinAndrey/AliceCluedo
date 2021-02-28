@@ -166,29 +166,29 @@ class GameTurn(Scene):
 # класс меню помощи
 class HelpMenuItem(Scene):
     def reply(self, request: Request, text: str, tts: str):
+        next_button = request.session[state.NEXT_BUTTON]
         text = (
             text
             + "\n"
-            + """Скажите ""Помощь"", чтобы снова получить подсказки.
-        Скажите "Продолжить", чтобы вернуться откуда начали"""
+            + f"""Скажите ""Помощь"", чтобы снова получить подсказки.
+        Скажите "{next_button}", чтобы вернуться откуда начали"""
         )
         tts = (
             tts
             + "\n"
-            + """Скажите ""Помощь"", чтобы снова получить подсказки. sil <[500]>
-        Скажите "Продолжить", чтобы вернуться откуда начали"""
+            + f"""Скажите ""Помощь"", чтобы снова получить подсказки. sil <[500]>
+        Скажите "{next_button}", чтобы вернуться откуда начали"""
         )
 
         return self.make_response(
             request,
             text,
             tts,
-            buttons=[button("Помощь"), button("Продолжить")],
-            state={state.PREVIOUS_STATE: request.session[state.PREVIOUS_STATE]},
+            buttons=[button("Помощь"), button(next_button)],
         )
 
     def handle_local_intents(self, request: Request):
-        if intents.CONTINUE in request.intents:
+        if intents.CONTINUE in request.intents or intents.NEW_GAME in request.intents:
             return eval(f"{request.session[state.PREVIOUS_STATE]}()")
 
     def handle_global_intents(self, request):
@@ -203,11 +203,6 @@ class HelpMenuItem(Scene):
             request=request,
             text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
         )
-
-    @staticmethod
-    def go_back(request: Request):
-        previous_state = request.session[state.PREVIOUS_STATE]
-        return eval(f"{previous_state}()")
 
 
 # endregion
@@ -346,12 +341,13 @@ class EndTour(GlobalScene):
 
 
 class HelpMenu(GlobalScene):
-    def __init__(self, save_scene="", next_button="Продолжить"):
-        self.save_scene = save_scene
+    def __init__(self, save_state, next_button):
+        self.save_state = save_state
         self.next_button = next_button
 
     def reply(self, request: Request):
-        text, tts = texts.help_menu(self.next_button)
+        next_button = request.session[self.next_button]
+        text, tts = texts.help_menu(next_button)
         return self.make_response(
             request,
             text,
@@ -388,7 +384,7 @@ class HelpMenu(GlobalScene):
                 ],
             ),
             buttons=[button(self.next_button)],
-            state={state.PREVIOUS_STATE: self.save_scene},
+            state={state.PREVIOUS_STATE: self.save_state}
         )
 
     def handle_local_intents(self, request: Request):

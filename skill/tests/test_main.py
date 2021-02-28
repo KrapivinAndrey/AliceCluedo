@@ -81,6 +81,7 @@ def intent(name, slots=None):
 def get_next_scene(answer):
     return answer["session_state"].get("scene", None)
 
+
 # region Fixture
 
 
@@ -135,7 +136,6 @@ def test_start(start_session):
     Check(ans).is_not_none().is_dict().has_keys("response")
     Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
     Check(get_next_scene(ans)).is_not_none().is_string().matches("NewGame")
-
 
 # endregion
 
