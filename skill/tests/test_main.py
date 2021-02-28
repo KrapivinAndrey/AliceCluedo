@@ -3,7 +3,6 @@ from fluentcheck import Check
 
 import skill.intents as intents
 import skill.main as main
-import skill.state as state
 
 
 def game_for_test():
@@ -79,18 +78,35 @@ def intent(name, slots=None):
     return {name: {"slots": slots}}
 
 
+def get_next_scene(answer):
+    return answer["session_state"].get("scene", None)
+
 # region Fixture
 
 
 @pytest.fixture()
-def start_session():
+def new_session():
     return prepare_request(new=True)
 
 
 @pytest.fixture()
-def need_rules():
+def help_session():
     return prepare_request(
-        intents=intent(intents.HELP), state_session={"scene": state.WELCOME}
+        intents=intent(intents.HELP), state_session={"scene": "Welcome"}
+    )
+
+
+@pytest.fixture()
+def start_session():
+    return prepare_request(
+        intents=intent(intents.NEW_GAME), state_session={"scene": "Welcome"}
+    )
+
+
+@pytest.fixture()
+def need_help_welcome():
+    return prepare_request(
+        intents=intent(intents.HELP), state_session={"scene": "Welcome"}
     )
 
 
@@ -126,25 +142,31 @@ def move_suspect():
 # region start
 
 
-def test_hello(start_session):
-    ans = main.handler(start_session, None)
+def test_hello(new_session):
+    ans = main.handler(new_session, None)
     Check(ans).is_not_none().is_dict().has_keys("response")
     Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
     Check(ans["response"]["text"]).is_not_none().is_string().matches("^Привет!.*")
+    Check(get_next_scene(ans)).is_not_none().is_string().matches("Welcome")
 
 
-def test_rule(need_rules):
-    ans = main.handler(need_rules, None)
+def test_help(help_session):
+    ans = main.handler(help_session, None)
     Check(ans).is_not_none().is_dict().has_keys("response")
     Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_not_none().is_string().matches("^Правила игры")
+    Check(get_next_scene(ans)).is_not_none().is_string().matches("HelpMenu")
 
 
-def test_list(list_detective):
-    ans = main.handler(list_detective, None)
+def test_start(start_session):
+    ans = main.handler(start_session, None)
     Check(ans).is_not_none().is_dict().has_keys("response")
     Check(ans.get("response", {})).is_not_none().is_dict().has_keys("text", "tts")
-    Check(ans["response"]["text"]).is_not_none().is_string().matches("^Возьмите лист бумаги")
+    Check(get_next_scene(ans)).is_not_none().is_string().matches("NewGame")
+
+
+# endregion
+
+# region Меню помощью
 
 
 # endregion

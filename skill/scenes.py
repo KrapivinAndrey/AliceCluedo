@@ -4,15 +4,8 @@ import sys
 import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
-from skill.alice import Request
+from skill.alice import Request, big_image, button, image_button, image_gallery, image_list
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
-from skill.responce_helpers import (
-    big_image,
-    button,
-    image_button,
-    image_gallery,
-    image_list,
-)
 from skill.scenes_util import Scene
 
 game = GameEngine()
@@ -30,7 +23,7 @@ class GlobalScene(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            if self.id() == state.WELCOME:
+            if self.id() == "Welcome":
                 button_name = "Начать игру"
             else:
                 button_name = "Продолжить"
