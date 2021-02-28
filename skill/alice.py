@@ -6,18 +6,8 @@ from skill.state import MUST_BE_SAVE
 STATE_RESPONSE_KEY = "session_state"
 USER_STATE_RESPONSE_KEY = "user_state_update"
 
-
-class Chain(object):
-    def __getattribute__(self, item):
-        fn = object.__getattribute__(self, item)
-        if fn and type(fn) == MethodType:
-
-            def chained(*args, **kwargs):
-                ans = fn(*args, **kwargs)
-                return ans if ans is not None else self
-
-            return chained
-        return fn
+GEOLOCATION_ALLOWED = "Geolocation.Allowed"
+GEOLOCATION_REJECTED = "Geolocation.Rejected"
 
 
 class Request:
@@ -67,169 +57,97 @@ class Request:
             .get("value", None)
         )
 
+def big_image(image_id: list, title=None, description=None):
+    big_image = {"type": "BigImage", "image_id": image_id}
+    if title:
+        big_image["title"] = title
+    if description:
+        big_image["description"] = description
 
-class AliceResponse(Chain):
-    def __init__(self, request: Request):
+    return big_image
 
-        self._response_dict = {
-            "version": "1.0",
-            "session": request["session"],  # для отладки
-            "response": {"end_session": False, "buttons": []},
-            "session_state": {},
+
+def image_list(
+    image_ids: list,
+    header="",
+    footer="",
+    button_text="",
+    button_url="",
+    button_payload="",
+):
+    card = {
+        "type": "ItemsList",
+        "items": image_ids,
+    }
+    if header:
+        card["header"] = {"text": header}
+    if footer or button_text or button_url or button_payload:
+        card["footer"] = {}
+        if footer:
+            card["footer"]["text"] = footer
+        if button_text or button_url or button_payload:
+            card["footer"]["button"] = {}
+            if button_text:
+                card["footer"]["button"]["text"] = button_text
+            if button_url:
+                card["footer"]["button"]["url"] = button_url
+            if button_payload:
+                card["footer"]["button"]["payload"] = button_payload
+
+    return card
+
+
+def image_gallery(image_ids: list):
+    if image_ids and image_ids[0] != "":
+
+        items = [{"image_id": image_id} for image_id in image_ids]
+        return {
+            "type": "ImageGallery",
+            "items": items,
         }
-        for el in MUST_BE_SAVE:
-            self._response_dict["session_state"][el] = request.session[el]
+    else:
+        return {}
 
-        self._images = []
-        self._header = ""
-        self._footer = ""
-        self._asItemsList = False
-        self._asImageGallery = False
 
-    def __str__(self) -> str:
-        return self.dumps()
+def image_button(
+    image_id="",
+    title="",
+    description="",
+    button_text="",
+    button_url="",
+    button_payload="",
+):
+    image = {
+        "image_id": image_id,
+    }
+    if title:
+        image["title"] = title
+    if description:
+        image["description"] = description
+    if button_text or button_url or button_payload:
+        button = {}
+        if button_text:
+            button["text"] = button_text
+        if button_url:
+            button["url"] = button_url
+        if button_payload:
+            button["payload"] = button_payload
+        image["button"] = button
 
-    def dumps(self):
-        return json.dumps(self._response_dict, ensure_ascii=False, indent=2)
+    return image
 
-    @staticmethod
-    def __button(text: str, url: str, payload: str, hide: bool) -> dict:
-        button = {"title": text[:64]}
-        if url:
-            button["url"] = url[:1024]
-        if payload:
-            button["payload"] = payload
-        if hide:
-            button["hide"] = hide
 
-        return button
+def button(title, payload=None, url=None, hide=False):
+    button = {
+        "title": title,
+        "hide": hide,
+    }
+    if payload is not None:
+        button["payload"] = payload
+    if url is not None:
+        button["url"] = url
+    return button
 
-    @staticmethod
-    def __buttonImage(text: str, url: str, payload: str) -> dict:
-        button = {"text": text[:64]}
-        if url:
-            button["url"] = url[:1024]
-        if payload:
-            button["payload"] = payload
 
-        return button
-
-    def __prepare_card(self):
-        if not self._images:
-            raise Exception("No images for card")
-        elif len(self._images) == 1 and not (self._asItemsList or self._asImageGallery):
-            result = {"type": "BigImage"}
-            result.update(self._images[0])
-        elif len(self._images) <= 5 and not self._asImageGallery:
-            result = {"type": "ItemsList", "items": copy.deepcopy(self._images)}
-        elif len(self._images) <= 7:
-            result = {"type": "ImageGallery", "items": copy.deepcopy(self._images)}
-        else:
-            raise Exception("Too many images")
-
-        if self._header:
-            result["header"] = self._header
-
-        if self._footer:
-            result["footer"] = self._footer
-
-        return result
-
-    def text(self, text: str):
-        """Установить выводимый текст на экран"""
-        self._response_dict["response"]["text"] = text[:1024]
-        # по умолчанию произношение совпадает с текстом
-        self._response_dict["response"]["tts"] = text[:1024]
-
-    def tts(self, tts: str):
-        """Установить произносимую Алисой фразу"""
-        self._response_dict["response"][
-            "tts"
-        ] = tts  # tts может быть длиннее за счет дополнительных звуков
-
-    def setButtons(self, buttons: list):
-        """Вывести несколько кнопок
-        Параметры:
-            buttons -- массив заголовков
-        """
-        for title in buttons:
-            self.button(title)
-
-    def button(self, text: str, url="", payload="", hide=False):
-        """Добавить кнопку
-        Параметры:
-            title -- Текст кнопки, возвращается как выполненная команда request.command
-            url -- URL, который должна открывать кнопка
-            payload -- Произвольный JSON, который Яндекс.Диалоги должны отправить обработчику,
-                        если данная кнопка будет нажата.
-            hide -- ризнак того, что кнопку нужно убрать после следующей реплики пользователя.
-        """
-        button = self.__button(text, url, payload, hide)
-        self._response_dict["response"]["buttons"].append(button)
-
-    def image(self, image_id: str, title="", description=""):
-        self._images.append(
-            {"image_id": image_id, "title": title, "description": description}
-        )
-
-    def withButton(self, title: str, url="", payload=""):
-        if not self._images:
-            raise Exception("No images")
-        self._images[-1]["button"] = self.__buttonImage(title, url, payload)
-
-    def header(self, text: str):
-        self._header = text
-
-    def footer(self, text: str):
-        self._footer = text
-
-    def asItemsList(self):
-        assert not self._asImageGallery
-        self._asItemsList = True
-
-    def asImageGallery(self):
-        assert not self._asItemsList
-        self._asImageGallery = True
-
-    def saveState(self, name: str, value):
-        """Сохранить переменную в течении сессии
-        Получить значения можно в запросе state.session.<name>
-        Параметры:
-             name -- имя переменной для сохранения
-             value -- сохраняемое значение
-        """
-        self._response_dict[STATE_RESPONSE_KEY][name] = value
-
-    def clearState(self):
-        """При инициализаци сохранаяется предыдущее состояние
-        Это процедура позволяет его очистить"""
-        self._response_dict.pop(STATE_RESPONSE_KEY)
-
-    def saveUserState(self, name: str, value):
-        """Сохранить переменную для пользователя
-        Получить значения можно в запросе state.user.<name>
-        Параметры:
-             name -- имя переменной для сохранения
-             value -- сохраняемое значение
-        """
-        self._response_dict[USER_STATE_RESPONSE_KEY][name] = value
-
-    def clearUserState(self, name: str):
-        """Сбросить значение ранее сохраненной переменной
-        Параметры:
-             name -- имя переменной для сохранения
-        """
-        self.saveUserState(name, None)
-
-    def end(self):
-        """Признак конца разговора"""
-        self._response_dict["response"]["end_session"] = True
-
-    @property
-    def body(self):
-        if self._images:
-            self._response_dict["card"] = self.__prepare_card()
-
-        print(self.dumps())
-
-        return self._response_dict.copy()
+def has_location(event):
+    return event["session"].get("location") is not None
