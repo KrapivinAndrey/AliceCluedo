@@ -110,33 +110,6 @@ def need_help_welcome():
     )
 
 
-@pytest.fixture()
-def list_detective():
-    return prepare_request(
-        intents=intent(intents.CONFIRM), state_session={"scene": state.RULES}
-    )
-
-
-@pytest.fixture()
-def move_suspect():
-
-    return prepare_request(
-        intents=intent(
-            "gossip",
-            {
-                "slots": {
-                    "suspect": {
-                        "type": "Suspect",
-                        "tokens": {"start": 0, "end": 2},
-                        "value": "Peacock",
-                    }
-                }
-            },
-        ),
-        state_session={"screen": state.SUSPECT, "game": game_for_test()},
-    )
-
-
 # endregion
 
 # region start
