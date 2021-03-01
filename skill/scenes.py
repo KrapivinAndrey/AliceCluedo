@@ -160,7 +160,7 @@ class GameTurn(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(self.id())
+            return HelpMenu(self.id(), "Продолжить")
 
 
 # класс меню помощи
