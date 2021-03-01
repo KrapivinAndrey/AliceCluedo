@@ -333,7 +333,7 @@ class EndTour(GlobalScene):
     def handle_local_intents(self, request: Request):
         if intents.CONFIRM in request.intents or intents.REPEAT in request.intents:
             return EndTour(request.session[state.TURN])
-        else:
+        elif intents.REJECT in request.intents:
             return Suspect()
 
 
