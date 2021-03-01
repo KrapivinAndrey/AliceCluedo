@@ -177,13 +177,13 @@ class HelpMenuItem(Scene):
         text = (
             text
             + "\n"
-            + f"""Скажите ""Помощь"", чтобы снова получить подсказки.
+            + f"""Скажите "Помощь", чтобы снова получить подсказки.
         Скажите "{next_button}", чтобы вернуться откуда начали"""
         )
         tts = (
             tts
             + "\n"
-            + f"""Скажите ""Помощь"", чтобы снова получить подсказки. sil <[500]>
+            + f"""Скажите "Помощь", чтобы снова получить подсказки. sil <[500]>
         Скажите "{next_button}", чтобы вернуться откуда начали"""
         )
 
@@ -207,7 +207,7 @@ class HelpMenuItem(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(request.session[state.PREVIOUS_STATE])
+            return HelpMenu(request.session[state.PREVIOUS_STATE], request.session[state.NEXT_BUTTON])
 
     def fallback(self, request: Request):
         return self.make_response(
