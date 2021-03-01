@@ -341,7 +341,7 @@ class EndTour(GlobalScene):
 
 
 class HelpMenu(GlobalScene):
-    def __init__(self, save_state, next_button):
+    def __init__(self, save_state="", next_button=""):
         self.save_state = save_state
         self.next_button = next_button
 
@@ -383,7 +383,7 @@ class HelpMenu(GlobalScene):
                 ],
             ),
             buttons=[button(self.next_button)],
-            state={state.PREVIOUS_STATE: self.save_state}
+            state={state.PREVIOUS_STATE: self.save_state, state.NEXT_BUTTON: self.next_button}
         )
 
     def handle_local_intents(self, request: Request):
