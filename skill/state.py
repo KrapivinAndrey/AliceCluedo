@@ -12,7 +12,9 @@ TURN = "turn"
 
 # endregion
 
+# help menu
 PREVIOUS_STATE = "previous_state"
+NEXT_BUTTON = "next_button"
 
 # Эти состояния будут сохранены в fallback
 MUST_BE_SAVE = {PREVIOUS_STATE, TURN}

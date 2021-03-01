@@ -57,6 +57,7 @@ class Request:
             .get("value", None)
         )
 
+
 def big_image(image_id: list, title=None, description=None):
     big_image = {"type": "BigImage", "image_id": image_id}
     if title:
