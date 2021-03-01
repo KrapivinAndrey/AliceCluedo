@@ -4,7 +4,14 @@ import sys
 import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
-from skill.alice import Request, big_image, button, image_button, image_gallery, image_list
+from skill.alice import (
+    Request,
+    big_image,
+    button,
+    image_button,
+    image_gallery,
+    image_list,
+)
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from skill.scenes_util import Scene
 
@@ -185,6 +192,10 @@ class HelpMenuItem(Scene):
             text,
             tts,
             buttons=[button("Помощь"), button(next_button)],
+            state={
+                state.PREVIOUS_STATE: request.session[state.PREVIOUS_STATE],
+                state.NEXT_BUTTON: next_button,
+            },
         )
 
     def handle_local_intents(self, request: Request):
@@ -379,11 +390,14 @@ class HelpMenu(GlobalScene):
                         "Комнаты",
                         "Карты комнат, где могли убить",
                         "Комнаты",
-                    )
+                    ),
                 ],
             ),
             buttons=[button(self.next_button)],
-            state={state.PREVIOUS_STATE: self.save_state, state.NEXT_BUTTON: self.next_button}
+            state={
+                state.PREVIOUS_STATE: self.save_state,
+                state.NEXT_BUTTON: self.next_button,
+            },
         )
 
     def handle_local_intents(self, request: Request):
