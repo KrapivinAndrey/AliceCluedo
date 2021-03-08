@@ -17,7 +17,7 @@ PREVIOUS_STATE = "previous_state"
 NEXT_BUTTON = "next_button"
 
 # Эти состояния будут сохранены в fallback
-MUST_BE_SAVE = {PREVIOUS_STATE, TURN}
+MUST_BE_SAVE = {PREVIOUS_STATE, NEXT_BUTTON, TURN}
 
 # Эти состояния сохраняются на каждый ход
 PERMANENT_VALUES = {GAME}
