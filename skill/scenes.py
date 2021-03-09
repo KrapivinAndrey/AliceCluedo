@@ -199,8 +199,11 @@ class HelpMenuItem(Scene):
         )
 
     def handle_local_intents(self, request: Request):
-        if intents.CONTINUE in request.intents or intents.NEW_GAME in request.intents:
+        if intents.CONTINUE in request.intents:
             return eval(f"{request.session[state.PREVIOUS_STATE]}()")
+        elif intents.NEW_GAME in request.intents:
+            return NewGame()
+
 
     def handle_global_intents(self, request):
         if (
