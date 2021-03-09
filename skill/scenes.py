@@ -210,9 +210,18 @@ class HelpMenuItem(Scene):
             return HelpMenu(request.session[state.PREVIOUS_STATE], request.session[state.NEXT_BUTTON])
 
     def fallback(self, request: Request):
+        next_button = request.session[state.NEXT_BUTTON]
+        for_save = {}
+        # Сохраним важные состояние
+        for save in state.MUST_BE_SAVE:
+            if save in request.session:
+                for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
-            text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
+            text=f"""Извините, я вас не понял. Пожалуйста, повторите что Вы сказали
+            Скажите "Помощь", чтобы снова получить подсказки.
+            Скажите {next_button}, чтобы вернуться откуда начали""",
+            state=for_save,
         )
 
 

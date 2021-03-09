@@ -5,7 +5,7 @@ import os
 true = True
 false = False
 
-with open(os.path.dirname(__file__) + '/emulate_response.json') as json_file:
+with open(os.path.dirname(__file__) + '/emulate_response.json', encoding='utf8') as json_file:
     REQUEST = json.load(json_file)
 
 
