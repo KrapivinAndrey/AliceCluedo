@@ -204,13 +204,15 @@ class HelpMenuItem(Scene):
         elif intents.NEW_GAME in request.intents:
             return NewGame()
 
-
     def handle_global_intents(self, request):
         if (
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(request.session[state.PREVIOUS_STATE], request.session[state.NEXT_BUTTON])
+            return HelpMenu(
+                request.session[state.PREVIOUS_STATE],
+                request.session[state.NEXT_BUTTON],
+            )
 
     def fallback(self, request: Request):
         next_button = request.session[state.NEXT_BUTTON]
@@ -221,9 +223,7 @@ class HelpMenuItem(Scene):
                 for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
-            text=f"""Извините, я вас не понял. Пожалуйста, повторите что Вы сказали
-            Скажите "Помощь", чтобы снова получить подсказки.
-            Скажите {next_button}, чтобы вернуться откуда начали""",
+            text=texts.help_menu_fallback(next_button),
             state=for_save,
         )
 
