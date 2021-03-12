@@ -1,2 +1,3 @@
 pymorphy2==0.8
 fluentcheck
+sentry_sdk
