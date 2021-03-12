@@ -23,8 +23,6 @@ root.setLevel(logging.DEBUG)
 
 handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.DEBUG)
-handler.setFormatter(logging.Formatter('[%(levelname)s]\t%(name)s\t%(request_id)s\t%(message)s\n'))
-
 root.addHandler(handler)
 
 
@@ -55,4 +53,4 @@ def handler(event, context):
     except Exception as e:
         logging.exception(e)
         message = SCENES.get("HaveMistake")()
-        return message.replay()
+        return message.reply(request)
