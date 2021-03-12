@@ -1,5 +1,5 @@
 import json
-from main import logging
+from skill.main import logging
 from abc import ABC, abstractmethod
 from typing import Optional
 

@@ -1,5 +1,5 @@
 import inspect
-import logging
+from skill.main import logging
 import sys
 
 import skill.gallery as gallery
