@@ -9,15 +9,6 @@ from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
 from skill.state import STATE_REQUEST_KEY
 
-sentry_logging = LoggingIntegration(
-    level=logging.INFO,
-    event_level=logging.ERROR,
-)
-sentry_sdk.init(
-    dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
-    integrations=[sentry_logging],
-)
-
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
 
@@ -27,6 +18,17 @@ root.addHandler(handler)
 
 
 def handler(event, context):
+
+    # если контекст пустой - это отладка или тесты
+    if context is not None:
+        sentry_logging = LoggingIntegration(
+            level=logging.INFO,
+            event_level=logging.ERROR,
+        )
+        sentry_sdk.init(
+            dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
+            integrations=[sentry_logging],
+        )
 
     logging.info(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
     logging.info(f"COMMAND: {event['request']['command']}")
