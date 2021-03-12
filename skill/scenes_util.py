@@ -1,9 +1,10 @@
-from abc import ABC, abstractmethod
 import json
+import logging
+from abc import ABC, abstractmethod
 from typing import Optional
 
 from skill.alice import Request
-from skill.state import STATE_RESPONSE_KEY, USERSTATE_RESPONSE_KEY, PERMANENT_VALUES
+from skill.state import PERMANENT_VALUES, STATE_RESPONSE_KEY, USERSTATE_RESPONSE_KEY
 
 
 class Scene(ABC):
@@ -76,5 +77,5 @@ class Scene(ABC):
         if user_state is not None:
             webhook_response[USERSTATE_RESPONSE_KEY] = user_state
 
-        print(f"RESPONSE {json.dumps(webhook_response, ensure_ascii=False)}")
+        logging.debug(f"RESPONSE {json.dumps(webhook_response, ensure_ascii=False)}")
         return webhook_response

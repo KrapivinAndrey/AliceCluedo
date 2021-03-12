@@ -1,17 +1,11 @@
 import inspect
+import logging
 import sys
 
 import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
-from skill.alice import (
-    Request,
-    big_image,
-    button,
-    image_button,
-    image_gallery,
-    image_list,
-)
+from skill.alice import Request, big_image, button, image_button, image_gallery, image_list
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from skill.scenes_util import Scene
 
@@ -258,6 +252,7 @@ class Welcome(GlobalScene):
 class NewGame(GlobalScene):
     def reply(self, request: Request):
         game.new_game()
+        logging.exception("An exception happened")
         text, tts = texts.start_game(
             game.playerCards[0], game.playerCards[1], game.playerCards[2]
         )
