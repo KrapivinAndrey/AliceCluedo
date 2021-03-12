@@ -10,22 +10,26 @@ from skill.state import STATE_REQUEST_KEY
 
 # All of this is already happening by default!
 sentry_logging = LoggingIntegration(
-    level=logging.INFO,        # Capture info and above as breadcrumbs
-    event_level=logging.ERROR  # Send errors as events
+    level=logging.INFO,  # Capture info and above as breadcrumbs
+    event_level=logging.ERROR,  # Send errors as events
 )
 sentry_sdk.init(
     dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
-    integrations=[sentry_logging]
+    integrations=[sentry_logging],
 )
+
+logger = logging.getLogger(__name__)
 
 
 def handler(event, context):
 
-    logging.info(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
-    logging.info(f"COMMAND: {event.get('command')}")
+    print(context)
+
+    logger.info(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
+    logger.info(f"COMMAND: {event.get('command')}")
     current_scene_id = event.get("state", {}).get(STATE_REQUEST_KEY, {}).get("scene")
 
-    logging.info(f"Current scene: {current_scene_id}")
+    logger.info(f"Current scene: {current_scene_id}")
     request = Request(event)
 
     if current_scene_id is None:
@@ -35,8 +39,8 @@ def handler(event, context):
     next_scene = current_scene.move(request)
 
     if next_scene is not None:
-        logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
+        logger.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
         return next_scene.reply(request)
     else:
-        logging.info(f"Failed to parse user request at scene {current_scene.id()}")
+        logger.info(f"Failed to parse user request at scene {current_scene.id()}")
         return current_scene.fallback(request)

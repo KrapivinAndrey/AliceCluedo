@@ -1,5 +1,5 @@
 import inspect
-from skill.main import logging
+from skill.main import logger
 import sys
 
 import skill.gallery as gallery
@@ -252,7 +252,7 @@ class Welcome(GlobalScene):
 class NewGame(GlobalScene):
     def reply(self, request: Request):
         game.new_game()
-        logging.exception("An exception happened")
+        logger.exception("An exception happened")
         text, tts = texts.start_game(
             game.playerCards[0], game.playerCards[1], game.playerCards[2]
         )
