@@ -266,7 +266,6 @@ class NewGame(GlobalScene):
         text, tts = texts.start_game(
             game.playerCards[0], game.playerCards[1], game.playerCards[2]
         )
-        a = 1/0
         return self.make_response(
             request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
         )
