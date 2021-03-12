@@ -54,4 +54,5 @@ def handler(event, context):
 
     except Exception as e:
         logging.exception(e)
-        return SCENES.get("HaveMistake").replay()
+        message = SCENES.get("HaveMistake")()
+        return message.replay()
