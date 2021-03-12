@@ -1,5 +1,5 @@
 import json
-import logging
+from main import logging
 from abc import ABC, abstractmethod
 from typing import Optional
 
