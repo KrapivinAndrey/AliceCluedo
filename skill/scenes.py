@@ -1,17 +1,11 @@
 import inspect
+import logging
 import sys
 
 import skill.gallery as gallery
 import skill.texts as texts
 from skill import intents, state
-from skill.alice import (
-    Request,
-    big_image,
-    button,
-    image_button,
-    image_gallery,
-    image_list,
-)
+from skill.alice import Request, big_image, button, image_button, image_gallery, image_list
 from skill.game import ROOMS, SUSPECTS, WEAPONS, GameEngine
 from skill.scenes_util import Scene
 
@@ -251,6 +245,17 @@ class Welcome(GlobalScene):
         elif intents.NEW_GAME in request.intents:
             return NewGame()
 
+
+class HaveMistake(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.mistake()
+
+        return self.make_response(
+            request,
+            text,
+            tts,
+            end_session=True
+        )
 
 # region Start new game
 
