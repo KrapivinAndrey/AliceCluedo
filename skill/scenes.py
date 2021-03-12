@@ -348,14 +348,16 @@ class EndTour(GlobalScene):
         self.turn = turn
 
     def reply(self, request: Request):
-        text, tts = texts.gossip(self.turn)
+        turn = self.turn if self.turn is not None else request.session[state.TURN]
+
+        text, tts = texts.gossip(turn)
         return self.make_response(
             request, text, tts, buttons=YES_NO, state={state.TURN: self.turn}
         )
 
     def handle_local_intents(self, request: Request):
         if intents.CONFIRM in request.intents or intents.REPEAT in request.intents:
-            return EndTour(request.session[state.TURN])
+            return EndTour()
         elif intents.REJECT in request.intents:
             return Suspect()
 
