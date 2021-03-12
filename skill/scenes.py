@@ -199,20 +199,32 @@ class HelpMenuItem(Scene):
         )
 
     def handle_local_intents(self, request: Request):
-        if intents.CONTINUE in request.intents or intents.NEW_GAME in request.intents:
+        if intents.CONTINUE in request.intents:
             return eval(f"{request.session[state.PREVIOUS_STATE]}()")
+        elif intents.NEW_GAME in request.intents:
+            return NewGame()
 
     def handle_global_intents(self, request):
         if (
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            return HelpMenu(request.session[state.PREVIOUS_STATE], request.session[state.NEXT_BUTTON])
+            return HelpMenu(
+                request.session[state.PREVIOUS_STATE],
+                request.session[state.NEXT_BUTTON],
+            )
 
     def fallback(self, request: Request):
+        next_button = request.session[state.NEXT_BUTTON]
+        for_save = {}
+        # Сохраним важные состояние
+        for save in state.MUST_BE_SAVE:
+            if save in request.session:
+                for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
-            text="Извините, я вас не понял. Пожалуйста, повторите что Вы сказали",
+            text=texts.help_menu_fallback(next_button),
+            state=for_save,
         )
 
 
@@ -336,14 +348,16 @@ class EndTour(GlobalScene):
         self.turn = turn
 
     def reply(self, request: Request):
-        text, tts = texts.gossip(self.turn)
+        turn = self.turn if self.turn is not None else request.session[state.TURN]
+
+        text, tts = texts.gossip(turn)
         return self.make_response(
             request, text, tts, buttons=YES_NO, state={state.TURN: self.turn}
         )
 
     def handle_local_intents(self, request: Request):
         if intents.CONFIRM in request.intents or intents.REPEAT in request.intents:
-            return EndTour(request.session[state.TURN])
+            return EndTour()
         elif intents.REJECT in request.intents:
             return Suspect()
 
