@@ -246,16 +246,27 @@ class Welcome(GlobalScene):
             return NewGame()
 
 
+class HaveMistake(GlobalScene):
+    def reply(self, request: Request):
+        text, tts = texts.mistake()
+
+        return self.make_response(
+            request,
+            text,
+            tts,
+            end_session=True
+        )
+
 # region Start new game
 
 
 class NewGame(GlobalScene):
     def reply(self, request: Request):
         game.new_game()
-        logging.exception("An exception happened")
         text, tts = texts.start_game(
             game.playerCards[0], game.playerCards[1], game.playerCards[2]
         )
+        a = 1/0
         return self.make_response(
             request, text, tts, buttons=YES_NO, state={state.GAME: game.dump()}
         )

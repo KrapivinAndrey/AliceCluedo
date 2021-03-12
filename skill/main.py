@@ -37,15 +37,21 @@ def handler(event, context):
     logging.info(f"Current scene: {current_scene_id}")
     request = Request(event)
 
-    if current_scene_id is None:
-        return DEFAULT_SCENE().reply(request)
+    try:
 
-    current_scene = SCENES.get(current_scene_id, DEFAULT_SCENE)()
-    next_scene = current_scene.move(request)
+        if current_scene_id is None:
+            return DEFAULT_SCENE().reply(request)
 
-    if next_scene is not None:
-        logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
-        return next_scene.reply(request)
-    else:
-        logging.info(f"Failed to parse user request at scene {current_scene.id()}")
-        return current_scene.fallback(request)
+        current_scene = SCENES.get(current_scene_id, DEFAULT_SCENE)()
+        next_scene = current_scene.move(request)
+
+        if next_scene is not None:
+            logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
+            return next_scene.reply(request)
+        else:
+            logging.info(f"Failed to parse user request at scene {current_scene.id()}")
+            return current_scene.fallback(request)
+
+    except Exception as e:
+        logging.exception(e)
+        return SCENES.get("HaveMistake").replay()

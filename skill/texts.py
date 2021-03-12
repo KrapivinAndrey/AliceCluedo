@@ -27,6 +27,13 @@ def hello():
     return text, tts
 
 
+def mistake():
+    text = """Прошу прощения. Во время игры возникла непредвиденная ошибка.
+    Я ее обязательно исправлю. Возвращайтесь чуть позже."""
+
+    return text, text
+
+
 def start_game(suspect: str, room: str, weapon: str):
 
     room_text = __inflect(room, {"loct"})
