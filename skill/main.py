@@ -7,7 +7,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 
 from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
-from skill.state import STATE_REQUEST_KEY, GAME, TURN
+from skill.state import GAME, PREVIOUS_MOVES, STATE_REQUEST_KEY, TURN
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -30,8 +30,8 @@ def handler(event, context):
             integrations=[sentry_logging],
         )
 
-    logging.info(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
-    logging.info(f"COMMAND: {event['request']['command']}")
+    logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
+    logging.debug(f"COMMAND: {event['request']['command']}")
     current_scene_id = event.get("state", {}).get(STATE_REQUEST_KEY, {}).get("scene")
 
     logging.info(f"Current scene: {current_scene_id}")
@@ -55,6 +55,7 @@ def handler(event, context):
     except Exception as e:
         game = request.session.get(GAME, {})
         turn = request.session.get(TURN, {})
-        logging.exception(e, extra={"game": game, "turn": turn})
+        moves = request.session.get(PREVIOUS_MOVES, [])
+        logging.exception(e, extra={"game": game, "turn": turn, "moves":moves})
         message = SCENES.get("HaveMistake")()
         return message.reply(request)

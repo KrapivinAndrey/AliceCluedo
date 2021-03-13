@@ -9,6 +9,7 @@ WEAPON = "weapon"
 ROOM = "room"
 SUSPECT = "suspect"
 TURN = "turn"
+PREVIOUS_MOVES = "prev_moves"
 
 # endregion
 
