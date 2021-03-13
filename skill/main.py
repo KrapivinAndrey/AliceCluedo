@@ -19,6 +19,8 @@ root.addHandler(handler)
 
 def handler(event, context):
 
+    print(context.function_name)
+
     # если контекст пустой - это отладка или тесты
     if context is not None:
         sentry_logging = LoggingIntegration(
