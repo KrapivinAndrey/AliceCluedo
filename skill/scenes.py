@@ -357,7 +357,7 @@ class EndTour(GlobalScene):
 
         text, tts = texts.gossip(turn)
         return self.make_response(
-            request, text, tts, buttons=YES_NO, state={state.TURN: self.turn}
+            request, text, tts, buttons=YES_NO, state={state.TURN: turn}
         )
 
     def handle_local_intents(self, request: Request):
