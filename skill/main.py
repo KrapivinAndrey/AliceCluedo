@@ -7,7 +7,7 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 
 from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
-from skill.state import STATE_REQUEST_KEY
+from skill.state import STATE_REQUEST_KEY, GAME, TURN
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -49,10 +49,12 @@ def handler(event, context):
             logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
             return next_scene.reply(request)
         else:
-            logging.info(f"Failed to parse user request at scene {current_scene.id()}")
+            logging.warning(f"Failed to parse user request at scene {current_scene.id()}")
             return current_scene.fallback(request)
 
     except Exception as e:
-        logging.exception(e)
+        game = request.session.get(GAME, {})
+        turn = request.session.get(TURN, {})
+        logging.exception(e, extra={"game": game, "turn": turn})
         message = SCENES.get("HaveMistake")()
         return message.reply(request)
