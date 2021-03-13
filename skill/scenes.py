@@ -364,6 +364,7 @@ class EndTour(GlobalScene):
         if intents.CONFIRM in request.intents or intents.REPEAT in request.intents:
             return EndTour()
         elif intents.REJECT in request.intents:
+            a=1/0
             return Suspect()
 
 
