@@ -18,6 +18,10 @@ class Request:
         return self.request_body[key]
 
     @property
+    def command(self):
+        return self.request_body["request"].get("original_utterance", "")
+
+    @property
     def intents(self):
         return self.request_body["request"].get("nlu", {}).get("intents", {})
 

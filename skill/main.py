@@ -1,13 +1,14 @@
 import json
 import logging
 import sys
+import os
 
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
-from skill.state import STATE_REQUEST_KEY
+from skill.state import GAME, PREVIOUS_MOVES, STATE_REQUEST_KEY, TURN
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -22,16 +23,18 @@ def handler(event, context):
     # если контекст пустой - это отладка или тесты
     if context is not None:
         sentry_logging = LoggingIntegration(
-            level=logging.INFO,
-            event_level=logging.ERROR,
+            level=logging.INFO, event_level=logging.ERROR
         )
         sentry_sdk.init(
             dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
             integrations=[sentry_logging],
+            environment="development"
+            if os.environ["DEBUG"] == "True"
+            else "production",
         )
 
-    logging.info(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
-    logging.info(f"COMMAND: {event['request']['command']}")
+    logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
+    logging.debug(f"COMMAND: {event['request']['command']}")
     current_scene_id = event.get("state", {}).get(STATE_REQUEST_KEY, {}).get("scene")
 
     logging.info(f"Current scene: {current_scene_id}")
@@ -49,10 +52,15 @@ def handler(event, context):
             logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
             return next_scene.reply(request)
         else:
-            logging.info(f"Failed to parse user request at scene {current_scene.id()}")
+            logging.warning(
+                f"Failed to parse user request at scene {current_scene.id()}"
+            )
             return current_scene.fallback(request)
 
     except Exception as e:
-        logging.exception(e)
+        game = request.session.get(GAME, {})
+        turn = request.session.get(TURN, {})
+        moves = request.session.get(PREVIOUS_MOVES, [])
+        logging.exception(e, extra={"game": game, "turn": turn, "moves": moves})
         message = SCENES.get("HaveMistake")()
         return message.reply(request)
