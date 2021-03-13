@@ -1,6 +1,7 @@
 import json
 import logging
 import sys
+import os
 
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -28,7 +29,7 @@ def handler(event, context):
         sentry_sdk.init(
             dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
             integrations=[sentry_logging],
-            environment="development" if "test" in context.function_name else "production"
+            environment="development" if os.environ['DEBUG'] == 'True' else "production"
         )
 
     logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
