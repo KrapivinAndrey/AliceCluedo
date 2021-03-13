@@ -23,13 +23,14 @@ def handler(event, context):
     # если контекст пустой - это отладка или тесты
     if context is not None:
         sentry_logging = LoggingIntegration(
-            level=logging.INFO,
-            event_level=logging.ERROR
+            level=logging.INFO, event_level=logging.ERROR
         )
         sentry_sdk.init(
             dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
             integrations=[sentry_logging],
-            environment="development" if os.environ['DEBUG'] == 'True' else "production"
+            environment="development"
+            if os.environ["DEBUG"] == "True"
+            else "production",
         )
 
     logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
@@ -51,13 +52,15 @@ def handler(event, context):
             logging.info(f"Moving from scene {current_scene.id()} to {next_scene.id()}")
             return next_scene.reply(request)
         else:
-            logging.warning(f"Failed to parse user request at scene {current_scene.id()}")
+            logging.warning(
+                f"Failed to parse user request at scene {current_scene.id()}"
+            )
             return current_scene.fallback(request)
 
     except Exception as e:
         game = request.session.get(GAME, {})
         turn = request.session.get(TURN, {})
         moves = request.session.get(PREVIOUS_MOVES, [])
-        logging.exception(e, extra={"game": game, "turn": turn, "moves":moves})
+        logging.exception(e, extra={"game": game, "turn": turn, "moves": moves})
         message = SCENES.get("HaveMistake")()
         return message.reply(request)
