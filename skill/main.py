@@ -19,18 +19,16 @@ root.addHandler(handler)
 
 def handler(event, context):
 
-    print(context.function_name)
-
     # если контекст пустой - это отладка или тесты
     if context is not None:
         sentry_logging = LoggingIntegration(
             level=logging.INFO,
-            event_level=logging.ERROR,
-            environment="development" if "test" in context.function_name else "production"
+            event_level=logging.ERROR
         )
         sentry_sdk.init(
             dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
             integrations=[sentry_logging],
+            environment="development" if "test" in context.function_name else "production"
         )
 
     logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
