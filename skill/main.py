@@ -24,6 +24,7 @@ def handler(event, context):
         sentry_logging = LoggingIntegration(
             level=logging.INFO,
             event_level=logging.ERROR,
+            environment="development" if "test" in context.function_name else "production"
         )
         sentry_sdk.init(
             dsn="https://5514871307bc406499d1c9fe4b088b52@o241410.ingest.sentry.io/5653975",
