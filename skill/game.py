@@ -1,5 +1,6 @@
 import copy
 import random
+import logging
 
 SUSPECTS = [
     "Миссис Пикок",
@@ -34,7 +35,7 @@ class GameEngine:
     def __init__(self):
         self._secret = tuple()
         self.num_players = 6  # 5 игроков и детектив
-        self._playerCards = [[] for _ in range(self.num_players)]
+        self._playerCards = [[], [], [], [], [], []]
 
     def dump(self):
         return {"cards": copy.deepcopy(self._playerCards), "secret": self._secret}
@@ -72,25 +73,33 @@ class GameEngine:
         random.shuffle(rooms)
         random.shuffle(weapons)
 
+        logging.debug(f"shuffle suspects: {suspects}")
+        logging.debug(f"shuffle rooms: {rooms}")
+        logging.debug(f"shuffle weapons: {weapons}")
+
         self._secret = {
             "suspect": suspects.pop(),
             "room": rooms.pop(),
             "weapon": weapons.pop(),
         }
 
-        #  Ради цельной истоии игруку тоже дадим по одной из каждой колоды
+        logging.debug(f"shuffle suspects after secret: {suspects}")
+        logging.debug(f"shuffle rooms after secret: {rooms}")
+        logging.debug(f"shuffle weapons after secret: {weapons}")
+
+        #  Ради цельной истоии игроку тоже дадим по одной из каждой колоды
         self._playerCards[0] = [suspects.pop(), rooms.pop(), weapons.pop()]
 
         all_cards = weapons + rooms + suspects
+        logging.debug(f"all cards before shuffle: {all_cards}")
         random.shuffle(all_cards)
+        logging.debug(f"all cards after shuffle: {all_cards}")
 
-        i = 1
-        while all_cards:
-            self._playerCards[i].append(all_cards.pop())
-            if i == 5:
-                i = 1
-            else:
-                i += 1
+        self._playerCards[1] = [all_cards[0], all_cards[5], all_cards[10]]
+        self._playerCards[2] = [all_cards[1], all_cards[6], all_cards[11]]
+        self._playerCards[3] = [all_cards[2], all_cards[7], all_cards[12]]
+        self._playerCards[4] = [all_cards[3], all_cards[8]]
+        self._playerCards[5] = [all_cards[4], all_cards[9]]
 
     def game_turn(self, suspect, room, weapon):
         def randomCards(index):
