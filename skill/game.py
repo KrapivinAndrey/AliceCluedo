@@ -35,7 +35,7 @@ class GameEngine:
     def __init__(self):
         self._secret = tuple()
         self.num_players = 6  # 5 игроков и детектив
-        self._playerCards = [[] for _ in range(self.num_players)]
+        self._playerCards = [[], [], [], [], [], []]
 
     def dump(self):
         return {"cards": copy.deepcopy(self._playerCards), "secret": self._secret}
