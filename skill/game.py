@@ -96,12 +96,11 @@ class GameEngine:
         logging.debug(f"all cards after shuffle: {all_cards}")
 
         i = 1
-        while all_cards:
-            self._playerCards[i].append(all_cards.pop())
-            if i == 5:
-                i = 1
-            else:
-                i += 1
+        for card in all_cards:
+
+            logging.debug(f"add {card} to player {str(i)}")
+            self._playerCards[i].append(card)
+            i = 1 if i == 5 else i+1
 
     def game_turn(self, suspect, room, weapon):
         def randomCards(index):
