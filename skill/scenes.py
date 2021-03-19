@@ -211,13 +211,15 @@ class HelpMenuItem(Scene):
     def fallback(self, request: Request):
         next_button = request.session[state.NEXT_BUTTON]
         for_save = {}
+        text, tts = texts.help_menu_fallback(next_button)
         # Сохраним важные состояние
         for save in state.MUST_BE_SAVE:
             if save in request.session:
                 for_save.update({save: request.session[save]})
         return self.make_response(
             request=request,
-            text=texts.help_menu_fallback(next_button),
+            text=text,
+            tts=tts,
             state=for_save,
         )
 
