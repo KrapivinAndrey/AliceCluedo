@@ -24,10 +24,7 @@ class GlobalScene(Scene):
             intents.HELP in request.intents
             or intents.WHAT_CAN_YOU_DO in request.intents
         ):
-            if self.id() == "Welcome":
-                button_name = "Начать игру"
-            else:
-                button_name = "Продолжить"
+            button_name = "Начать игру" if self.id() == "Welcome" else "Продолжить"
             return HelpMenu(self.id(), button_name)
 
     def handle_local_intents(self, request: Request):
@@ -243,7 +240,8 @@ class Welcome(GlobalScene):
 
     def handle_local_intents(self, request: Request):
         if intents.RULES in request.intents:
-            return HelpMenu()
+            button_name = "Начать игру" if self.id() == "Welcome" else "Продолжить"
+            return HelpMenu(self.id(), button_name)
         elif intents.NEW_GAME in request.intents:
             return NewGame()
 
