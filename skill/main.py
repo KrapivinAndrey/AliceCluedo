@@ -9,6 +9,8 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from skill.alice import Request
 from skill.scenes import DEFAULT_SCENE, SCENES
 from skill.state import GAME, PREVIOUS_MOVES, STATE_REQUEST_KEY, TURN
+from ga4mp import Ga4mp
+
 
 root = logging.getLogger()
 root.setLevel(logging.DEBUG)
@@ -31,6 +33,11 @@ def handler(event, context):
             environment="development"
             if os.environ["DEBUG"] == "True"
             else "production",
+        )
+        ga = Ga4mp(
+            measurement_id="2394357485",
+            api_secret="c9V4oYkMT6Wk9Ff9fyYq_w",
+            client_id="1023363587073-bmd57tv3q01u4ksgis2j3303dmlo3nrc.apps.googleusercontent.com",
         )
 
     logging.debug(f"REQUEST: {json.dumps(event, ensure_ascii=False)}")
